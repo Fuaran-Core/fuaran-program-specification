@@ -1,0 +1,1737 @@
+{
+  "specification": "program-wire",
+  "formatVersion": 2,
+  "families": [
+    "handler",
+    "server-effect",
+    "client-effect",
+    "invocation",
+    "outcome",
+    "cross-layer",
+    "toy-handler",
+    "toy-server-effect",
+    "toy-client-effect",
+    "toy-outcome"
+  ],
+  "vocabularyFreeDocuments": [
+    "invocation",
+    "logic-tree-ref"
+  ],
+  "scenarioFamilies": [
+    "driver-semantics",
+    "driver-semantics-toy"
+  ],
+  "vectors": [
+    {
+      "id": "handler/minimal",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/minimal.json",
+      "sha256": "3ee78217600f1b3c9c0f60417d3c186ef48f8f97b12dc8c2bd3a6106df48ece7",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A handler with no stages — the honest empty handler, which is conformant and not an error."
+    },
+    {
+      "id": "handler/read-compute-write",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/read-compute-write.json",
+      "sha256": "9a91597ca944047c716cbfd91178b6d923282cc3c90390569fb2c9d0959e1b25",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "The decomposition the stage list exists to write down: read, compute, mutate domain state, respond to the surface."
+    },
+    {
+      "id": "handler/host-call",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/host-call.json",
+      "sha256": "a1007e48bcd9667508ee9032ae5e45f86dc7602e3443263bf7935d4b879ed308",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 1,
+          "defect": "opaque-host-call"
+        },
+        {
+          "stage": 2,
+          "defect": "outbound-notification"
+        }
+      ],
+      "description": "The one arm that reaches outside, with a landing slot, beside a notification — the two stages that make a handler unsafe to re-run."
+    },
+    {
+      "id": "handler/nested-call",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/nested-call.json",
+      "sha256": "b36fab0bba80c05caa4218f692e7c51d4b859b879c5f1f71f0408d5b4d2fa0a2",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A call action nested inside a chain in a compute stage: the documented no-op, and therefore provably re-runnable."
+    },
+    {
+      "id": "handler/value-from",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/value-from.json",
+      "sha256": "091aef310c0ef51efc23ed764f15d7f9ebe9392149147d399bea7ae6d84ecefd",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "non-literal-write"
+        }
+      ],
+      "description": "A state write whose value is resolved at dispatch against a store that has since moved — undecidable, and reported as undecided rather than rounded."
+    },
+    {
+      "id": "handler/reject-unknown-stage",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-unknown-stage.json",
+      "sha256": "28e23d247714babdc82968f684b20af542e671b13dc3d3280865424b2c31c25e",
+      "reject": "unknown-stage-kind",
+      "description": "A third stage kind. There are exactly two, and sequencing is not a third."
+    },
+    {
+      "id": "handler/reject-unknown-effect",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-unknown-effect.json",
+      "sha256": "7e8b9133919e399108d1022db997e77d84638c70ebe1e553acd1de0a45c8c047",
+      "reject": "unknown-effect-arm",
+      "description": "A sixth server-effect arm. The vocabulary is closed by registration, and no document widens it."
+    },
+    {
+      "id": "handler/reject-null-member",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-null-member.json",
+      "sha256": "42683a02642448dfa5a646d73ff127f3d13ca1a0c703237bca938c0ce0468c7a",
+      "reject": "null-member",
+      "description": "A JSON null inside an opaque payload position. The prohibition reaches every nesting depth, including a position this document does not otherwise decompose."
+    },
+    {
+      "id": "handler/reject-host-reserved-slot",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-host-reserved-slot.json",
+      "sha256": "68373db9a601ee131db6cd37f492aa6176e9c3995977fe543640066f60551a07",
+      "reject": "host-reserved-landing-slot",
+      "description": "A host call landing its result in the host-reserved state namespace — refused while planning, so the handler never reaches the outside world."
+    },
+    {
+      "id": "handler/reject-missing-name",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-missing-name.json",
+      "sha256": "0aa3937d9850a2e6b27ea61ec68d9686fad23ba3c129e2edf9709cf7ca10de6e",
+      "reject": "missing-member",
+      "description": "A handler with no registration key. A handler is reached by name; one without a name is unreachable rather than anonymous."
+    },
+    {
+      "id": "handler/reject-empty-name",
+      "family": "handler",
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-empty-name.json",
+      "sha256": "873ad33ebe6c713d0e9b2f7c5d7eb40b063deaad3f8f685a2ee54c5bcf7102ae",
+      "reject": "empty-name",
+      "description": "An empty registration key, which is a different claim from an absent one and is refused on its own class."
+    },
+    {
+      "id": "handler/host-call-only",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/host-call-only.json",
+      "sha256": "b77596604753dfddf6472b60a5699d74b6473d29033b71e3d3f0a90d08a48647",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "opaque-host-call"
+        }
+      ],
+      "description": "A handler whose only stage is the arm that reaches outside. Isolated so the reason set discriminates the arm and not merely its grade."
+    },
+    {
+      "id": "handler/notify-only",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/notify-only.json",
+      "sha256": "cf1f579df75d93cbb258ba8775c8680b6c9e5ee0c570b86321646d588c294d45",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "outbound-notification"
+        }
+      ],
+      "description": "A handler whose only stage ships a notification: a second run sends the message a second time, and the reason says which of the two outward arms it was."
+    },
+    {
+      "id": "handler/relative-op",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/relative-op.json",
+      "sha256": "a5615b8242a683d6ffefb7b40ad495b5f2403eb0ad2a362b0dca3e8329fd4c41",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "relative-addressing"
+        }
+      ],
+      "description": "An op addressing a position among a parent's children rather than naming a node. The walk cannot tell it from an absolute address and reports that it cannot."
+    },
+    {
+      "id": "handler/undecidable-action",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/undecidable-action.json",
+      "sha256": "bc5677cc229fb619cc98fd2d67c0d90ac5e30da10383b4aaa6a4b7b6272afc60",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "undecidable-action"
+        }
+      ],
+      "description": "A compute stage whose action arm the replay walk does not decide. Well-formed and not refused: an undecided classification is a report, never a rejection."
+    },
+    {
+      "id": "handler/chain-bound-write",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/chain-bound-write.json",
+      "sha256": "9765ce28b526de334d7712a698f826308e4d5a53b1b4e8aa7dba28454c1bc1ae",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "non-literal-write"
+        }
+      ],
+      "description": "A chain composing a literal write and a binding-valued one. A reader taking the chain clause unconditionally classifies this safe, one level above the write that decides it."
+    },
+    {
+      "id": "server-effect/run-query",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/run-query.json",
+      "sha256": "717f0337275caaea05b019a28917380359bccbcfa2ccc2f0901d3bfd2783c3c2",
+      "description": "The read arm: a by-reference source and a pipeline, both referenced vocabularies spliced byte-stably, landing in a named query slot."
+    },
+    {
+      "id": "server-effect/apply-ops",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/apply-ops.json",
+      "sha256": "01f278bcc211b940d5e1c20725b4da5af0b5523ce718ccd07d0efd6e2383493f",
+      "description": "The only domain-state mutation in the vocabulary."
+    },
+    {
+      "id": "server-effect/host-call",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/host-call.json",
+      "sha256": "dc6410d61cafc35d2b3844645295122908d2ff016d16e9961abaf04ba1d6035b",
+      "description": "The staged arm with a declared landing slot. Its gate capability is derived as host:<fn> and is carried nowhere in the document."
+    },
+    {
+      "id": "server-effect/host-call-bare",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/host-call-bare.json",
+      "sha256": "23f429929f37c800f75edc8d5de3b942b5e89302e2c39a508e05136e15223b8c",
+      "description": "The same arm with no landing slot: the result is discarded and only the fact of the call is recorded. The omitted member is absent, never null."
+    },
+    {
+      "id": "server-effect/emit-patch",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/emit-patch.json",
+      "sha256": "897b2b718627d4c7e1490f7ffdbb2fbb0987913c11747a09ff6edd0a89feb0b4",
+      "description": "Ops shipped to a rendering surface without touching domain state — kept a separate arm so what the surface sees and what is durable cannot be confused."
+    },
+    {
+      "id": "server-effect/notify",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/notify.json",
+      "sha256": "a008ad6992646e82ed645c12b0e30366586aade0ab4d0362da4f0d0616a1b647",
+      "description": "A host-channel message the handler asked for. Not the action algebra's notify arm, which is a documented no-op at every placement."
+    },
+    {
+      "id": "server-effect/notify-ordinal-divergence",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/notify-ordinal-divergence.json",
+      "sha256": "6e4668fe379e452b130411afe779a905653526aeca43e0f0b6bbf50fdbac2f1e",
+      "description": "The vector that discriminates Ordinal (UTF-16 code-unit) member ordering from code-point ordering. Its payload is an opaque position -- the one place the key set is open, so the one place the rule must be applied to keys no document declares -- and its keys straddle the sole boundary at which the two orderings disagree: a supplementary character leads with a high surrogate and therefore sorts BELOW U+E000-U+FFFF Ordinally, and above them by code point. A host that sorts keys by code point, by UTF-8 bytes, or by its language's native string order emits these three members in a different sequence and fails here alone."
+    },
+    {
+      "id": "server-effect/reject-missing-fn",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-missing-fn.json",
+      "sha256": "f0e306745f2952e0b89e3fc6f1bbe15978cac208f3b47c7d12301792dec125ff",
+      "reject": "missing-member",
+      "description": "A host call naming no function. The registration key is what the whole arm resolves through."
+    },
+    {
+      "id": "server-effect/reject-declared-capability",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-declared-capability.json",
+      "sha256": "25ff63c5a87874ac5c5c8ef7a48730d69afd9520d14c508aeebd262a1e4ef713",
+      "reject": "undeclared-member",
+      "description": "A document stating its own gate capability. The capability is derived from the closed vocabulary; a wire-carried one would put the untrusted side in charge of a fact the host computes."
+    },
+    {
+      "id": "client-effect/navigate",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/navigate.json",
+      "sha256": "3a2517981e2ac59e3c036675b3f132a01ae9438c5058e46d1abb99e4e44447ff",
+      "description": "A full navigation. Note the envelope: a kind member rather than $type, per the enumerated exception."
+    },
+    {
+      "id": "client-effect/navigate-target",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/navigate-target.json",
+      "sha256": "e49a34d248a2fd42e24b4ac690fe8ea78e3bed22d2633592b939638651a25b6f",
+      "description": "The same arm carrying its optional target. Its pair with client-effect/navigate.json is what pins the omit-at-identity rule by bytes: neither vector alone distinguishes an encoder that always emits the member from one that never does."
+    },
+    {
+      "id": "client-effect/push-state",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/push-state.json",
+      "sha256": "45af23bf18db73a9bf822b710096e3fcce4be60b7835db4b47785ccb3ff9be33",
+      "description": "An address update with no reload."
+    },
+    {
+      "id": "client-effect/write-to-clipboard",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/write-to-clipboard.json",
+      "sha256": "70ea09cb7ada23ef1f4ced5d6e006a3402fbfd68f2bfeb5d73fa68c5ad32b5e7",
+      "description": "A clipboard write."
+    },
+    {
+      "id": "client-effect/focus",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/focus.json",
+      "sha256": "6a516f9e2a2c51718a10b989a0d4dfa89bea31c28a3761d8a3f873ff1741a447",
+      "description": "Focus moved to an addressed node."
+    },
+    {
+      "id": "client-effect/download",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/download.json",
+      "sha256": "c930eae6c6c06b2ad8aa88f87519daf2aba2465a1c99a20f03f894860be9564d",
+      "description": "The two-member arm, and the one that pins the declaration-order exception: url precedes name, which is not Ordinal order."
+    },
+    {
+      "id": "client-effect/read-file-body",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/read-file-body.json",
+      "sha256": "58552873e201051f71ba069016cde7ca71e6ec54e04a3d874426ad3172a3844b",
+      "description": "A file body read at an addressed node, with the encoding named from the closed set."
+    },
+    {
+      "id": "client-effect/reject-unknown-kind",
+      "family": "client-effect",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-unknown-kind.json",
+      "sha256": "0cbc0d7ed1ec4072b6f2631db972b2a18f9ebf5db184b2baf9c203cb2d585a41",
+      "reject": "unknown-effect-arm",
+      "description": "A ninth client-effect arm. This vocabulary is closed on the same terms as the server's, envelope difference notwithstanding."
+    },
+    {
+      "id": "client-effect/reject-navigate-target",
+      "family": "client-effect",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-navigate-target.json",
+      "sha256": "ce024fc5ab34797aa59c2fbb0a444e58421366dc04b451bb9d503a300791c411",
+      "reject": "undeclared-member",
+      "description": "A third browsing context. The target set is closed at Self and Blank, and a value outside it is refused the way ReadFileBody's encoding is: the member is declared, the value it carries is not."
+    },
+    {
+      "id": "client-effect/control-characters",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/control-characters.json",
+      "sha256": "a16760fcecadde59698086b42cebe6a1f6cd6773a4a7c930d4f966b8bb3fc83a",
+      "description": "Clipboard text carrying all three of the short-escaped control characters, so the envelope exception is held by bytes rather than by prose alone."
+    },
+    {
+      "id": "client-effect/print",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/print.json",
+      "sha256": "b29fc125e8792a31894e6a9af5e5e20a0da6e90f066c1308402a9cbf130a16ac",
+      "description": "Format version 2, arm seven: the payload-free print instruction. The discriminator is the whole document, which is what this vector pins — an encoder that appends a member it thinks helpful passes every other vector in this family."
+    },
+    {
+      "id": "client-effect/confirm",
+      "family": "client-effect",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "client-effect/confirm.json",
+      "sha256": "064d8d89600a01d6d883c451729e7a800e4ee8374eb6caecd5cbbf414bbff49d",
+      "description": "Format version 2, arm eight: the confirmation. Two required members in declaration order, prompt before token, and nothing at all about what a yes will do — the continuations stay with whoever holds the tree and the gate."
+    },
+    {
+      "id": "client-effect/reject-print-member",
+      "family": "client-effect",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-print-member.json",
+      "sha256": "4d06e408fae2e1cbd26461059a5df1b4de7dc297947682df456659a8093560e8",
+      "reject": "undeclared-member",
+      "description": "A print instruction constraining the printing. Print declares no members, so every parameter of a printing belongs to the reader dialogue and none of them is expressible here; accepting one would leave an emitter believing it had constrained something it had not."
+    },
+    {
+      "id": "client-effect/reject-confirm-missing-token",
+      "family": "client-effect",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-confirm-missing-token.json",
+      "sha256": "47d8d0871918ad1ace886dc1740f4ad48ffb76dfce7cbfc675c38b8ded1679c8",
+      "reject": "missing-member",
+      "description": "A confirmation with a question and no token. Both members are required, and this is the half whose absence is silent rather than loud: a prompt alone still renders a dialogue, and the answer then addresses nothing."
+    },
+    {
+      "id": "invocation/keyed",
+      "family": "invocation",
+      "kind": "round-trip",
+      "document": "invocation",
+      "file": "invocation/keyed.json",
+      "sha256": "7bce83ef6c276729011b3fcca71b5ffd2c2d272f47bc7764b5c250dc868dd614",
+      "description": "An invocation carrying an idempotency key — the caller asking for at-most-once admission, which is strictly weaker than exactly-once."
+    },
+    {
+      "id": "invocation/unkeyed",
+      "family": "invocation",
+      "kind": "round-trip",
+      "document": "invocation",
+      "file": "invocation/unkeyed.json",
+      "sha256": "6a08c151ec5f357c7934028ca3c74904e8b2503eb2b21282176fec27f688468a",
+      "description": "The common case: no key, no deduplication asked for, and no member spelled null to say so."
+    },
+    {
+      "id": "invocation/reject-empty-key",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-empty-key.json",
+      "sha256": "b7f4bfe7e9b9e8da371b541f3ef75f7c9d07846c84081a744ecaf34cd46b3a70",
+      "reject": "empty-idempotency-key",
+      "description": "A present but empty key. Only omission means the caller is not asking for deduplication, so an empty string is refused rather than read as absence."
+    },
+    {
+      "id": "invocation/reject-key-too-long",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-key-too-long.json",
+      "sha256": "2de45c39919e518beb5a5d3877a01010ef75299170a359db8f7625ba32adb88d",
+      "reject": "idempotency-key-too-long",
+      "description": "A key over the 128-character cap. An unbounded key is an unbounded index entry on an untrusted input."
+    },
+    {
+      "id": "outcome/committed",
+      "family": "outcome",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "outcome/committed.json",
+      "sha256": "8203fe06bfe52592f9309ccb840b8ad563c0351e57dc8aad99dbe01eed437d97",
+      "description": "A committed run whose performed trail is in EXECUTION order: the staged host call trails a capability declared after it, because that is when it ran."
+    },
+    {
+      "id": "outcome/denied",
+      "family": "outcome",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "outcome/denied.json",
+      "sha256": "94c1902da763f2c38fdb4c2b0fe790449eec94b83bba301516512fa1de254eb3",
+      "description": "A plan-phase halt: everything is the entry state and performed is empty, because nothing reached the perform phase. The diagnostics are the whole record of why."
+    },
+    {
+      "id": "outcome/perform-failed",
+      "family": "outcome",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "outcome/perform-failed.json",
+      "sha256": "f6fc244a60c12b405b14e7f8641273f4de5c21c8ded7dc36468fb09dec901864",
+      "description": "The one case an uncommitted outcome reports work performed: the residual two-phase staging moves but cannot abolish, named rather than absorbed."
+    },
+    {
+      "id": "outcome/unregistered",
+      "family": "outcome",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "outcome/unregistered.json",
+      "sha256": "cd322d2578831cdff7777ce7ecbc58bb878c5e52cc48e8edb8721ac0632dc5ca",
+      "description": "The memberless diagnostic. It deliberately does not say which endpoint was named — that string is the one value that always comes off the wire."
+    },
+    {
+      "id": "outcome/reject-impossible",
+      "family": "outcome",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-impossible.json",
+      "sha256": "50c395c7e4c29a34d1aee93bb96f529071659fea22dcbc447eac91ce3bcb448f",
+      "reject": "impossible-outcome",
+      "description": "An uncommitted outcome reporting work performed with no perform-phase failure to explain it. No conformant run produces that pairing."
+    },
+    {
+      "id": "outcome/reject-endpoint-echoed",
+      "family": "outcome",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-endpoint-echoed.json",
+      "sha256": "78f4820be6c302e1713478034b152a997f7af468ba7e35f9f9d31846490e737d",
+      "reject": "endpoint-echoed",
+      "description": "An unregistered-handler diagnostic carrying the endpoint it could not resolve — the leak every other rule here is shaped to avoid."
+    },
+    {
+      "id": "outcome/reject-denial-origin",
+      "family": "outcome",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-denial-origin.json",
+      "sha256": "36be7a48bca1ff212922811fb9783b5d6a6d2c4e4c9451ae45cc148afd4ea982",
+      "reject": "undeclared-member",
+      "description": "A denial carrying an origin in the one position where no destination was ever consulted. Two rules refuse it and they coincide rather than compete: no server-effect arm names a destination, so the member is unreachable here at all, and origin belongs to GateRefused alone."
+    },
+    {
+      "id": "cross-layer/logic-tree-ref",
+      "family": "cross-layer",
+      "kind": "round-trip",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/logic-tree-ref.json",
+      "sha256": "011a7e8421d7c0370fa59f3a028fa6ac1ad676d22cf8347f12b9c0d488c256ee",
+      "description": "A composition surface naming a program by identifier under the namespaced slot: one bounded reference, and no content address. Absent is the unpinned posture, which is what every reference was before the member existed."
+    },
+    {
+      "id": "cross-layer/logic-tree-ref-pinned",
+      "family": "cross-layer",
+      "kind": "round-trip",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/logic-tree-ref-pinned.json",
+      "sha256": "fc73d718043ad6a34b47d6d6f218ccccefb9620ea37f8ff1ca2c98dc2ee8be39",
+      "description": "The same reference, content-addressed. Both emitters recompute the address from the preimage the text names rather than transcribing it, so what is triangulated is the rendering rule and the member's Ordinal position between the discriminator and the reference."
+    },
+    {
+      "id": "cross-layer/reject-malformed-content-address",
+      "family": "cross-layer",
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-malformed-content-address.json",
+      "sha256": "211c27385f6222938b2fd576a05026512609e51d30c4388cf669b410ea1ed35d",
+      "reject": "malformed-content-address",
+      "description": "A reference whose content address is present and unreadable — uppercase hex and the wrong length. Present-and-broken is refused rather than collapsed into absent, because collapsing it would let a malformed value buy the unpinned treatment."
+    },
+    {
+      "id": "cross-layer/reject-inline-body",
+      "family": "cross-layer",
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-inline-body.json",
+      "sha256": "80a7f970f9c26567a302cacf53272161c82c49723ed1ccfc3ba013a952ef4d6d",
+      "reject": "undeclared-member",
+      "description": "A reference carrying the program inline. The opaqueness is enforced by what the declaration omits, so this is refused as undeclared rather than by a list of forbidden names."
+    },
+    {
+      "id": "cross-layer/reject-unknown-slot",
+      "family": "cross-layer",
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-unknown-slot.json",
+      "sha256": "70b66cb7e2888ae29c9faa44185818b781bb86f24a570152d377818d10c9e4be",
+      "reject": "unknown-slot",
+      "description": "A reference under a slot identity nobody registered. The identity is a namespace and kind pair, and a near-miss is not a match."
+    },
+    {
+      "id": "cross-layer/reject-result-target",
+      "family": "cross-layer",
+      "kind": "reject",
+      "document": "handler",
+      "file": "cross-layer/reject-result-target.json",
+      "sha256": "506eb16d2b3a5beb9ce07799f6de81808d240c576b76ce1f70eb288950455b79",
+      "reject": "tree-declared-result-target",
+      "description": "A call action declaring where the answer should land. The handler declares that; refusing rather than ignoring is what keeps the retired mechanism from looking alive."
+    },
+    {
+      "id": "toy-handler/minimal",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/minimal.json",
+      "sha256": "0a69b66d279239373c4aeaf11632db0d2926b8a9e329ee0bc10a5120c68bc726",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "The empty handler at the toy subject. It carries no vocabulary, and is here because a toy-subject host runs none of the referenced subject's vectors and would otherwise never meet it (§10.7)."
+    },
+    {
+      "id": "toy-handler/read-compute-write",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/read-compute-write.json",
+      "sha256": "a3ba079c5a325f65ffa2a8311c385e721555dfe305d1e760391b700bdc405d92",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "§4.5's decomposition with the toy in the referenced positions: a read, a literal Put, an op stage and a patch stage each carrying an absolutely addressed Relabel."
+    },
+    {
+      "id": "toy-handler/host-call",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/host-call.json",
+      "sha256": "abd17ca6472f625a2c85f7b1f12f461a6198d8755cfb243d8432595930db1cd9",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 1,
+          "defect": "opaque-host-call"
+        },
+        {
+          "stage": 2,
+          "defect": "outbound-notification"
+        }
+      ],
+      "description": "A literal Put, a host call landing in a slot, and a notification: two stages that reach outside, each reported at its own ordinal."
+    },
+    {
+      "id": "toy-handler/nested-call",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/nested-call.json",
+      "sha256": "e63689d7325c946dce7ab8904a895fb2cf22ff6df8cb6d3eb487b66d4d3e8fb3",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A Ring nested in a Seq. The toy's call views as the algebra's call, which is inert inside a stage (§4.2), so the stage is as re-runnable as the literal write beside it."
+    },
+    {
+      "id": "toy-handler/value-from",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/value-from.json",
+      "sha256": "cb0383a7c5575e1d830ac64fe3a16bbfb7acc318d60066e2c3a3d7f39b79a220",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "non-literal-write"
+        }
+      ],
+      "description": "A Put whose value comes from a Read: resolved at dispatch against a store that has moved. Discriminates non-literal-write at the toy subject."
+    },
+    {
+      "id": "toy-handler/host-call-only",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/host-call-only.json",
+      "sha256": "3c2cc5fe3a990b1a72760e1d201a652ecf5a1f83c9724ec054c88751ce0b6f6e",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "opaque-host-call"
+        }
+      ],
+      "description": "A host call alone, with no landing slot. Discriminates opaque-host-call at the toy subject."
+    },
+    {
+      "id": "toy-handler/notify-only",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/notify-only.json",
+      "sha256": "3e63b4d3e11d6ad2ed23bb8e904a499948e3d85632d2cdc7bbe9d8f3922b0e77",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "outbound-notification"
+        }
+      ],
+      "description": "A notification alone. Discriminates outbound-notification at the toy subject."
+    },
+    {
+      "id": "toy-handler/undecidable-action",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/undecidable-action.json",
+      "sha256": "dae8ddb360a177487a55095d17c86d620f41d5f1d9bf73ce860a939ac04ade6c",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "undecidable-action"
+        }
+      ],
+      "description": "A Beep in a compute stage: a leaf, which the walk does not decide. Discriminates undecidable-action at the toy subject."
+    },
+    {
+      "id": "toy-handler/seq-bound-write",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/seq-bound-write.json",
+      "sha256": "7afe41e72227d3890c2a1bc9c7649a67045ffdc37b1a1d8456afcded979a3896",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "non-literal-write"
+        }
+      ],
+      "description": "§7.4's recursion through the toy's sequence: a literal Put and a Put from a Read. Reading a sequence unconditionally would classify it safe, one level above the write that makes it not."
+    },
+    {
+      "id": "toy-handler/guard",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/guard.json",
+      "sha256": "2ae5a9acd5ff9d7dca21c8e331bf000f7fa40d5fa88c865e63707a13a018bba3",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "undecidable-action"
+        }
+      ],
+      "description": "A Need: whether a guard over a moved store holds on a re-run is not decidable from the declared form (§10.7)."
+    },
+    {
+      "id": "toy-handler/choose",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/choose.json",
+      "sha256": "be8997d6e7e7bbb9c2e218ff22627ab59788179b85e47c5757f32c0a0df99a23",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "undecidable-action"
+        }
+      ],
+      "description": "A Pick whose arms are both re-runnable on their own — a literal Put and a Ring. Which arm re-runs is decided against a moved store, so the stage is undecided however safe the arms are (§10.7)."
+    },
+    {
+      "id": "toy-handler/repeat-literal",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/repeat-literal.json",
+      "sha256": "933ef22e360c3ecb44e37422d1a75211e241ba889c0c59c383f3d801615e4b1d",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A Times over a literal bound with a literal Put as its body: the same body the same number of times, so as re-runnable as the body (§10.7). A walk reading the case as merely undecided gets this one wrong."
+    },
+    {
+      "id": "toy-handler/repeat-parameter",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/repeat-parameter.json",
+      "sha256": "f0cbf61b23be96c1a3613656f0d073dbaf4722d205d8fe0b431fae87c16fe8e8",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "undecidable-action"
+        }
+      ],
+      "description": "The same body under a Parameter bound, whose count is resolved at dispatch: the pair with repeat-literal, which differs from it in the bound alone."
+    },
+    {
+      "id": "toy-handler/each-literal",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/each-literal.json",
+      "sha256": "0c637bcd0b3a0b6e68ae583118f4c82fd76cbe94090af42c62d0c8348c97b843",
+      "replaySafety": "unknown",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "non-literal-write"
+        }
+      ],
+      "description": "A ForEach over a literal collection whose body writes from the placeholder's Hole. Substituting an element changes no case, so each element contributes the body's non-literal write (§10.7)."
+    },
+    {
+      "id": "toy-handler/reject-unknown-stage",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-unknown-stage.json",
+      "sha256": "d2f389b1f408861dc5b37affe21a93c055209b51634e08ebd6a1344cf18aa28f",
+      "reject": "unknown-stage-kind",
+      "description": "A third stage kind carrying a toy action. The stage kinds are this specification's, and the subject does not widen them."
+    },
+    {
+      "id": "toy-handler/reject-unknown-effect",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-unknown-effect.json",
+      "sha256": "a266af6fc973076fd5fd5cfec80dddc107be7386f1eabb1c55fbc2015bc417ee",
+      "reject": "unknown-effect-arm",
+      "description": "A toy action spelled where a server effect belongs. §5.1's vocabulary is closed at every subject."
+    },
+    {
+      "id": "toy-handler/reject-null-member",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-null-member.json",
+      "sha256": "e2133a8f7a64650694bbccffb5c16db8810946ddd633e1cb35bbb3156d565ccc",
+      "reject": "null-member",
+      "description": "A null inside a toy action, in a referenced position: §3 rule 3 refuses it there as everywhere."
+    },
+    {
+      "id": "toy-handler/reject-reserved-slot",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-reserved-slot.json",
+      "sha256": "cd6ad5224ede049528a1f595c1ab8a8e86bf36a43763ab6f107abc8d82830dfd",
+      "reject": "host-reserved-landing-slot",
+      "description": "A host call landing under sys., the toy's host-reserved namespace (§10.7) — the toy counterpart of a slot under host."
+    },
+    {
+      "id": "toy-handler/reject-missing-name",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-missing-name.json",
+      "sha256": "032ba1e37d30a9f871b6369242aa4fb8d99af71b7310f8147b96dca8c0a2445e",
+      "reject": "missing-member",
+      "description": "A toy handler with no registration key. Absent is refused on its own class, distinct from empty."
+    },
+    {
+      "id": "toy-handler/reject-empty-name",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-empty-name.json",
+      "sha256": "fd1c9f654d12f6a55a10ed54f501a8939dc78db52b2d99f6f2c6543ace426313",
+      "reject": "empty-name",
+      "description": "A toy handler whose registration key is present and empty."
+    },
+    {
+      "id": "toy-handler/reject-foreign-action",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-foreign-action.json",
+      "sha256": "06d89420172e630abacece32a89019cf62d23e672a36477909db1d808c41a438",
+      "reject": "malformed-referenced-value",
+      "description": "A compute stage carrying an action of the OTHER subject's vocabulary. At the toy subject the position holds a toy action, and a value that is not one does not decode under its vocabulary (§10.7)."
+    },
+    {
+      "id": "toy-handler/reject-ring-into",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-ring-into.json",
+      "sha256": "95b93f977f52ab0bb55d563d0113c2e7b63318e2353a9cc43d37e052f6c6326b",
+      "reject": "undeclared-member",
+      "description": "A Ring carrying a landing slot as an extra member. The toy is owned here, so §2.9 refuses the member outright, before any reading of the action: the toy call declares a target only through its required targeted, which toy-handler/reject-result-target pins (§10.7)."
+    },
+    {
+      "id": "toy-handler/reject-result-target",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-result-target.json",
+      "sha256": "ea4f4b412d32f946c9356151a7b10f453362361e2e1d2dc3ef9b2f9f160e104e",
+      "reject": "tree-declared-result-target",
+      "description": "A toy call declaring a result target, inside a sequence. The codec reads the target through the subject's own declared reading, so the refusal is the referenced subject's class at the same point (§9.5, §10.7)."
+    },
+    {
+      "id": "toy-server-effect/run-query",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/run-query.json",
+      "sha256": "c108f4679343097dd4fd36541db9781cf1570b352b927500a7a5f5bd2d2f517e",
+      "description": "The read arm at the toy subject. Its source and pipeline are the substrate's vocabulary at both subjects."
+    },
+    {
+      "id": "toy-server-effect/apply-ops",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/apply-ops.json",
+      "sha256": "5842b69750ceac959c9726bf74d4c38cdc852e1aab01c1341ad0e1b54df73750",
+      "description": "The mutation arm carrying the toy's one op, Relabel."
+    },
+    {
+      "id": "toy-server-effect/host-call",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/host-call.json",
+      "sha256": "8120c972b4d3218d8b74b05e788c602e4082c03e745a229aaf44677e599f696c",
+      "description": "A host call with a landing slot outside the toy's reserved namespace."
+    },
+    {
+      "id": "toy-server-effect/host-call-bare",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/host-call-bare.json",
+      "sha256": "2b2221b5f7846efd29d330936633a723fa4d670d468ab7b0504f3b79d1865392",
+      "description": "A host call with no landing slot and an empty payload: the member is absent rather than null, and an empty object is still {}."
+    },
+    {
+      "id": "toy-server-effect/emit-patch",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/emit-patch.json",
+      "sha256": "8a344b12008d38330d8f58722dc9a6f1beea9039df1b3657142ef4985bd8c29e",
+      "description": "The patch arm carrying a Relabel."
+    },
+    {
+      "id": "toy-server-effect/notify",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/notify.json",
+      "sha256": "f2816cdf242e1a0dfd1e66c5287f91ba41b233263a09e6a343362bb6716b3823",
+      "description": "The notification arm."
+    },
+    {
+      "id": "toy-server-effect/notify-ordinal-divergence",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/notify-ordinal-divergence.json",
+      "sha256": "54e8502527664701c1b19eccfe907658537b3d6bb47362c5b378a8c107d47088",
+      "description": "§2.3's Ordinal ordering at the open payload position, where Ordinal and code-point ordering disagree. The rule is the canonical encoder's, and a toy-subject host has one."
+    },
+    {
+      "id": "toy-server-effect/reject-missing-fn",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-missing-fn.json",
+      "sha256": "9ef8d15030e5d881362ceb1ce55135c427d546aeb95bc2fad7b95ccb2db4aaea",
+      "reject": "missing-member",
+      "description": "A host call naming no host function."
+    },
+    {
+      "id": "toy-server-effect/reject-declared-capability",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-declared-capability.json",
+      "sha256": "5bbad264b1d9b65926441dee1a59e0c4dfaaa14a3d899afc66eeb89c2e46584b",
+      "reject": "undeclared-member",
+      "description": "A notification declaring its own capability. The capability is derived at every subject, never carried (§5.1)."
+    },
+    {
+      "id": "toy-server-effect/reject-foreign-op",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-foreign-op.json",
+      "sha256": "b7efec477cc69fd84821aecfb975860e1c6c4e8af5e00d4c0a05e14c710b77ba",
+      "reject": "malformed-referenced-value",
+      "description": "An op stage carrying an op of the other subject's vocabulary. At the toy subject an op is a Relabel, and anything else does not decode under its vocabulary (§10.7)."
+    },
+    {
+      "id": "toy-client-effect/sound",
+      "family": "toy-client-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "client-effect",
+      "file": "toy-client-effect/sound.json",
+      "sha256": "4f198a5a28fb266872afda965d925a722cabbb290f491dc253910a81c8ac74aa",
+      "description": "The toy's one effect in §5.2's envelope, members in the emitter's order: kind, nodeId, volume (§10.6)."
+    },
+    {
+      "id": "toy-client-effect/reject-unknown-kind",
+      "family": "toy-client-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "toy-client-effect/reject-unknown-kind.json",
+      "sha256": "3a2517981e2ac59e3c036675b3f132a01ae9438c5058e46d1abb99e4e44447ff",
+      "reject": "unknown-effect-arm",
+      "description": "An arm of the other subject's client vocabulary. The toy's is closed at Sound."
+    },
+    {
+      "id": "toy-client-effect/reject-missing-member",
+      "family": "toy-client-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "toy-client-effect/reject-missing-member.json",
+      "sha256": "dae8dbd2b275743f44b17515d9026e7af1e2b712deb04d7f88464fdf7ce57f76",
+      "reject": "missing-member",
+      "description": "A Sound with no volume. All three members are required."
+    },
+    {
+      "id": "toy-outcome/committed",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "toy-outcome/committed.json",
+      "sha256": "084093e4c0e59e1c0ce8e409a75c66685b7b223037e67be8670c95f66d2f534b",
+      "description": "A committed run whose patches carry a Relabel; performed is execution order, so the staged host call trails the capabilities the plan phase ran."
+    },
+    {
+      "id": "toy-outcome/denied",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "toy-outcome/denied.json",
+      "sha256": "d0e4478bbecfe601484c73a1e75e6ec808c9c91a92840fff662d931f7ccb62a7",
+      "description": "A plan-phase refusal: the entry state throughout and nothing performed. It carries no Bounded diagnostic, for the reason §10.7 gives."
+    },
+    {
+      "id": "toy-outcome/perform-failed",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "toy-outcome/perform-failed.json",
+      "sha256": "4d343e20f9e9191f1783ed125ac4133385daf37abf10b78c3e4c907a34440005",
+      "description": "The one case an uncommitted outcome reports work performed (§6.4): a host call ran, the next declined."
+    },
+    {
+      "id": "toy-outcome/unregistered",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "outcome",
+      "file": "toy-outcome/unregistered.json",
+      "sha256": "cd322d2578831cdff7777ce7ecbc58bb878c5e52cc48e8edb8721ac0632dc5ca",
+      "description": "The memberless diagnostic. It carries no vocabulary of either subject, and is here so that a toy-subject host meets it (§10.7)."
+    },
+    {
+      "id": "toy-outcome/reject-impossible",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-impossible.json",
+      "sha256": "f7fe282e199e3885ace5217ced951b3c07b29868ed33b17cf470d10529c3af72",
+      "reject": "impossible-outcome",
+      "description": "An uncommitted outcome reporting a host call performed with no perform-phase failure to explain it."
+    },
+    {
+      "id": "toy-outcome/reject-endpoint-echoed",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-endpoint-echoed.json",
+      "sha256": "0d2c45eb24d37d347fa715dc37fa054ea1cd568f7a1f95b687bc50913648eee0",
+      "reject": "endpoint-echoed",
+      "description": "An unregistered-handler diagnostic naming the endpoint it could not resolve."
+    },
+    {
+      "id": "toy-outcome/reject-denial-origin",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-denial-origin.json",
+      "sha256": "36be7a48bca1ff212922811fb9783b5d6a6d2c4e4c9451ae45cc148afd4ea982",
+      "reject": "undeclared-member",
+      "description": "An origin on an Unregistered denial, which consulted no destination (§5.3)."
+    },
+    {
+      "id": "toy-outcome/reject-foreign-patch",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-foreign-patch.json",
+      "sha256": "37dbe5445516366a64cbe7aa5bd8cf3c5066e5d909adbd2147fe4996e83c3b0b",
+      "reject": "malformed-referenced-value",
+      "description": "Patches carrying an op of the other subject's vocabulary: at the toy subject a patch is a Relabel (§10.7)."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "driver-semantics/chain-folds",
+      "family": "driver-semantics",
+      "name": "chain-folds",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/chain-folds",
+      "files": {
+        "tree": "driver-semantics/chain-folds/tree.json",
+        "events": "driver-semantics/chain-folds/events.json",
+        "expectation": "driver-semantics/chain-folds/expectation.json"
+      },
+      "sha256": {
+        "tree": "8b2be480fbe1a2f4c11217e73b51b54c381b460197a2afe00d44d47beda21d92",
+        "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
+        "expectation": "2203c451a35e3ec98257305c22017d6b0ad4e3b2320ea38290ffb042a56d8842"
+      },
+      "steps": 2,
+      "description": "A chain of two writes to one key, where the second wins. Ordered composition pinned as ORDER rather than merely as both-applied."
+    },
+    {
+      "id": "driver-semantics/closure-free-effects",
+      "family": "driver-semantics",
+      "name": "closure-free-effects",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/closure-free-effects",
+      "files": {
+        "tree": "driver-semantics/closure-free-effects/tree.json",
+        "events": "driver-semantics/closure-free-effects/events.json",
+        "expectation": "driver-semantics/closure-free-effects/expectation.json"
+      },
+      "sha256": {
+        "tree": "116865a3b76737f725f5925b1f5940d279405b31f31c5deedb5eee01c5924cfd",
+        "events": "23a62cc070f44cea84281c490bef382e6ee559324fc5d9b4b710cb7c1a68abe2",
+        "expectation": "b18e5d3ca5be0139ba9b9bff80dca7953dc9a1a779d77bc769f69d777aa8f525"
+      },
+      "steps": 3,
+      "description": "Two surface effects, one per step, recorded in the as-emitted envelope of the client-effect family. The effect a step reached is the shared fact; what a surface then does with it is not (§5.5)."
+    },
+    {
+      "id": "driver-semantics/coverage-floor-passthrough",
+      "family": "driver-semantics",
+      "name": "coverage-floor-passthrough",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/coverage-floor-passthrough",
+      "files": {
+        "tree": "driver-semantics/coverage-floor-passthrough/tree.json",
+        "events": "driver-semantics/coverage-floor-passthrough/events.json",
+        "expectation": "driver-semantics/coverage-floor-passthrough/expectation.json"
+      },
+      "sha256": {
+        "tree": "8d8ab3f55accf2d3696b7ea63ff24986e443dada69ad86f43c26315413f5dbe4",
+        "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
+        "expectation": "5ac0fec1cdc5e37dd27581236b1a113d1183645f144c45df72c0d7f08da7baa8"
+      },
+      "steps": 2,
+      "description": "The kinds a re-resolution pass deliberately does NOT reach. A negative result recorded on purpose, so a later widening of the floor changes an expectation rather than moving behaviour silently."
+    },
+    {
+      "id": "driver-semantics/coverage-floor-reactive",
+      "family": "driver-semantics",
+      "name": "coverage-floor-reactive",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/coverage-floor-reactive",
+      "files": {
+        "tree": "driver-semantics/coverage-floor-reactive/tree.json",
+        "events": "driver-semantics/coverage-floor-reactive/events.json",
+        "expectation": "driver-semantics/coverage-floor-reactive/expectation.json"
+      },
+      "sha256": {
+        "tree": "6d40fea61c26d880c73b5bfc88315d6e5e1f0dd817639af257db859ca533ad92",
+        "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
+        "expectation": "0e8d7c9db3556af0d1988d0a1aca5af448f764aaeb0263f525db6f787521ec2f"
+      },
+      "steps": 2,
+      "description": "One state write and several bound fields, every one of which must re-resolve — the floor a conformant loop reaches."
+    },
+    {
+      "id": "driver-semantics/documented-no-ops",
+      "family": "driver-semantics",
+      "name": "documented-no-ops",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/documented-no-ops",
+      "files": {
+        "tree": "driver-semantics/documented-no-ops/tree.json",
+        "events": "driver-semantics/documented-no-ops/events.json",
+        "expectation": "driver-semantics/documented-no-ops/expectation.json"
+      },
+      "sha256": {
+        "tree": "ef1270aa52b06a9c21a4c82d63ab1c4bd4b4296f3c3b038833ce968a7b72a521",
+        "events": "57768c0ee3995edffcd20be11304cd4924ebd9ff881e2825446706eec4194fae",
+        "expectation": "26d88daa9eac2addf377dfadf54775857f91fb9136e95c7c38dfc7530e7434a6"
+      },
+      "steps": 4,
+      "description": "Three arms that are inert on the bounded path by design. A placement that quietly grew an implementation of one of them diverges here rather than passing as a richer host."
+    },
+    {
+      "id": "driver-semantics/fixed-base-reresolution",
+      "family": "driver-semantics",
+      "name": "fixed-base-reresolution",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/fixed-base-reresolution",
+      "files": {
+        "tree": "driver-semantics/fixed-base-reresolution/tree.json",
+        "events": "driver-semantics/fixed-base-reresolution/events.json",
+        "expectation": "driver-semantics/fixed-base-reresolution/expectation.json"
+      },
+      "sha256": {
+        "tree": "09e1898211c3d34e785b7f789ab7835d68f3bf15045f3b2784c7c86d639b5c21",
+        "events": "c1bf1a9944665ae850267cf97c7912d84cc891beb4d01ba3d5b3187375090407",
+        "expectation": "ab19fff870bd064b830e31e6e5177924a356bffdbba03b47a801fdf7ddacf028"
+      },
+      "steps": 3,
+      "description": "Two writes to one key, one per EVENT. Re-resolution is against the fixed base tree (§10.5): a host folding its own output resolves the binding away at step 1 and cannot reach it at step 2, which every one-event scenario passes over."
+    },
+    {
+      "id": "driver-semantics/nested-handler-call",
+      "family": "driver-semantics",
+      "name": "nested-handler-call",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/nested-handler-call",
+      "files": {
+        "tree": "driver-semantics/nested-handler-call/tree.json",
+        "events": "driver-semantics/nested-handler-call/events.json",
+        "expectation": "driver-semantics/nested-handler-call/expectation.json"
+      },
+      "sha256": {
+        "tree": "6b0ec24250e9dba9c531b8a9ba9f0f2f6be7915e4bd175ef68a84d70cb6ef89e",
+        "events": "a67b0e99d64013d8c945c71a2d8956bd4a804b2299a794d00ccc95a4bc0d4787",
+        "expectation": "e18afa857da793f085ffa338b9318e6a61afa6a71c0fea90eae1ff25cc7715a8"
+      },
+      "steps": 2,
+      "description": "A call action nested inside a chain between two writes. With no handler registered it resolves to the documented no-op of §4.2 and the chain folds around it untouched — the position a top-level-only recognition could not produce."
+    },
+    {
+      "id": "driver-semantics/refused-navigate",
+      "family": "driver-semantics",
+      "name": "refused-navigate",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/refused-navigate",
+      "files": {
+        "tree": "driver-semantics/refused-navigate/tree.json",
+        "events": "driver-semantics/refused-navigate/events.json",
+        "expectation": "driver-semantics/refused-navigate/expectation.json"
+      },
+      "sha256": {
+        "tree": "93d05c9024978c54ee6811bad427312280a9719d61dfb0944744f0ff22bfbeb2",
+        "events": "f077c4fc1155fe0da910d319996c5a53726380a80edb6eda90cb06bdbe53c271",
+        "expectation": "d59fa4d7ce4576c7bfce2c62f46ff0812a64368795e414248c42a93e3f979a00"
+      },
+      "steps": 2,
+      "description": "An unsafe route is refused rather than silently neutered, and refused identically everywhere, because the check belongs to the shared algebra rather than to a surface."
+    },
+    {
+      "id": "driver-semantics/refused-destination",
+      "family": "driver-semantics",
+      "name": "refused-destination",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "hostPolicy": "local-egress-only",
+      "dir": "driver-semantics/refused-destination",
+      "files": {
+        "tree": "driver-semantics/refused-destination/tree.json",
+        "events": "driver-semantics/refused-destination/events.json",
+        "expectation": "driver-semantics/refused-destination/expectation.json"
+      },
+      "sha256": {
+        "tree": "e95c95df73bac2aa658ec5831e168f17f562d6386d9479c578e6242800e63347",
+        "events": "cff8ef36d7429159ffa2a4af4b16109b9c7277f3d511b8acdeb12c4fa257397b",
+        "expectation": "99f9cfe0cca735d0268a78984b95e141b3552ba6c3a409a4f5529586bb9fe345"
+      },
+      "steps": 3,
+      "description": "A destination the fold ADMITS and the performer seam declines. The scheme floor passes a well-formed https route, so the effect is reached with the value the program named — and the denial beside it records that this host does not send it there. The one shape that could not be recorded before denials existed: identical to a permissive host in every member but one."
+    },
+    {
+      "id": "driver-semantics/server-handler-call",
+      "family": "driver-semantics",
+      "name": "server-handler-call",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/server-handler-call",
+      "files": {
+        "tree": "driver-semantics/server-handler-call/tree.json",
+        "events": "driver-semantics/server-handler-call/events.json",
+        "expectation": "driver-semantics/server-handler-call/expectation.json"
+      },
+      "sha256": {
+        "tree": "5668372b48fd6ed4e40958f69a374c1cd26f7025087e4ceaef667d37a2464339",
+        "events": "a67b0e99d64013d8c945c71a2d8956bd4a804b2299a794d00ccc95a4bc0d4787",
+        "expectation": "ce663de198b6f8f469efa675345391c8d9893fb098d5fa381ca77abff047c75c"
+      },
+      "steps": 2,
+      "description": "A tree naming a handler endpoint. Where no handler is registered the arm reaches nothing, which is what makes a logic host's divergence from the other placements exactly the handler and nothing else."
+    },
+    {
+      "id": "driver-semantics/setstate-rebinds",
+      "family": "driver-semantics",
+      "name": "setstate-rebinds",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/setstate-rebinds",
+      "files": {
+        "tree": "driver-semantics/setstate-rebinds/tree.json",
+        "events": "driver-semantics/setstate-rebinds/events.json",
+        "expectation": "driver-semantics/setstate-rebinds/expectation.json"
+      },
+      "sha256": {
+        "tree": "531997d8520141ac84e0d3a4e794758a7eeedc183168eb5fc76bb2390cdde6fe",
+        "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
+        "expectation": "8fa5a266bf46644d68f5e74dca30b64c644fcddd52061726e02dca4733150fbf"
+      },
+      "steps": 2,
+      "description": "A single state write and the re-resolution that makes it visible — the smallest complete step a bounded loop takes."
+    },
+    {
+      "id": "driver-semantics/confirm-answer-yes",
+      "family": "driver-semantics",
+      "name": "confirm-answer-yes",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/confirm-answer-yes",
+      "files": {
+        "tree": "driver-semantics/confirm-answer-yes/tree.json",
+        "events": "driver-semantics/confirm-answer-yes/events.json",
+        "expectation": "driver-semantics/confirm-answer-yes/expectation.json"
+      },
+      "sha256": {
+        "tree": "7e73b1faaef3193ff03461c56207014d49dc8d98069bd5c113ee6cc6adf72715",
+        "events": "347ad9fc6c34af376e4d2364e8dd278a88f548579ed8656d75ac54c140bde7bf",
+        "expectation": "e6026f4d3103afeb1466fa0fec59957eb50345c6de41e5ce14dd8a2ce6f15e08"
+      },
+      "steps": 3,
+      "description": "A confirm is TWO events on the bounded path. The gesture asks (the Confirm effect, its token the confirm's address — here the empty path, so the node id and a bare #) and runs no continuation; the answer, the originating event re-delivered with confirmToken and confirmAccepted true, runs onConfirm as the core's Choose over the answer (§10.5)."
+    },
+    {
+      "id": "driver-semantics/confirm-answer-no",
+      "family": "driver-semantics",
+      "name": "confirm-answer-no",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/confirm-answer-no",
+      "files": {
+        "tree": "driver-semantics/confirm-answer-no/tree.json",
+        "events": "driver-semantics/confirm-answer-no/events.json",
+        "expectation": "driver-semantics/confirm-answer-no/expectation.json"
+      },
+      "sha256": {
+        "tree": "1dc844e0ff66a611c5c8d0dfff2a49c42ddc52fc2ec05bdf1756495fe4110903",
+        "events": "432e18f1d873cce97a3ee8d0e88337f05cf69351def8ac05af88d79f0a0b4890",
+        "expectation": "a3e8fec7621529f618bb5d40279f06790e389b8640625e2f5fdea2508cb46937"
+      },
+      "steps": 3,
+      "description": "The answer false runs onCancel. The confirm sits second in a chain, so the gesture's first member runs on the ask and the question's token is the confirm's position in the chain."
+    },
+    {
+      "id": "driver-semantics/confirm-withdrawn",
+      "family": "driver-semantics",
+      "name": "confirm-withdrawn",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/confirm-withdrawn",
+      "files": {
+        "tree": "driver-semantics/confirm-withdrawn/tree.json",
+        "events": "driver-semantics/confirm-withdrawn/events.json",
+        "expectation": "driver-semantics/confirm-withdrawn/expectation.json"
+      },
+      "sha256": {
+        "tree": "15b14728f4d7e0a88bf613b1c25c056746e757918f52f54d56000d9567a06bad",
+        "events": "ba44755fd10ed3e88a07072380eb712e331e39090afe7c4be3c2529ef2927aa9",
+        "expectation": "fc6d026f755d0d12059e98cf9339a7988b5d1a723245b370124796e384151348"
+      },
+      "steps": 4,
+      "description": "An admitted event that is not the answer WITHDRAWS the pending question, so the late answer is refused as an event and its continuation never runs — the reader moved on (§10.5)."
+    },
+    {
+      "id": "driver-semantics/confirm-duplicate-answer",
+      "family": "driver-semantics",
+      "name": "confirm-duplicate-answer",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics/confirm-duplicate-answer",
+      "files": {
+        "tree": "driver-semantics/confirm-duplicate-answer/tree.json",
+        "events": "driver-semantics/confirm-duplicate-answer/events.json",
+        "expectation": "driver-semantics/confirm-duplicate-answer/expectation.json"
+      },
+      "sha256": {
+        "tree": "7e73b1faaef3193ff03461c56207014d49dc8d98069bd5c113ee6cc6adf72715",
+        "events": "49ab64e4df8223dcb891e1bc5cbd6638bde1f5a38b60b024923caf8e36773d33",
+        "expectation": "e340c0b4c55a15b4b04004be738fa952e76411c387cef571f29bc32aba8eb8f0"
+      },
+      "steps": 4,
+      "description": "An answer CONSUMES its question: the same answer delivered again is refused as an event, so a replayed yes does not run the continuation twice (§10.5)."
+    },
+    {
+      "id": "driver-semantics-toy/sequence-folds",
+      "family": "driver-semantics-toy",
+      "name": "sequence-folds",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/sequence-folds",
+      "files": {
+        "tree": "driver-semantics-toy/sequence-folds/tree.json",
+        "events": "driver-semantics-toy/sequence-folds/events.json",
+        "expectation": "driver-semantics-toy/sequence-folds/expectation.json"
+      },
+      "sha256": {
+        "tree": "87c1c23627afab052e475a6c748ca129e7da04752b5fe5c08fc68816e1a89eef",
+        "events": "0566cab61f286d9cd4111ed0d84559572ad1ccb3bd4595b49f792ecaf6deb726",
+        "expectation": "7124862d8441168974ba0c3cd023a06cb4a719bca0e619cde7a54b01f4ac2403"
+      },
+      "steps": 2,
+      "description": "A sequence of two writes to one key and a leaf, where the second write wins and the leaf emits after both. Ordered composition pinned as ORDER, at the toy witness."
+    },
+    {
+      "id": "driver-semantics-toy/choose-takes-an-arm",
+      "family": "driver-semantics-toy",
+      "name": "choose-takes-an-arm",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/choose-takes-an-arm",
+      "files": {
+        "tree": "driver-semantics-toy/choose-takes-an-arm/tree.json",
+        "events": "driver-semantics-toy/choose-takes-an-arm/events.json",
+        "expectation": "driver-semantics-toy/choose-takes-an-arm/expectation.json"
+      },
+      "sha256": {
+        "tree": "5fab6aaf5c83a0cd741126ad768b2a7c7ad50acb2928a2706f0b4dbd08c78928",
+        "events": "32e858d1afc3ec4c2a3f477719974af72e41d18eab32bcfc0730349f820aacb0",
+        "expectation": "688e11b568b0c0dec0bec6dd68edec80b4db592a3dd5b09fa4806632c7c6f7c1"
+      },
+      "steps": 6,
+      "description": "A two-arm branch on a store key: unresolved, its condition halts before either arm; false, it takes the false arm; true, the true arm. The UI witness views no action as a branch, so this is the family's only Choose."
+    },
+    {
+      "id": "driver-semantics-toy/repeat-bounded",
+      "family": "driver-semantics-toy",
+      "name": "repeat-bounded",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/repeat-bounded",
+      "files": {
+        "tree": "driver-semantics-toy/repeat-bounded/tree.json",
+        "events": "driver-semantics-toy/repeat-bounded/events.json",
+        "expectation": "driver-semantics-toy/repeat-bounded/expectation.json"
+      },
+      "sha256": {
+        "tree": "abd6c479d041f4901d13f1e570966fc893b50c7332099ab7228b527ba33f08c9",
+        "events": "f82c881e12dedbb6d88680b667087da6e2b557bf070ed10c8a70f905f1efd215",
+        "expectation": "ed6a5cb4e3db20f84e95a798097eac3fabc9b71fb895daeb03f9dbf1bb93cf4d"
+      },
+      "steps": 4,
+      "description": "A bounded repeat three ways: a literal bound runs its body that many times; a parameter bound read from the store runs within its range; a parameter over its declared range halts before the body, and nothing after it in the sequence runs."
+    },
+    {
+      "id": "driver-semantics-toy/each-over-literal",
+      "family": "driver-semantics-toy",
+      "name": "each-over-literal",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/each-over-literal",
+      "files": {
+        "tree": "driver-semantics-toy/each-over-literal/tree.json",
+        "events": "driver-semantics-toy/each-over-literal/events.json",
+        "expectation": "driver-semantics-toy/each-over-literal/expectation.json"
+      },
+      "sha256": {
+        "tree": "70d74dff09709e7c3e24b1fc8e3aa55638d53e2a34272933adc6de2a3484e706",
+        "events": "fa28da7777e2f8b0804ba21c2238edf76139b796eccffbaf352d1b0a95669bd9",
+        "expectation": "320f991a6db0c0ee7ad3ad0f169475ea711575613024d140cf9f9e3965e0d207"
+      },
+      "steps": 3,
+      "description": "Per-element iteration over a literal collection: the placeholder is substituted element by element, so the last write wins with the last element; and an element whose guard fails halts the iteration there, the elements after it never running."
+    },
+    {
+      "id": "driver-semantics-toy/require-halts",
+      "family": "driver-semantics-toy",
+      "name": "require-halts",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/require-halts",
+      "files": {
+        "tree": "driver-semantics-toy/require-halts/tree.json",
+        "events": "driver-semantics-toy/require-halts/events.json",
+        "expectation": "driver-semantics-toy/require-halts/expectation.json"
+      },
+      "sha256": {
+        "tree": "20c2cb82c3e9437036049f768945b9d59a476ade462280d6e0fb020f7bc29e90",
+        "events": "f7867e636a4b029ff42affb6ede2c8cbcc6674123247961681804bd943b854da",
+        "expectation": "fe682c8727496239bd3e69d00cb6c9f97f1e0aed494e5c9ba1b7952571e2577f"
+      },
+      "steps": 4,
+      "description": "A guard over the store halts the sequence it sits in: the write before it stands, the write and the leaf after it never run. Once the guarded key holds, the same event runs to the end."
+    },
+    {
+      "id": "driver-semantics-toy/leaf-refusal-continues",
+      "family": "driver-semantics-toy",
+      "name": "leaf-refusal-continues",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/leaf-refusal-continues",
+      "files": {
+        "tree": "driver-semantics-toy/leaf-refusal-continues/tree.json",
+        "events": "driver-semantics-toy/leaf-refusal-continues/events.json",
+        "expectation": "driver-semantics-toy/leaf-refusal-continues/expectation.json"
+      },
+      "sha256": {
+        "tree": "fa94ca983de2f4a29ef392f2f36fa0decc5cbfc246d42807694910338fcc65cd",
+        "events": "b283ee5d73586c9ddad112155955c540eecf335e47ac5a94a5e600739c9db379",
+        "expectation": "bcc80c985aa7885222ba9a417f4dbb9e96a9835be73849054ae4aa695f40a126"
+      },
+      "steps": 4,
+      "description": "A refused leaf, a write under the host-reserved namespace and a documented decline each do nothing, and the sequence carries on past all three - unlike a guard. A leaf reads the store: once muted, the same leaf declines."
+    },
+    {
+      "id": "driver-semantics-toy/closure-free-call",
+      "family": "driver-semantics-toy",
+      "name": "closure-free-call",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/closure-free-call",
+      "files": {
+        "tree": "driver-semantics-toy/closure-free-call/tree.json",
+        "events": "driver-semantics-toy/closure-free-call/events.json",
+        "expectation": "driver-semantics-toy/closure-free-call/expectation.json"
+      },
+      "sha256": {
+        "tree": "93f354eac9c5f9b04a12b5a1453987e65db66c84a7b290b7d142fcbb71fd0c3f",
+        "events": "a14380b83bce7ccd5f6389b61081d471913dc1a57cd4f411c21c796c1b3d5475",
+        "expectation": "0d90510277221663d736985a37a4b003ec2de44a41b454b6b1513fc6141998d7"
+      },
+      "steps": 3,
+      "description": "A call naming an endpoint, alone and declaring a result target. Where no handler is registered the first reaches nothing; the second is refused within the event and the write after it still runs. The answer slot is a closure, has no wire form, and is never invoked."
+    },
+    {
+      "id": "driver-semantics-toy/refused-event",
+      "family": "driver-semantics-toy",
+      "name": "refused-event",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/refused-event",
+      "files": {
+        "tree": "driver-semantics-toy/refused-event/tree.json",
+        "events": "driver-semantics-toy/refused-event/events.json",
+        "expectation": "driver-semantics-toy/refused-event/expectation.json"
+      },
+      "sha256": {
+        "tree": "b1791cf30790809178c843266e5a8ea6102fb4932aef3312a9cf7a9b6af620cb",
+        "events": "8bf5d5ca75deed4eeba1fdabe0bdfec5bbe7fe27c89a00960836eefcec75626a",
+        "expectation": "d7b68e5b8cea8f9e81ddb6a1b261e55086b21128bace088ad5e499d9dd592b7a"
+      },
+      "steps": 4,
+      "description": "The trust boundary, at the toy transport: an event naming no node of the tree is REFUSED at the event and changes nothing; an event the node carries no handler for is admitted and inert - not a refusal (�10.5); the node's own event then runs."
+    },
+    {
+      "id": "driver-semantics-toy/fixed-base-reresolution",
+      "family": "driver-semantics-toy",
+      "name": "fixed-base-reresolution",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/fixed-base-reresolution",
+      "files": {
+        "tree": "driver-semantics-toy/fixed-base-reresolution/tree.json",
+        "events": "driver-semantics-toy/fixed-base-reresolution/events.json",
+        "expectation": "driver-semantics-toy/fixed-base-reresolution/expectation.json"
+      },
+      "sha256": {
+        "tree": "677cc978f00095930a542bf83bfa602f782ca69fc80341e1cc26c967ba38da56",
+        "events": "16915fd9f5eff254c141ce5b3e3061c96ad18d7e0f9570ea803ea4b27b4e8b93",
+        "expectation": "f338db10455c7e87be03d16f90f9eebe4473ba3ebea86369ecd8f1ce0e61b4f8"
+      },
+      "steps": 3,
+      "description": "Two events writing one key. Re-resolution is against the FIXED tree the program started from, so the second write reaches the binding the first resolved; folding each step's tree into the next would leave it reading the first."
+    },
+    {
+      "id": "driver-semantics-toy/budget-refusal",
+      "family": "driver-semantics-toy",
+      "name": "budget-refusal",
+      "kind": "step-trace",
+      "requires": "bounded-loop",
+      "dir": "driver-semantics-toy/budget-refusal",
+      "files": {
+        "tree": "driver-semantics-toy/budget-refusal/tree.json",
+        "events": "driver-semantics-toy/budget-refusal/events.json",
+        "expectation": "driver-semantics-toy/budget-refusal/expectation.json"
+      },
+      "sha256": {
+        "tree": "f70b0f6a6fc3d228126725e4361302dada0a46631fb2eea0894dd9a05354fc22",
+        "events": "dc0834fe03943c7e4483688d56d943c809ddea4bf4a8d3c4dcd8e2017ee07586",
+        "expectation": "4d4c0534dca841addbcddad63fc66d7c4db5a5b91715be1fbd2f126b242ae351"
+      },
+      "steps": 3,
+      "description": "The resource budget refuses an EVENT whose action cascade costs more than the per-interaction ceiling - a repeat prices at its bound times its body - before anything runs; an event within budget then runs."
+    },
+    {
+      "id": "driver-semantics-toy/handler-op-channel",
+      "family": "driver-semantics-toy",
+      "name": "handler-op-channel",
+      "kind": "step-trace",
+      "requires": "handler-loop",
+      "hostHandlers": "toy-relabel",
+      "dir": "driver-semantics-toy/handler-op-channel",
+      "files": {
+        "tree": "driver-semantics-toy/handler-op-channel/tree.json",
+        "events": "driver-semantics-toy/handler-op-channel/events.json",
+        "expectation": "driver-semantics-toy/handler-op-channel/expectation.json"
+      },
+      "sha256": {
+        "tree": "cbe43e4ef9b5324869cbf68029ff0789e3ffbf66e56c709d34ad95b850807118",
+        "events": "99185023636fee225676bf832dbdeeeae19443748fc4c6b2c3945d4577f4e1f8",
+        "expectation": "b3e2a4eca8074c8360228cd43d1497e62bd6a5538f868d73b436790822b07eb7"
+      },
+      "steps": 2,
+      "description": "A call answered by a registered handler: its compute stage writes the store and emits through the shared fold, its op stage relabels a node through the op channel, and its staged host call performs - so the plan commits and the tree shows the edit."
+    },
+    {
+      "id": "driver-semantics-toy/handler-argument-policy",
+      "family": "driver-semantics-toy",
+      "name": "handler-argument-policy",
+      "kind": "step-trace",
+      "requires": "handler-loop",
+      "hostHandlers": "toy-relabel",
+      "dir": "driver-semantics-toy/handler-argument-policy",
+      "files": {
+        "tree": "driver-semantics-toy/handler-argument-policy/tree.json",
+        "events": "driver-semantics-toy/handler-argument-policy/events.json",
+        "expectation": "driver-semantics-toy/handler-argument-policy/expectation.json"
+      },
+      "sha256": {
+        "tree": "e3bb9926848e169ef2a508abc9a6aae0b965e530614ee6293eb94945a2de51cc",
+        "events": "7e96ab9fae9781d142636d013c5bdc4ed298cf2a79be0319a530f5c7f3427f55",
+        "expectation": "6e544cd384b1f8dc12f772450101aafd50e6a66f42882922c4f0d10eab717b06"
+      },
+      "steps": 2,
+      "description": "A handler whose op addresses a target the host's argument policy does not admit. The gate refuses the op stage while planning, the handler halts, and nothing it planned commits - the store write before the op included."
+    },
+    {
+      "id": "driver-semantics-toy/handler-staged-perform",
+      "family": "driver-semantics-toy",
+      "name": "handler-staged-perform",
+      "kind": "step-trace",
+      "requires": "handler-loop",
+      "hostHandlers": "toy-relabel",
+      "dir": "driver-semantics-toy/handler-staged-perform",
+      "files": {
+        "tree": "driver-semantics-toy/handler-staged-perform/tree.json",
+        "events": "driver-semantics-toy/handler-staged-perform/events.json",
+        "expectation": "driver-semantics-toy/handler-staged-perform/expectation.json"
+      },
+      "sha256": {
+        "tree": "aefab0cd6ffaad4dadfc5cdc538da87ac16e2d40da58ec21f1311fdd82bc80fc",
+        "events": "c065d386e8880102d732b25d9e6a790c246d2413341078e0f9447009fdb39542",
+        "expectation": "f01e677dacf7b925fc870a230e27a4130e9c77e98072d5962920fad198b5347b"
+      },
+      "steps": 2,
+      "description": "A handler whose staged host call is declined when it is performed. The plan was complete, but the handler is the unit of atomicity: the write and the relabel it planned do not commit."
+    },
+    {
+      "id": "driver-semantics-toy/handler-nested-call",
+      "family": "driver-semantics-toy",
+      "name": "handler-nested-call",
+      "kind": "step-trace",
+      "requires": "handler-loop",
+      "hostHandlers": "toy-relabel",
+      "dir": "driver-semantics-toy/handler-nested-call",
+      "files": {
+        "tree": "driver-semantics-toy/handler-nested-call/tree.json",
+        "events": "driver-semantics-toy/handler-nested-call/events.json",
+        "expectation": "driver-semantics-toy/handler-nested-call/expectation.json"
+      },
+      "sha256": {
+        "tree": "dfed241ef975afec7ed0db2bf43feb1621aa97a4f841210391da475f87b43272",
+        "events": "7d711988ef2c1eb71aa9ea9402334d7fb6e75bf69a528b7932f11e9386d995b6",
+        "expectation": "ed31fa52837bf1547ae6ce57e8403600071cf8d5710e30566cc27429ba37f60e"
+      },
+      "steps": 2,
+      "description": "The handler's call nested in a sequence: it sees the write before it and is seen by the write after it, which reads the status the handler wrote - the answer spliced in place."
+    }
+  ]
+}

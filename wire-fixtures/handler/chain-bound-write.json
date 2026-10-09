@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"orders.stage","stages":[{"$type":"Compute","action":{"$type":"Chain","ops":[{"$type":"SetState","key":"stage","value":"picking"},{"$type":"SetState","key":"chosen-id","valueFrom":{"$type":"Selection","field":"id","nodeId":"orders-grid"}}]}}]}

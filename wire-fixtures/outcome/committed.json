@@ -1,0 +1,1 @@
+{"$type":"HandlerReport","committed":true,"diagnostics":[],"notifications":[{"channel":"audit","payload":{"event":"settled"}}],"patches":[{"$type":"RemoveNode","target":"orders-spinner"}],"performed":["RunQuery","Notify","host:payments.settle"]}

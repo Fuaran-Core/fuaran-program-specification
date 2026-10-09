@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/outcome.schema.json",
+  "title": "Program wire — handler outcome (§6.3)",
+  "description": "What one handler run produced. Two of this family's rules are beyond a schema and are the two that matter: `performed` is EXECUTION order rather than stage order (§6.3), and an uncommitted outcome reporting work performed MUST carry a perform-phase failure (§6.4). The corpus carries both — outcome/committed and outcome/reject-impossible.",
+  "type": "object",
+  "required": ["$type", "committed", "diagnostics", "notifications", "patches", "performed"],
+  "additionalProperties": false,
+  "properties": {
+    "$type": { "const": "HandlerReport" },
+    "committed": { "type": "boolean" },
+    "diagnostics": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    },
+    "notifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["channel", "payload"],
+        "additionalProperties": false,
+        "properties": {
+          "channel": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+          "payload": { "$ref": "common.schema.json#/$defs/opaquePayload" }
+        }
+      }
+    },
+    "patches": { "$ref": "common.schema.json#/$defs/referencedArray" },
+    "performed": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/capability" }
+    }
+  },
+  "$defs": {
+    "diagnostic": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$type", "diagnostic"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Bounded" },
+            "diagnostic": { "$ref": "common.schema.json#/$defs/referenced" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "denial"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Denied" },
+            "denial": { "$ref": "#/$defs/denial" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "capability", "reason"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "enum": ["Failed", "PerformFailed"] },
+            "capability": { "$ref": "common.schema.json#/$defs/capability" },
+            "reason": { "type": "string" }
+          }
+        },
+        {
+          "description": "It deliberately carries NO member: the endpoint it could not resolve is wire-carried (§6.5).",
+          "type": "object",
+          "required": ["$type"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "HandlerUnregistered" }
+          }
+        }
+      ]
+    },
+    "denial": {
+      "description": "A denial (§5.3) AS IT APPEARS IN AN OUTCOME DOCUMENT. §5.3 declares the shape once and gives it an optional `origin`, present when the refusal's ground was the destination the effect named — but no arm of the server-effect vocabulary (§5.1) names a destination, so the member is not reachable in this position and is excluded here. That is this schema recording where the member can currently occur, subordinate to the text as every schema in this directory is; it is not a second rule, and a denial carried anywhere else (§10.3's step trace) may carry it. A denial here carrying `origin` is refused as `undeclared-member`, which is the same class §5.3's own rule names for an `origin` on `Unregistered` — so the two readings coincide rather than compete.",
+      "type": "object",
+      "required": ["$type", "capability"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "enum": ["Unregistered", "GateRefused"] },
+        "capability": { "$ref": "common.schema.json#/$defs/capability" }
+      }
+    }
+  }
+}

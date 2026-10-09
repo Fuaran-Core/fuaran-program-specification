@@ -1,0 +1,22 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"hit","value":"yes"},"event":"tap"}],"id":"button","label":{"$type":"Const","value":"button"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"hit"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"hit","value":"yes"},"event":"tap"}],"id":"button","label":{"$type":"Const","value":"button"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"hit"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": true
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"hit","value":"yes"},"event":"tap"}],"id":"button","label":{"$type":"Const","value":"button"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"hit"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"hit","value":"yes"},"event":"tap"}],"id":"button","label":{"$type":"Const","value":"button"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Const","value":"yes"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  }
+]

@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"chained","stages":[{"$type":"Compute","action":{"$type":"Chain","ops":[{"$type":"SetState","key":"a","value":1},{"$type":"Call","endpoint":"/api/inner"}]}}]}

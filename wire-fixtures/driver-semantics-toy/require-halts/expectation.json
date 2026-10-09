@@ -1,0 +1,22 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Need","condition":{"$type":"Read","key":"armed"}},{"$type":"Put","key":"after","value":"ran"},{"$type":"Beep","volume":2}]},"event":"tap"}],"id":"guarded","label":{"$type":"Const","value":"guarded"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"armed","value":true},"event":"tap"}],"id":"arm","label":{"$type":"Const","value":"arm"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Read","key":"before"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Read","key":"after"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Need","condition":{"$type":"Read","key":"armed"}},{"$type":"Put","key":"after","value":"ran"},{"$type":"Beep","volume":2}]},"event":"tap"}],"id":"guarded","label":{"$type":"Const","value":"guarded"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"armed","value":true},"event":"tap"}],"id":"arm","label":{"$type":"Const","value":"arm"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Const","value":"ran"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Read","key":"after"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Need","condition":{"$type":"Read","key":"armed"}},{"$type":"Put","key":"after","value":"ran"},{"$type":"Beep","volume":2}]},"event":"tap"}],"id":"guarded","label":{"$type":"Const","value":"guarded"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"armed","value":true},"event":"tap"}],"id":"arm","label":{"$type":"Const","value":"arm"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Const","value":"ran"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Read","key":"after"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Need","condition":{"$type":"Read","key":"armed"}},{"$type":"Put","key":"after","value":"ran"},{"$type":"Beep","volume":2}]},"event":"tap"}],"id":"guarded","label":{"$type":"Const","value":"guarded"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"armed","value":true},"event":"tap"}],"id":"arm","label":{"$type":"Const","value":"arm"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Const","value":"ran"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Const","value":"ran"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"guarded\",\"volume\":2}"],
+    "refused": false
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/toy-state.schema.json",
+  "title": "Program wire — the toy witness's state (§10.6)",
+  "description": "The toy's store: one keyed state channel, a member per key, members Ordinal like every object here. A toy scenario starts from the EMPTY state (`{}`); the state is observable in a trace only through the labels that read it, and this is its shape wherever a host writes it down. Keys under `sys.` are the host-reserved namespace: a document may carry one, and the fold refuses to WRITE one. A repeated key is refused rather than resolved by position, since two readers keeping different occurrences would hold different stores — a rule JSON Schema cannot state, so it is §10.6's.",
+  "type": "object",
+  "propertyNames": { "minLength": 1 },
+  "additionalProperties": { "not": { "type": "null" } }
+}

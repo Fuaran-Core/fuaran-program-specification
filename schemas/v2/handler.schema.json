@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/handler.schema.json",
+  "title": "Program wire — handler (§4)",
+  "description": "A named, ordered stage list and nothing else. What this schema CANNOT say is most of what §4 says: that a stage's call action is inert, that the order is the plan phase's execution order, and that a handler's replay safety is derived from this document rather than declared in it.",
+  "type": "object",
+  "required": ["$type", "name", "stages"],
+  "additionalProperties": false,
+  "properties": {
+    "$type": { "const": "Handler" },
+    "name": {
+      "description": "The registration key. Empty is refused on its own class, distinct from absent (§4.1).",
+      "$ref": "common.schema.json#/$defs/identifier"
+    },
+    "stages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/stage" }
+    }
+  },
+  "$defs": {
+    "stage": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$type", "action"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Compute" },
+            "action": { "$ref": "common.schema.json#/$defs/referenced" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "effect"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Effect" },
+            "effect": { "$ref": "server-effect.schema.json" }
+          }
+        }
+      ]
+    }
+  }
+}

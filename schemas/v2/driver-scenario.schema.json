@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/driver-scenario.schema.json",
+  "title": "Program wire — driver-semantics scenario (§10.3)",
+  "description": "The two authored documents of a driver-semantics scenario: the event script and the per-step trace. The third file, the starting tree, is a REFERENCED document (§3) owned by the tree wire specification and is not described here. Like every schema in this directory these definitions are SUBORDINATE to PROGRAM_WIRE.md, and the gap is unusually wide for this family: a schema cannot say that a trace carries one entry per event PLUS the state before any of them, that the tree at a step is compared semantically while the effects beside it are compared byte-for-byte, or that a harness must report the FIRST divergent step. All three are in §10.3, and `wire-fixtures/check-scenarios.mjs` is what enforces them.",
+  "$defs": {
+    "events": {
+      "description": "The ordered event script. Order is the drive order, and it is what the trace's step indices count.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "event": {
+      "type": "object",
+      "required": ["nodeId", "event", "payload"],
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "description": "The originating node, threaded to the evaluator exactly as every placement threads it (§8.3).",
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "event": {
+          "description": "The event name the surface would have delivered.",
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "payload": {
+          "description": "The event's values, as a flat object of strings. Present even when empty: an omitted payload and an empty one would be two spellings of one fact.",
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "trace": {
+      "description": "One entry per step. INDEX 0 IS THE STATE BEFORE ANY EVENT, so a trace is one longer than the script that drove it — an arithmetic relation between two files, which no schema can express and which §10.3 states and the corpus checker enforces.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "denial": {
+      "description": "A denial (§5.3) as it appears in a step trace. Unlike the outcome document's position, `origin` IS reachable here: the client-effect arms name destinations, and a host declining one for its destination records which. A schema cannot say that `origin` may appear only on `GateRefused` — that is in §5.3, and `wire-fixtures/check-scenarios.mjs` enforces it — nor that a harness must DECODE these rather than diff their bytes, which is in §10.3.",
+      "type": "object",
+      "required": ["$type", "capability"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "enum": ["Unregistered", "GateRefused"] },
+        "capability": { "$ref": "common.schema.json#/$defs/capability" },
+        "origin": {
+          "description": "The destination the refusal was about — a network destination's HOST, or the class of destination where there is no host. Never the scheme, port, path or query: a denial record outlives its session, and the query string of a refused exfiltration attempt IS the payload.",
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["tree", "effects", "refused"],
+      "additionalProperties": false,
+      "properties": {
+        "tree": {
+          "description": "The resolved tree at this step, EMBEDDED AS A DOCUMENT rather than as a string of one implementation's bytes. That is what makes the expectation placement-independent: a host decodes it with its own decoder and compares against its own resolved tree, so a host whose encoder differs from the one that generated the scenario is not held to bytes this specification does not own (§3).",
+          "type": "object"
+        },
+        "effects": {
+          "description": "The client effects (§5.2) this step emitted, in order. Each is a STRING whose contents are the effect document's own bytes — recorded as emitted, never as an embedded object, because embedding one would licence a JSON writer to re-order its members Ordinally and so erase the specification's one enumerated envelope exception in the one place nobody would notice.",
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+        },
+        "refused": {
+          "description": "Whether the loop refused the event that produced this step. Always false at index 0, where no event has yet been delivered.",
+          "type": "boolean"
+        },
+        "denials": {
+          "description": "OPTIONAL. The effects this host's performer seam declined at this step, in order, embedded as documents. Its ABSENCE means none-or-unobserved and is not a claim that nothing was declined; an EMPTY array is the positive claim that the seam was consulted and declined nothing. A host whose scenario runner consults no seam omits the member rather than writing an empty array — the two spellings carry different facts here, which is the opposite of the rule everywhere else in this specification and is why §10.3 states it. A step that emitted nothing can have declined nothing, so index 0 never carries a non-empty array.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/denial" }
+        }
+      }
+    }
+  }
+}

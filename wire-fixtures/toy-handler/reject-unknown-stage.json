@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"bell.ring","stages":[{"$type":"Perform","action":{"$type":"Beep","volume":2}}]}

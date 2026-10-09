@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/logic-tree-ref.schema.json",
+  "title": "Program wire — cross-layer reference (§9.2)",
+  "description": "A composition surface naming a program by identifier, optionally content-addressed. The opaqueness this family exists for is enforced by `additionalProperties: false` over a declaration that states the ONLY members there are — so an inline body, an evaluation hint or an interpretation tag is refused as undeclared, including the ones nobody has thought of yet. A blocklist could only ever cover the ones somebody had.",
+  "type": "object",
+  "required": ["$type", "ref", "slot"],
+  "additionalProperties": false,
+  "properties": {
+    "$type": { "const": "LogicTreeRef" },
+    "hash": {
+      "description": "The content address of the demand projection published under `ref` (§9.2). OPTIONAL: absent means unpinned, which is the posture every reference took before this member existed, and is a different fact from 'any document will do'. The pattern is the whole of what a schema can say here — that the recomputed address must EQUAL this value is §9.2 obligation 2, which needs the addressed document and so belongs to the text.",
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "ref": {
+      "description": "The identifier under which the host holds the program. A bounded reference and nothing else — never the program.",
+      "$ref": "common.schema.json#/$defs/identifier"
+    },
+    "slot": {
+      "description": "The slot identity. It is a (namespace, kind) PAIR rendered here joined with `/`; a host whose registry joins the same pair differently derives both renderings from the pair rather than storing either string twice (§9.2).",
+      "const": "fuaran.program/logic-tree"
+    }
+  }
+}

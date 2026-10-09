@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"bell.repeat-n","stages":[{"$type":"Compute","action":{"$type":"Times","body":{"$type":"Put","key":"count","value":1},"bound":{"$type":"Parameter","count":{"$type":"Read","key":"n"},"hi":3,"lo":0}}}]}

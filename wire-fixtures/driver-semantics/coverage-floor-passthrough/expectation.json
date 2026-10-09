@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"SetState","key":"rows","value":"ignored"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"upload","kind":{"$type":"FileUpload","accept":[],"label":"","multiple":false,"onSelect":"<closure>"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"SetState","key":"rows","value":"ignored"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"upload","kind":{"$type":"FileUpload","accept":[],"label":"","multiple":false,"onSelect":"<closure>"}},{"id":"readout","kind":{"$type":"Markdown","text":"ignored"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  }
+]

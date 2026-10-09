@@ -1,0 +1,17 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Put","from":{"$type":"Hole","placeholder":"x"},"key":"last"},{"$type":"Beep","volume":1}]},"collection":["a","b","c"],"placeholder":"x"},"event":"tap"}],"id":"each","label":{"$type":"Const","value":"each"}},{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Need","condition":{"$type":"Hole","placeholder":"ok"}},{"$type":"Put","from":{"$type":"Hole","placeholder":"ok"},"key":"reached"},{"$type":"Beep","volume":2}]},"collection":[true,false,true],"placeholder":"ok"},"event":"tap"}],"id":"each-halt","label":{"$type":"Const","value":"each-halt"}},{"children":[],"handlers":[],"id":"last","label":{"$type":"Read","key":"last"}},{"children":[],"handlers":[],"id":"reached","label":{"$type":"Read","key":"reached"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Put","from":{"$type":"Hole","placeholder":"x"},"key":"last"},{"$type":"Beep","volume":1}]},"collection":["a","b","c"],"placeholder":"x"},"event":"tap"}],"id":"each","label":{"$type":"Const","value":"each"}},{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Need","condition":{"$type":"Hole","placeholder":"ok"}},{"$type":"Put","from":{"$type":"Hole","placeholder":"ok"},"key":"reached"},{"$type":"Beep","volume":2}]},"collection":[true,false,true],"placeholder":"ok"},"event":"tap"}],"id":"each-halt","label":{"$type":"Const","value":"each-halt"}},{"children":[],"handlers":[],"id":"last","label":{"$type":"Const","value":"c"}},{"children":[],"handlers":[],"id":"reached","label":{"$type":"Read","key":"reached"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"each\",\"volume\":1}", "{\"kind\":\"Sound\",\"nodeId\":\"each\",\"volume\":1}", "{\"kind\":\"Sound\",\"nodeId\":\"each\",\"volume\":1}"],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Put","from":{"$type":"Hole","placeholder":"x"},"key":"last"},{"$type":"Beep","volume":1}]},"collection":["a","b","c"],"placeholder":"x"},"event":"tap"}],"id":"each","label":{"$type":"Const","value":"each"}},{"children":[],"handlers":[{"action":{"$type":"ForEach","body":{"$type":"Seq","actions":[{"$type":"Need","condition":{"$type":"Hole","placeholder":"ok"}},{"$type":"Put","from":{"$type":"Hole","placeholder":"ok"},"key":"reached"},{"$type":"Beep","volume":2}]},"collection":[true,false,true],"placeholder":"ok"},"event":"tap"}],"id":"each-halt","label":{"$type":"Const","value":"each-halt"}},{"children":[],"handlers":[],"id":"last","label":{"$type":"Const","value":"c"}},{"children":[],"handlers":[],"id":"reached","label":{"$type":"Const","value":true}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"each-halt\",\"volume\":2}"],
+    "refused": false
+  }
+]

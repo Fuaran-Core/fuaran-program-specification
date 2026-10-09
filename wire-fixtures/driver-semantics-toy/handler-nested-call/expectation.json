@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[],"id":"title","label":{"$type":"Const","value":"Title"}},{"children":[],"handlers":[],"id":"footer","label":{"$type":"Const","value":"Footer"}},{"children":[],"handlers":[],"id":"status","label":{"$type":"Read","key":"status"}},{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Ring","endpoint":"/handlers/relabel","targeted":false},{"$type":"Put","from":{"$type":"Read","key":"status"},"key":"after"}]},"event":"tap"}],"id":"nested","label":{"$type":"Const","value":"nested"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Read","key":"before"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Read","key":"after"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[],"id":"title","label":{"$type":"Const","value":"Relabelled"}},{"children":[],"handlers":[],"id":"footer","label":{"$type":"Const","value":"Footer"}},{"children":[],"handlers":[],"id":"status","label":{"$type":"Const","value":"relabelled"}},{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"before","value":"ran"},{"$type":"Ring","endpoint":"/handlers/relabel","targeted":false},{"$type":"Put","from":{"$type":"Read","key":"status"},"key":"after"}]},"event":"tap"}],"id":"nested","label":{"$type":"Const","value":"nested"}},{"children":[],"handlers":[],"id":"before","label":{"$type":"Const","value":"ran"}},{"children":[],"handlers":[],"id":"after","label":{"$type":"Const","value":"relabelled"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"nested\",\"volume\":2}"],
+    "refused": false
+  }
+]

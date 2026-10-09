@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.stage","stages":[{"$type":"Compute","action":{"$type":"Seq","actions":[{"$type":"Put","key":"stage","value":"picking"},{"$type":"Put","from":{"$type":"Read","key":"draft"},"key":"copied"}]}}]}

@@ -1,0 +1,1 @@
+{"$type":"HandlerReport","committed":false,"diagnostics":[{"$type":"Denied","denial":{"$type":"GateRefused","capability":"ApplyOps"}}],"notifications":[],"patches":[],"performed":["host:audit"]}

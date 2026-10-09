@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.choose","stages":[{"$type":"Compute","action":{"$type":"Pick","entry":{"$type":"Read","key":"ready"},"whenFalse":{"$type":"Ring","endpoint":"/handlers/relabel","targeted":false},"whenTrue":{"$type":"Put","key":"mode","value":"on"}}}]}

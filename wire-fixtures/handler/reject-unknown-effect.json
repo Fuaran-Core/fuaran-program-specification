@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"orders.refresh","stages":[{"$type":"Effect","effect":{"$type":"DropTable","name":"orders"}}]}

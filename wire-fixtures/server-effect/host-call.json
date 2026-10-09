@@ -1,0 +1,1 @@
+{"$type":"HostCall","args":{"amount":1250,"currency":"GBP"},"fn":"payments.settle","into":"settlement"}

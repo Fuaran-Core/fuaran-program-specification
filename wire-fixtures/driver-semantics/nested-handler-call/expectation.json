@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"refresh","kind":{"$type":"Button","label":"refresh","onClick":{"$type":"Chain","ops":[{"$type":"SetState","key":"rows","value":"before"},{"$type":"Call","endpoint":"/handlers/refresh"},{"$type":"SetState","key":"trailing","value":"after"}]},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}},{"id":"tail","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"refresh","kind":{"$type":"Button","label":"refresh","onClick":{"$type":"Chain","ops":[{"$type":"SetState","key":"rows","value":"before"},{"$type":"Call","endpoint":"/handlers/refresh"},{"$type":"SetState","key":"trailing","value":"after"}]},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"before"}},{"id":"tail","kind":{"$type":"Markdown","text":"after"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  }
+]

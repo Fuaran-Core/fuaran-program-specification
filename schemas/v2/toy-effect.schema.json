@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/toy-effect.schema.json",
+  "title": "Program wire — the toy witness's effect (§10.6)",
+  "description": "The toy's one effect, as a toy step trace records it: a STRING whose contents are these bytes, members in the order `kind`, `nodeId`, `volume`. The toy's effect adopts §5.2's envelope — a `kind` discriminator and the emitter's member order — because a trace compares effects byte-for-byte as emitted, for the reason §10.3 gives. That the three members coincide with Ordinal order is an accident of their names, and `wire-fixtures/check-scenarios.mjs` checks the ORDER, which a schema cannot.",
+  "type": "object",
+  "required": ["kind", "nodeId", "volume"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": { "const": "Sound" },
+    "nodeId": { "$ref": "toy-tree.schema.json#/$defs/id" },
+    "volume": { "type": "integer", "minimum": 0 }
+  }
+}

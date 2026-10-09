@@ -1,0 +1,1 @@
+{"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"hit","value":"yes"},"event":"tap"}],"id":"button","label":{"$type":"Const","value":"button"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"hit"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}}

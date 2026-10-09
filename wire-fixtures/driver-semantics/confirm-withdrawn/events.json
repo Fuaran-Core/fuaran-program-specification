@@ -1,0 +1,5 @@
+[
+  { "nodeId": "delete", "event": "click", "payload": {} },
+  { "nodeId": "other", "event": "click", "payload": {} },
+  { "nodeId": "delete", "event": "click", "payload": {"confirmAccepted": true, "confirmToken": "delete#"} }
+]

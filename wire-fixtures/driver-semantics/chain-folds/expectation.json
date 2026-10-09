@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"first"},{"$type":"SetState","key":"msg","value":"second"}]},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"first"},{"$type":"SetState","key":"msg","value":"second"}]},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"second"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":100},"event":"tap"}],"id":"flood","label":{"$type":"Const","value":"flood"}},{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":2},"event":"tap"}],"id":"small","label":{"$type":"Const","value":"small"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":100},"event":"tap"}],"id":"flood","label":{"$type":"Const","value":"flood"}},{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":2},"event":"tap"}],"id":"small","label":{"$type":"Const","value":"small"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": true
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":100},"event":"tap"}],"id":"flood","label":{"$type":"Const","value":"flood"}},{"children":[],"handlers":[{"action":{"$type":"Times","body":{"$type":"Beep","volume":1},"bound":2},"event":"tap"}],"id":"small","label":{"$type":"Const","value":"small"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"small\",\"volume\":1}", "{\"kind\":\"Sound\",\"nodeId\":\"small\",\"volume\":1}"],
+    "refused": false
+  }
+]

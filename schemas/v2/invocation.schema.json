@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/invocation.schema.json",
+  "title": "Program wire — invocation (§8.3)",
+  "description": "What reaches a handler, and under what identity. The key's PRESENCE is structural and lives here; everything that makes it mean anything — the (host, session, endpoint) scope, at-most-once admission, and the fact that exactly-once is forgone — is §8 and cannot be schematised.",
+  "type": "object",
+  "required": ["$type", "endpoint", "nodeId"],
+  "additionalProperties": false,
+  "properties": {
+    "$type": { "const": "Invocation" },
+    "endpoint": {
+      "description": "The entry point named — the one string that always comes off the wire, and therefore the one a diagnostic may never echo (§6.5).",
+      "$ref": "common.schema.json#/$defs/nonEmptyString"
+    },
+    "idempotencyKey": {
+      "description": "Optional. Present-and-empty is a different claim from absent and is refused on its own class (§8.3).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "nodeId": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+  }
+}

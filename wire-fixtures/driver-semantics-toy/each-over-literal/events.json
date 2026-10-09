@@ -1,0 +1,4 @@
+[
+  { "nodeId": "each", "event": "tap", "payload": {} },
+  { "nodeId": "each-halt", "event": "tap", "payload": {} }
+]

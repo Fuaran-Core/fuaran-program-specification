@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.relabel","stages":[{"$type":"Compute","action":{"$type":"Put","key":"status","value":"relabelled"}},{"$type":"Effect","effect":{"$type":"HostCall","args":{"note":"relabel"},"fn":"audit","into":"receipt"}},{"$type":"Effect","effect":{"$type":"Notify","channel":"chimes","payload":{"event":"relabelled"}}}]}

@@ -1,0 +1,5 @@
+[
+  { "nodeId": "noisy", "event": "tap", "payload": {} },
+  { "nodeId": "mute", "event": "tap", "payload": {} },
+  { "nodeId": "noisy", "event": "tap", "payload": {} }
+]

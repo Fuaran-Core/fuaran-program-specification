@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"SetState","key":"msg","value":"resolved"},"variant":"Secondary"}},{"accessibility":{"liveRegion":"polite"},"id":"metric","kind":{"$type":"Metric","label":"init","value":{"$type":"Query","name":"__fuaran_not_provided__"}}},{"accessibility":{"liveRegion":"assertive","role":"alert"},"id":"callout","kind":{"$type":"Callout","body":"init","tone":"Info"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"set","kind":{"$type":"Button","label":"set","onClick":{"$type":"SetState","key":"msg","value":"resolved"},"variant":"Secondary"}},{"accessibility":{"liveRegion":"polite"},"id":"metric","kind":{"$type":"Metric","label":"resolved","value":{"$type":"Query","name":"__fuaran_not_provided__"}}},{"accessibility":{"liveRegion":"assertive","role":"alert"},"id":"callout","kind":{"$type":"Callout","body":"resolved","tone":"Info"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  }
+]

@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/toy-tree.schema.json",
+  "title": "Program wire — the toy witness's tree (§10.6)",
+  "description": "The tree a `driver-semantics-toy` scenario starts from and records at every step: a node, its label expression, the actions it carries by event, and its children — with the toy's action and expression vocabularies. Unlike the UI family's tree, which is a REFERENCED document (§3), the toy is a vocabulary this specification OWNS, so §2 governs it without exception: members Ordinal, `$type` discriminators, no `null`, no undeclared member, and a scenario's `tree.json` is its canonical bytes. Like every schema in this directory these definitions are SUBORDINATE to PROGRAM_WIRE.md; a schema cannot say that a `Hole` is substituted by the `ForEach` that binds it, that an unsubstituted one resolves to an error, or that a guard halts the sequence it sits in — §10.6 and the fold the core runs say that.",
+  "$ref": "#/$defs/node",
+  "$defs": {
+    "id": {
+      "description": "A toy identifier: a node id, or an op's target. Letters, digits, `.`, `_` and `-` only, so the toy's effect emitter — which writes a node id into its bytes — always writes a JSON document.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "node": {
+      "type": "object",
+      "required": ["children", "handlers", "id", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "description": "Present even when empty: an omitted list and an empty one would be two spellings of one fact.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        },
+        "handlers": {
+          "description": "The actions the node carries, by event, in order. Present even when empty.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/handler" }
+        },
+        "id": { "$ref": "#/$defs/id" },
+        "label": {
+          "description": "The node's label. Re-resolved against the store at every step: a `Read` that resolves becomes a `Const`; one that does not stays as written. Every toy node re-resolves its label — the toy's re-resolution floor is total (§10.6).",
+          "$ref": "#/$defs/expr"
+        }
+      }
+    },
+    "handler": {
+      "type": "object",
+      "required": ["action", "event"],
+      "additionalProperties": false,
+      "properties": {
+        "action": { "$ref": "#/$defs/action" },
+        "event": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      }
+    },
+    "expr": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$type", "value"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Const" }, "value": { "not": { "type": "null" } } }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "key"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Read" }, "key": { "$ref": "common.schema.json#/$defs/nonEmptyString" } }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "message"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Fail" }, "message": { "type": "string" } }
+        },
+        {
+          "type": "object",
+          "required": ["$type"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Missing" } }
+        },
+        {
+          "type": "object",
+          "required": ["$type", "placeholder"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Hole" },
+            "placeholder": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+          }
+        }
+      ]
+    },
+    "count": { "type": "integer", "minimum": 0 },
+    "bound": {
+      "description": "A repeat's bound: a literal count, or a parameter read from the store within a declared range.",
+      "oneOf": [
+        { "$ref": "#/$defs/count" },
+        {
+          "type": "object",
+          "required": ["$type", "count", "hi", "lo"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Parameter" },
+            "count": { "$ref": "#/$defs/expr" },
+            "hi": { "$ref": "#/$defs/count" },
+            "lo": { "$ref": "#/$defs/count" }
+          }
+        }
+      ]
+    },
+    "action": {
+      "oneOf": [
+        {
+          "description": "Sequence.",
+          "type": "object",
+          "required": ["$type", "actions"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Seq" }, "actions": { "type": "array", "items": { "$ref": "#/$defs/action" } } }
+        },
+        {
+          "description": "Assign: a literal `value`, or an expression `from` resolved at dispatch, or neither (a write of nothing, which the fold declines).",
+          "type": "object",
+          "required": ["$type", "key"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Put" },
+            "from": { "$ref": "#/$defs/expr" },
+            "key": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+            "value": { "not": { "type": "null" } }
+          }
+        },
+        {
+          "description": "Call. The answer slot is a closure in a host's model and has NO wire form; `targeted` says whether the call declares a result target, which the fold refuses in a program and the codec refuses in a handler document (§9.5).",
+          "type": "object",
+          "required": ["$type", "endpoint", "targeted"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Ring" },
+            "endpoint": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+            "targeted": { "type": "boolean" }
+          }
+        },
+        {
+          "description": "Require: the halting guard over the store.",
+          "type": "object",
+          "required": ["$type", "condition"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Need" }, "condition": { "$ref": "#/$defs/expr" } }
+        },
+        {
+          "description": "Choose: the two-arm branch, with an optional exit assertion.",
+          "type": "object",
+          "required": ["$type", "entry", "whenFalse", "whenTrue"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Pick" },
+            "entry": { "$ref": "#/$defs/expr" },
+            "exit": { "$ref": "#/$defs/expr" },
+            "whenFalse": { "$ref": "#/$defs/action" },
+            "whenTrue": { "$ref": "#/$defs/action" }
+          }
+        },
+        {
+          "description": "Repeat: the bounded repeat.",
+          "type": "object",
+          "required": ["$type", "body", "bound"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "Times" },
+            "body": { "$ref": "#/$defs/action" },
+            "bound": { "$ref": "#/$defs/bound" }
+          }
+        },
+        {
+          "description": "Each: per-element iteration over a LITERAL collection; the body reads the element through a `Hole` naming the placeholder.",
+          "type": "object",
+          "required": ["$type", "body", "collection", "placeholder"],
+          "additionalProperties": false,
+          "properties": {
+            "$type": { "const": "ForEach" },
+            "body": { "$ref": "#/$defs/action" },
+            "collection": { "type": "array", "items": { "not": { "type": "null" } } },
+            "placeholder": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+          }
+        },
+        {
+          "description": "A leaf: emits a `Sound` (§10.6), is refused above volume 10, and declines while the store holds `muted: true`.",
+          "type": "object",
+          "required": ["$type", "volume"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Beep" }, "volume": { "$ref": "#/$defs/count" } }
+        },
+        {
+          "description": "A leaf that declines, documented.",
+          "type": "object",
+          "required": ["$type"],
+          "additionalProperties": false,
+          "properties": { "$type": { "const": "Hush" } }
+        }
+      ]
+    }
+  }
+}

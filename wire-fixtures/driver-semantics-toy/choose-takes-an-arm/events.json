@@ -1,0 +1,7 @@
+[
+  { "nodeId": "choose", "event": "tap", "payload": {} },
+  { "nodeId": "lower", "event": "tap", "payload": {} },
+  { "nodeId": "choose", "event": "tap", "payload": {} },
+  { "nodeId": "raise", "event": "tap", "payload": {} },
+  { "nodeId": "choose", "event": "tap", "payload": {} }
+]

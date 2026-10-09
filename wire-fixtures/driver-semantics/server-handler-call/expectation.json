@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"refresh","kind":{"$type":"Button","label":"refresh","onClick":{"$type":"Call","endpoint":"/handlers/refresh"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"refresh","kind":{"$type":"Button","label":"refresh","onClick":{"$type":"Call","endpoint":"/handlers/refresh"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  }
+]

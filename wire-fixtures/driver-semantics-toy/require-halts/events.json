@@ -1,0 +1,5 @@
+[
+  { "nodeId": "guarded", "event": "tap", "payload": {} },
+  { "nodeId": "arm", "event": "tap", "payload": {} },
+  { "nodeId": "guarded", "event": "tap", "payload": {} }
+]

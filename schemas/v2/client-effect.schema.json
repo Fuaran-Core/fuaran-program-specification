@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/client-effect.schema.json",
+  "title": "Program wire — client effect (§5.2)",
+  "description": "The rendering surface's closed vocabulary, and the specification's ONE enumerated envelope exception: the discriminator member is `kind`, not `$type`, and the emitted member order is declaration order rather than Ordinal. A JSON Schema cannot express member ORDER at all, which is exactly why the corpus rather than this file is what pins the exception — see client-effect/download.json, where `url` precedes `name`.",
+  "oneOf": [
+    { "$ref": "#/$defs/navigate" },
+    { "$ref": "#/$defs/pushState" },
+    { "$ref": "#/$defs/writeToClipboard" },
+    { "$ref": "#/$defs/focus" },
+    { "$ref": "#/$defs/download" },
+    { "$ref": "#/$defs/readFileBody" },
+    { "$ref": "#/$defs/print" },
+    { "$ref": "#/$defs/confirm" }
+  ],
+  "$defs": {
+    "navigate": {
+      "description": "`target` is optional and closed. It is OMITTED at its identity `Self`, so `\"Blank\"` is the only value that appears on this wire; a schema cannot express omit-at-default, which is why §5.2 states it and the corpus pins it with client-effect/navigate.json beside client-effect/navigate-target.json.",
+      "type": "object",
+      "required": ["kind", "route"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "Navigate" },
+        "route": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "target": { "enum": ["Self", "Blank"] }
+      }
+    },
+    "pushState": {
+      "type": "object",
+      "required": ["kind", "route"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "PushState" },
+        "route": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      }
+    },
+    "writeToClipboard": {
+      "type": "object",
+      "required": ["kind", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "WriteToClipboard" },
+        "text": { "type": "string" }
+      }
+    },
+    "focus": {
+      "type": "object",
+      "required": ["kind", "nodeId"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "Focus" },
+        "nodeId": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      }
+    },
+    "download": {
+      "type": "object",
+      "required": ["kind", "url", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "Download" },
+        "url": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      }
+    },
+    "readFileBody": {
+      "type": "object",
+      "required": ["kind", "nodeId", "encoding"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "ReadFileBody" },
+        "nodeId": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "encoding": { "enum": ["Text", "Base64", "DataUrl"] }
+      }
+    },
+    "print": {
+      "description": "Format version 2. The payload-free arm: `kind` and nothing else. The emptiness is normative — the paged medium belongs to the host and every parameter of the printing to the reader's own dialogue — so `additionalProperties: false` over a single declared member is the whole shape, and a document carrying anything beside `kind` is refused as `undeclared-member`.",
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "Print" }
+      }
+    },
+    "confirm": {
+      "description": "Format version 2. `prompt` is the question; `token` names WHICH confirmation in the originating gesture is being answered. Both required. What a yes will DO is deliberately absent — the continuations stay with whoever holds the tree, the gate and the egress policy — and the answer returns on the ORIGINATING event re-delivered with `confirmToken` / `confirmAccepted`, which is a payload shape on another wire and therefore not expressible here. §5.2 states both, and a schema that could express neither is why the text governs and this file is subordinate to it.",
+      "type": "object",
+      "required": ["kind", "prompt", "token"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "Confirm" },
+        "prompt": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "token": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
+      }
+    }
+  }
+}

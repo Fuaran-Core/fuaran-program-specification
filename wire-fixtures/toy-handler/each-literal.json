@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.each","stages":[{"$type":"Compute","action":{"$type":"ForEach","body":{"$type":"Put","from":{"$type":"Hole","placeholder":"item"},"key":"last"},"collection":["a","b"],"placeholder":"item"}}]}

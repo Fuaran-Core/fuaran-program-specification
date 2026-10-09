@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/toy-op.schema.json",
+  "title": "Program wire — the toy witness's op (§10.6)",
+  "description": "The toy's one tree-op: relabel the node `target` with the literal `label`. It is what a `toy-relabel` handler's op stage carries through the op channel, and its `target` is the argument the host's argument policy reads (§10.6). SUBORDINATE to PROGRAM_WIRE.md, which states what a schema cannot: that relabelling a node absent from the tree changes nothing, and that the op is applied to the BASE tree, so a label bound to the store is replaced by the literal rather than written through.",
+  "type": "object",
+  "required": ["$type", "label", "target"],
+  "additionalProperties": false,
+  "properties": {
+    "$type": { "const": "Relabel" },
+    "label": { "type": "string" },
+    "target": { "$ref": "toy-tree.schema.json#/$defs/id" }
+  }
+}

@@ -1,0 +1,1 @@
+{"$type":"HandlerReport","committed":false,"diagnostics":[{"$type":"PerformFailed","capability":"host:decline","reason":"the host function declined"}],"notifications":[],"patches":[],"performed":["host:audit"]}

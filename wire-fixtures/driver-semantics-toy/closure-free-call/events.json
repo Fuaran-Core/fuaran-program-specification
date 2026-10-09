@@ -1,0 +1,4 @@
+[
+  { "nodeId": "call", "event": "tap", "payload": {} },
+  { "nodeId": "targeted", "event": "tap", "payload": {} }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"first"},"event":"tap"}],"id":"first","label":{"$type":"Const","value":"first"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"second"},"event":"tap"}],"id":"second","label":{"$type":"Const","value":"second"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"msg"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"first"},"event":"tap"}],"id":"first","label":{"$type":"Const","value":"first"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"second"},"event":"tap"}],"id":"second","label":{"$type":"Const","value":"second"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Const","value":"first"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"first"},"event":"tap"}],"id":"first","label":{"$type":"Const","value":"first"}},{"children":[],"handlers":[{"action":{"$type":"Put","key":"msg","value":"second"},"event":"tap"}],"id":"second","label":{"$type":"Const","value":"second"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Const","value":"second"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  }
+]

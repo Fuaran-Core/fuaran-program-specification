@@ -1,0 +1,1 @@
+{"$type":"HandlerReport","committed":false,"diagnostics":[{"$type":"Bounded","diagnostic":{"$type":"UnsupportedOnBoundedPath","action":"AiTool","nodeId":"btn-settle"}},{"$type":"Denied","denial":{"$type":"GateRefused","capability":"ApplyOps"}}],"notifications":[],"patches":[],"performed":[]}

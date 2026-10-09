@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/common.schema.json",
+  "title": "Program wire — shared shapes",
+  "description": "Structural definitions shared by the family schemas. These are SUBORDINATE to PROGRAM_WIRE.md: a schema can say that a member is a string, and cannot say that a capability is derived rather than carried, that `performed` is execution order, or that an uncommitted outcome reporting work must carry a perform-phase failure. Where a schema and the normative text disagree, the text wins and the schema is the defect.",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "capability": {
+      "description": "A gate-facing capability string. DERIVED by the host from the closed vocabulary — an effect arm's own discriminator, or `host:` followed by a host-function name — and never carried by a document that declares an effect (§5.1).",
+      "type": "string",
+      "minLength": 1
+    },
+    "opaquePayload": {
+      "description": "A structured JSON value the specification does not decompose. The one rule that still reaches inside it is §2.5: the token `null` is refused at any depth. JSON Schema cannot express `no null anywhere below here`, so this definition constrains only the top level and the corpus carries the nested case (handler/reject-null-member).",
+      "not": {
+        "type": "null"
+      }
+    },
+    "referenced": {
+      "description": "A position carrying a value of a vocabulary specified elsewhere (§3): an action, a tree-op (whether an effect's `ops` or an outcome's `patches`), a tabular source, a pipeline, or the evaluator diagnostic a `Bounded` arm passes through. Described structurally rather than re-derived, on the same 'do not constrain content this document does not decompose' posture the opaque payload takes. At the toy subject (§10.7) the action and op positions hold the toy witness's own vocabulary instead, whose shapes are `toy-tree.schema.json#/$defs/action` and `toy-op.schema.json`; this definition stays structural at both subjects, because which vocabulary a position holds is the vector's `subject`, not something a document says about itself.",
+      "not": {
+        "type": "null"
+      }
+    },
+    "referencedArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/referenced"
+      }
+    }
+  }
+}

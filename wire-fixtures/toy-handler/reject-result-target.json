@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.relabel","stages":[{"$type":"Compute","action":{"$type":"Seq","actions":[{"$type":"Put","key":"mode","value":"on"},{"$type":"Ring","endpoint":"/handlers/relabel","targeted":true}]}}]}

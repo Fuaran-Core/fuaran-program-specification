@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"orders.reorder","stages":[{"$type":"Effect","effect":{"$type":"ApplyOps","ops":[{"$type":"ReorderChildren","newOrder":["ord-2","ord-1"],"parentId":"orders-list"}]}}]}

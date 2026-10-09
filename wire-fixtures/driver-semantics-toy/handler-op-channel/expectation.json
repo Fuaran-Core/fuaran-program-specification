@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[],"id":"title","label":{"$type":"Const","value":"Title"}},{"children":[],"handlers":[],"id":"footer","label":{"$type":"Const","value":"Footer"}},{"children":[],"handlers":[],"id":"status","label":{"$type":"Read","key":"status"}},{"children":[],"handlers":[{"action":{"$type":"Ring","endpoint":"/handlers/relabel","targeted":false},"event":"tap"}],"id":"relabel","label":{"$type":"Const","value":"relabel"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[],"id":"title","label":{"$type":"Const","value":"Relabelled"}},{"children":[],"handlers":[],"id":"footer","label":{"$type":"Const","value":"Footer"}},{"children":[],"handlers":[],"id":"status","label":{"$type":"Const","value":"relabelled"}},{"children":[],"handlers":[{"action":{"$type":"Ring","endpoint":"/handlers/relabel","targeted":false},"event":"tap"}],"id":"relabel","label":{"$type":"Const","value":"relabel"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"relabel\",\"volume\":2}"],
+    "refused": false
+  }
+]

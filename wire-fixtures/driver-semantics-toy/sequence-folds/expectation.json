@@ -1,0 +1,12 @@
+[
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"msg","value":"first"},{"$type":"Put","key":"msg","value":"second"},{"$type":"Beep","volume":3}]},"event":"tap"}],"id":"set","label":{"$type":"Const","value":"set"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Read","key":"msg"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"children":[{"children":[],"handlers":[{"action":{"$type":"Seq","actions":[{"$type":"Put","key":"msg","value":"first"},{"$type":"Put","key":"msg","value":"second"},{"$type":"Beep","volume":3}]},"event":"tap"}],"id":"set","label":{"$type":"Const","value":"set"}},{"children":[],"handlers":[],"id":"readout","label":{"$type":"Const","value":"second"}}],"handlers":[],"id":"root","label":{"$type":"Const","value":"toy"}},
+    "effects": ["{\"kind\":\"Sound\",\"nodeId\":\"set\",\"volume\":3}"],
+    "refused": false
+  }
+]

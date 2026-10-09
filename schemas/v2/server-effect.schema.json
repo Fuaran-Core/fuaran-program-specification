@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fuaran.com/program-wire/v2/server-effect.schema.json",
+  "title": "Program wire — server effect (§5.1)",
+  "description": "The logic host's closed effect vocabulary. Five arms; `additionalProperties: false` on each is what makes §5.1's derived-capability rule enforceable structurally — a document declaring its own `capability` fails here as well as normatively.",
+  "oneOf": [
+    { "$ref": "#/$defs/runQuery" },
+    { "$ref": "#/$defs/applyOps" },
+    { "$ref": "#/$defs/hostCall" },
+    { "$ref": "#/$defs/emitPatch" },
+    { "$ref": "#/$defs/notify" }
+  ],
+  "$defs": {
+    "runQuery": {
+      "type": "object",
+      "required": ["$type", "name", "pipeline", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "RunQuery" },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "pipeline": { "$ref": "common.schema.json#/$defs/referencedArray" },
+        "source": { "$ref": "common.schema.json#/$defs/referenced" }
+      }
+    },
+    "applyOps": {
+      "type": "object",
+      "required": ["$type", "ops"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "ApplyOps" },
+        "ops": { "$ref": "common.schema.json#/$defs/referencedArray" }
+      }
+    },
+    "hostCall": {
+      "type": "object",
+      "required": ["$type", "args", "fn"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "HostCall" },
+        "args": { "$ref": "common.schema.json#/$defs/opaquePayload" },
+        "fn": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "into": {
+          "description": "The state slot the result lands in. Optional; omitted, the result is discarded. A slot under the host-reserved `host.` namespace is refused (§4.3) — under the toy store's `sys.` at the toy subject (§10.7) — a rule about the VALUE, which is why the corpus carries it and this schema cannot.",
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "emitPatch": {
+      "type": "object",
+      "required": ["$type", "ops"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "EmitPatch" },
+        "ops": { "$ref": "common.schema.json#/$defs/referencedArray" }
+      }
+    },
+    "notify": {
+      "type": "object",
+      "required": ["$type", "channel", "payload"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "Notify" },
+        "channel": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "payload": { "$ref": "common.schema.json#/$defs/opaquePayload" }
+      }
+    }
+  }
+}

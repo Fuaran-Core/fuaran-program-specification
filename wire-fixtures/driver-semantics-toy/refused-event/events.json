@@ -1,0 +1,5 @@
+[
+  { "nodeId": "ghost", "event": "tap", "payload": {} },
+  { "nodeId": "button", "event": "hover", "payload": {} },
+  { "nodeId": "button", "event": "tap", "payload": {} }
+]

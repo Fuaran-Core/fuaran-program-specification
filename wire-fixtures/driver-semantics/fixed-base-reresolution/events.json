@@ -1,0 +1,4 @@
+[
+  { "nodeId": "alpha", "event": "click", "payload": {} },
+  { "nodeId": "beta", "event": "click", "payload": {} }
+]

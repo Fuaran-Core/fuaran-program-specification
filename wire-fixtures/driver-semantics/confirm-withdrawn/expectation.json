@@ -1,0 +1,22 @@
+[
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"delete","kind":{"$type":"Button","label":"delete","onClick":{"$type":"Confirm","onCancel":{"$type":"SetState","key":"msg","value":"kept"},"onConfirm":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"deleted"},{"$type":"Navigate","route":"/orders"}]},"prompt":"Delete the order?"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"other","kind":{"$type":"Button","label":"other","onClick":{"$type":"SetState","key":"msg","value":"other"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"delete","kind":{"$type":"Button","label":"delete","onClick":{"$type":"Confirm","onCancel":{"$type":"SetState","key":"msg","value":"kept"},"onConfirm":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"deleted"},{"$type":"Navigate","route":"/orders"}]},"prompt":"Delete the order?"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"other","kind":{"$type":"Button","label":"other","onClick":{"$type":"SetState","key":"msg","value":"other"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"init"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": ["{\"kind\":\"Confirm\",\"prompt\":\"Delete the order?\",\"token\":\"delete#\"}"],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"delete","kind":{"$type":"Button","label":"delete","onClick":{"$type":"Confirm","onCancel":{"$type":"SetState","key":"msg","value":"kept"},"onConfirm":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"deleted"},{"$type":"Navigate","route":"/orders"}]},"prompt":"Delete the order?"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"other","kind":{"$type":"Button","label":"other","onClick":{"$type":"SetState","key":"msg","value":"other"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"other"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": false
+  },
+  {
+    "tree": {"accessibility":{"role":"main"},"id":"root","kind":{"$type":"Box","children":[{"accessibility":{"role":"button"},"id":"delete","kind":{"$type":"Button","label":"delete","onClick":{"$type":"Confirm","onCancel":{"$type":"SetState","key":"msg","value":"kept"},"onConfirm":{"$type":"Chain","ops":[{"$type":"SetState","key":"msg","value":"deleted"},{"$type":"Navigate","route":"/orders"}]},"prompt":"Delete the order?"},"variant":"Secondary"}},{"accessibility":{"role":"button"},"id":"other","kind":{"$type":"Button","label":"other","onClick":{"$type":"SetState","key":"msg","value":"other"},"variant":"Secondary"}},{"id":"readout","kind":{"$type":"Markdown","text":"other"}}],"layout":{"$type":"Auto"},"role":"Dashboard"}},
+    "effects": [],
+    "refused": true
+  }
+]
