@@ -43,7 +43,8 @@ handlers necessarily reaches all six — so partitioning it would produce claims
    reason is not a pass.
 3. **Reproduce** every derived value a vector declares — today, the `replaySafety` on each handler
    vector and the `replayReasons` beside it, both recomputed from the decoded document rather than
-   read off the manifest. The reasons discriminate *within* a grade, which the value cannot.
+   read off the manifest, under the host query posture the vector names in `queryEvaluator` (§7.4).
+   The reasons discriminate *within* a grade, which the value cannot.
 4. **Implement §6, §7.2 and §8.2**, which are obligations on behaviour rather than on bytes and are
    the reason this is a specification of a *loop* and not merely of a document set.
 

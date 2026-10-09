@@ -71,6 +71,11 @@ Handler `round-trip` vectors additionally carry **`replaySafety`** (§7.4) and *
 either off the manifest certifies nothing; a derived value nobody re-derives is a constant with a
 longer name.
 
+A handler vector may also carry **`queryEvaluator`** (§7.4): the host query posture its derived
+values are read under, `reaching` or `pure-read`. It is an INPUT, not a derived value — a reader
+recomputes under it and never writes it — and a vector without one is read under `pure-read`, the
+in-memory fold.
+
 The reasons are the finer of the two, and they are what makes the expectation discriminate an arm
 rather than a grade: two defect tokens of one grade produce one `replaySafety`, so a reader that
 confused `relative-addressing` with `non-literal-write` would pass a corpus pinning only the value.
@@ -78,16 +83,19 @@ Each is a stage **ordinal** and a token from §7.5's closed vocabulary, compared
 sequence — a reason attributed to the wrong stage is a locator pointing at the wrong place while the
 verdict stays exactly right.
 
-Five of §7.5's six tokens are covered here, each by a handler vector carrying that token **and no
-other**; the sixth, `unencodable-op`, is not, and §7.5 says why it cannot be: it names a defect in a
-reader's own rendering of a referenced position, and no conformant document reaches it. A host
-certifies that one against its own construction. The manifest check enforces the other five, so an
-arm that lost its discriminating vector is a named failure rather than a silence.
+Six of §7.5's seven tokens are covered here, each by a handler vector carrying that token **and no
+other** — `staged-query` by a vector declaring the `reaching` posture; the seventh, `unencodable-op`,
+is not, and §7.5 says why it cannot be: it names a defect in a reader's own rendering of a referenced
+position, and no conformant document reaches it. A host certifies that one against its own
+construction. The manifest check enforces the other six, so an arm that lost its discriminating
+vector is a named failure rather than a silence. It also holds the posture and the reasons to one
+another: a vector names `staged-query` at exactly its read stages under `reaching`, and nowhere
+otherwise.
 
 At the toy subject the handler vectors' derived values are recomputed by §10.7's table of the toy's
-cases, and four tokens are reachable rather than five: the toy's one op always names its target, so
+cases, and five tokens are reachable rather than six: the toy's one op always names its target, so
 no toy document exhibits `relative-addressing`. The manifest check holds `toy-handler` to
-discriminating those four and asserts that no toy vector carries the other two.
+discriminating those five and asserts that no toy vector carries the other two.
 
 ## What a scenario is
 

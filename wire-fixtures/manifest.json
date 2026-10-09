@@ -1,6 +1,6 @@
 {
   "specification": "program-wire",
-  "formatVersion": 2,
+  "formatVersion": 3,
   "families": [
     "handler",
     "server-effect",
@@ -214,6 +214,23 @@
         }
       ],
       "description": "A compute stage whose action arm the replay walk does not decide. Well-formed and not refused: an undecided classification is a report, never a rejection."
+    },
+    {
+      "id": "handler/staged-query",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/staged-query.json",
+      "sha256": "14f8c9561c69f63678e907b8feea065a1e41c202a6a073f779685434a3b49daf",
+      "queryEvaluator": "reaching",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "staged-query"
+        }
+      ],
+      "description": "A read alone, classified under the host posture the vector declares: an evaluator the host could not declare a pure read (§7.4). Discriminates staged-query, the one token a document exhibits only under a host's declaration; under the fold the same bytes report nothing."
     },
     {
       "id": "handler/chain-bound-write",
@@ -730,6 +747,24 @@
         }
       ],
       "description": "A Beep in a compute stage: a leaf, which the walk does not decide. Discriminates undecidable-action at the toy subject."
+    },
+    {
+      "id": "toy-handler/staged-query",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/staged-query.json",
+      "sha256": "b772470508caa8cb29444a1dd46d6e56fcc185a6b4f575e36caba99187a5e672",
+      "queryEvaluator": "reaching",
+      "replaySafety": "unsafe",
+      "replayReasons": [
+        {
+          "stage": 0,
+          "defect": "staged-query"
+        }
+      ],
+      "description": "A read alone under the reaching posture the vector declares (§7.4). Discriminates staged-query at the toy subject."
     },
     {
       "id": "toy-handler/seq-bound-write",

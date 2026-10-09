@@ -360,6 +360,8 @@ RANK = {"safe": 0, "unknown": 1, "unsafe": 2}
 GRADE = {
     "opaque-host-call": "unsafe",
     "outbound-notification": "unsafe",
+    # §7.4 — a read under the `reaching` posture a vector declares.
+    "staged-query": "unsafe",
     "relative-addressing": "unknown",
     "non-literal-write": "unknown",
     "undecidable-action": "unknown",
@@ -401,10 +403,12 @@ def action_defects(action):
     return ["undecidable-action"]
 
 
-def effect_defects(e):
+def effect_defects(e, query=None):
+    """`query` is the host posture the vector declares (§7.4): an input to the
+    walk, never read off the document. Only `reaching` makes a read a reach."""
     kind = e["$type"]
     if kind == "RunQuery":
-        return []
+        return ["staged-query"] if query == "reaching" else []
     if kind in ("ApplyOps", "EmitPatch"):
         return [d for op in e["ops"] for d in op_defects(op)]
     if kind == "HostCall":
@@ -449,22 +453,22 @@ def toy_action_defects(action):
     return ["undecidable-action"]
 
 
-def replay_reasons(h, walk=action_defects):
+def replay_reasons(h, walk=action_defects, query=None):
     """§7.5 — reasons in stage order, DISTINCT within a stage and never merged
     across stages: nine relatively-addressed ops in one effect are one fact
     about that stage, and two stages carrying the same defect are two places to
     go and look."""
     out = []
     for stage, s in enumerate(h["stages"]):
-        defects = distinct(walk(s["action"]) if s["$type"] == "Compute" else effect_defects(s["effect"]))
+        defects = distinct(walk(s["action"]) if s["$type"] == "Compute" else effect_defects(s["effect"], query))
         for defect in defects:
             out.append({"stage": stage, "defect": defect})
     return out
 
 
-def replay_safety(h, walk=action_defects):
+def replay_safety(h, walk=action_defects, query=None):
     verdict = "safe"
-    for r in replay_reasons(h, walk):
+    for r in replay_reasons(h, walk, query):
         verdict = worst(verdict, GRADE[r["defect"]])
     return verdict
 
@@ -510,6 +514,8 @@ HANDLERS = {
         "orders.reorder", [effect(apply_ops([a_reorder_children("orders-list", ["ord-2", "ord-1"])]))]
     ),
     "handler/undecidable-action.json": handler("orders.open", [compute(a_navigate("/orders/42"))]),
+    # Classified under the `reaching` posture its vector declares (§7.4).
+    "handler/staged-query.json": handler("orders.read", [effect(run_query("orders", a_named_source("orders"), []))]),
     "handler/chain-bound-write.json": handler(
         "orders.stage",
         [
@@ -757,6 +763,7 @@ TOY_HANDLERS = {
     "toy-handler/host-call-only.json": handler("ledger.audit", [effect(host_call("audit", {"note": "viewed"}, None))]),
     "toy-handler/notify-only.json": handler("chimes.ring", [effect(notify("chimes", {"event": "viewed"}))]),
     "toy-handler/undecidable-action.json": handler("bell.ring", [compute(t_beep(2))]),
+    "toy-handler/staged-query.json": handler("levels.read", [effect(run_query("levels", a_named_source("levels"), []))]),
     "toy-handler/seq-bound-write.json": handler(
         "title.stage", [compute(t_seq([t_put("stage", "picking"), t_put_from("copied", t_read("draft"))]))]
     ),
@@ -917,8 +924,9 @@ def main() -> int:
         entry = by_file.get(file)
         if entry is None:
             continue
-        recomputed = replay_safety(model, walk)
-        reasons = replay_reasons(model, walk)
+        # The host posture is an input the vector declares, never derived.
+        recomputed = replay_safety(model, walk, entry.get("queryEvaluator"))
+        reasons = replay_reasons(model, walk, entry.get("queryEvaluator"))
         if entry.get("replaySafety") != recomputed:
             failures += 1
             print(

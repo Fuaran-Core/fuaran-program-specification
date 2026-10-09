@@ -189,6 +189,9 @@ const worst = (a, b) => (RANK[a] >= RANK[b] ? a : b);
 const GRADE = {
   "opaque-host-call": "unsafe",
   "outbound-notification": "unsafe",
+  // A read under a host evaluator the host could not declare a pure read: the
+  // vector's declared `queryEvaluator` is `reaching` (§7.4).
+  "staged-query": "unsafe",
   "relative-addressing": "unknown",
   "non-literal-write": "unknown",
   "undecidable-action": "unknown",
@@ -219,10 +222,12 @@ const actionDefects = (action) => {
   }
 };
 
-const effectDefects = (e) => {
+// `query` is the host posture the vector declares (§7.4): `reaching` stages a
+// read like a host call; absent, or `pure-read`, a read reaches nothing.
+const effectDefects = (e, query) => {
   switch (e.$type) {
     case "RunQuery":
-      return [];
+      return query === "reaching" ? ["staged-query"] : [];
     case "ApplyOps":
     case "EmitPatch":
       return e.ops.flatMap(opDefects);
@@ -241,16 +246,16 @@ const effectDefects = (e) => {
  * about that stage, and two stages carrying the same defect are two places
  * to go and look.
  */
-const replayReasons = (h, walk = actionDefects) =>
+const replayReasons = (h, walk = actionDefects, query = undefined) =>
   h.stages.flatMap((s, stage) =>
-    distinct(s.$type === "Compute" ? walk(s.action) : effectDefects(s.effect)).map((defect) => ({
+    distinct(s.$type === "Compute" ? walk(s.action) : effectDefects(s.effect, query)).map((defect) => ({
       stage,
       defect,
     })),
   );
 
-const replaySafety = (h, walk = actionDefects) =>
-  replayReasons(h, walk).reduce((acc, r) => worst(acc, GRADE[r.defect]), "safe");
+const replaySafety = (h, walk = actionDefects, query = undefined) =>
+  replayReasons(h, walk, query).reduce((acc, r) => worst(acc, GRADE[r.defect]), "safe");
 
 // ── §10.7 — the toy subject's action walk ────────────────────────────
 //
@@ -345,6 +350,11 @@ const handlers = {
   // classification is `unknown` rather than a refusal: §7.4 reports what it
   // cannot decide, and rounding it either way would be a guess.
   "handler/undecidable-action.json": handler("orders.open", [compute(navigate("/orders/42"))]),
+
+  // A read alone, classified under the `reaching` posture its vector declares
+  // (§7.4): the one token a document exhibits only under a host's declaration.
+  // The same bytes under the fold are `read-compute-write`'s first stage.
+  "handler/staged-query.json": handler("orders.read", [effect(runQuery("orders", refSource("orders"), []))]),
 
   // §7.4's recursion, exercised: a chain composing a literal write AND a
   // binding-valued one. A reader taking "a chain" unconditionally — the
@@ -581,6 +591,8 @@ const toyHandlers = {
   "toy-handler/host-call-only.json": handler("ledger.audit", [effect(hostCall("audit", { note: "viewed" }, undefined))]),
   "toy-handler/notify-only.json": handler("chimes.ring", [effect(notify("chimes", { event: "viewed" }))]),
   "toy-handler/undecidable-action.json": handler("bell.ring", [compute(beep(2))]),
+  // Under the `reaching` posture its vector declares (§7.4).
+  "toy-handler/staged-query.json": handler("levels.read", [effect(runQuery("levels", refSource("levels"), []))]),
 
   // §7.4's recursion, through the toy's sequence: the bound write is one
   // level below the stage the walk reports on.
@@ -755,9 +767,11 @@ const classified = [
 
 for (const [file, model, walk] of classified) {
   const entry = manifest.vectors.find((v) => v.file === file);
-  const recomputed = replaySafety(model, walk);
-  const reasons = replayReasons(model, walk);
   if (!entry) continue;
+  // The host posture is an INPUT the vector declares, not a derived value: it
+  // is read, never written.
+  const recomputed = replaySafety(model, walk, entry.queryEvaluator);
+  const reasons = replayReasons(model, walk, entry.queryEvaluator);
   if (write) {
     entry.replaySafety = recomputed;
     entry.replayReasons = reasons;

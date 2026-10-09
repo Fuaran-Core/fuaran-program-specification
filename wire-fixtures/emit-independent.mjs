@@ -223,6 +223,8 @@ const weaker = (a, b) => (STRENGTH[a] >= STRENGTH[b] ? a : b);
 const FORCES = {
   "opaque-host-call": "unsafe",
   "outbound-notification": "unsafe",
+  // §7.4 — a read the host stages, under a declared `reaching` posture.
+  "staged-query": "unsafe",
   "relative-addressing": "unknown",
   "non-literal-write": "unknown",
   "undecidable-action": "unknown",
@@ -259,10 +261,13 @@ const actionDefects = (action) => {
   }
 };
 
-const effectDefects = (effect) => {
+// `posture` is the host's declaration the vector names (§7.4) — an input to
+// the walk, not something the document says. Only `reaching` makes a read a
+// reach; absent is the in-memory fold.
+const effectDefects = (effect, posture) => {
   switch (effect.$type) {
     case "RunQuery":
-      return [];
+      return posture === "reaching" ? ["staged-query"] : [];
     case "ApplyOps":
     case "EmitPatch":
       return effect.ops.flatMap(opDefects);
@@ -281,16 +286,18 @@ const effectDefects = (effect) => {
  * §7.5 — a reason is a stage ORDINAL and a defect token, distinct within a
  * stage and never merged across stages.
  */
-const replayReasonsOf = (handler, actionWalk = actionDefects) =>
+const replayReasonsOf = (handler, actionWalk = actionDefects, posture = undefined) =>
   handler.stages.flatMap((stage, ordinal) =>
-    once(stage.$type === "Compute" ? actionWalk(stage.action) : effectDefects(stage.effect)).map((defect) => ({
-      stage: ordinal,
-      defect,
-    })),
+    once(stage.$type === "Compute" ? actionWalk(stage.action) : effectDefects(stage.effect, posture)).map(
+      (defect) => ({
+        stage: ordinal,
+        defect,
+      }),
+    ),
   );
 
-const replayClass = (handler, actionWalk = actionDefects) =>
-  replayReasonsOf(handler, actionWalk).reduce((acc, reason) => weaker(acc, FORCES[reason.defect]), "safe");
+const replayClass = (handler, actionWalk = actionDefects, posture = undefined) =>
+  replayReasonsOf(handler, actionWalk, posture).reduce((acc, reason) => weaker(acc, FORCES[reason.defect]), "safe");
 
 // §10.7 · the toy subject's walk. One row per toy case, read off the table:
 // what the case is in the algebra (§10.6) decides what it contributes, and
@@ -363,6 +370,8 @@ const HANDLERS = {
   // Not `Call`, not `Chain`, not `SetState`: the walk's own list does not
   // reach it, so it is undecided rather than refused.
   "handler/undecidable-action.json": handlerDoc("orders.open", [computeStage(aNavigate("/orders/42"))]),
+  // Classified under the `reaching` posture its vector declares (§7.4).
+  "handler/staged-query.json": handlerDoc("orders.read", [effectStage(runQuery("orders", aNamedSource("orders"), []))]),
 
   // The recursion of §7.4, exercised: the chain's own classification is
   // nothing until its parts are read, and one of them is bound.
@@ -590,6 +599,7 @@ const TOY_HANDLERS = {
   ]),
   "toy-handler/notify-only.json": handlerDoc("chimes.ring", [effectStage(notify("chimes", { event: "viewed" }))]),
   "toy-handler/undecidable-action.json": handlerDoc("bell.ring", [computeStage(tBeep(2))]),
+  "toy-handler/staged-query.json": handlerDoc("levels.read", [effectStage(runQuery("levels", aNamedSource("levels"), []))]),
 
   "toy-handler/seq-bound-write.json": handlerDoc("title.stage", [
     computeStage(tSeq([tPutLiteral("stage", "picking"), tPutFrom("copied", tRead("draft"))])),
@@ -743,7 +753,7 @@ for (const { file, model, walk } of CLASSIFIED) {
   const entry = manifest.vectors.find((v) => v.file === file);
   if (!entry) continue;
 
-  const recomputed = replayClass(model, walk);
+  const recomputed = replayClass(model, walk, entry.queryEvaluator);
   if (entry.replaySafety === recomputed) {
     console.log(`ok   ${file} replaySafety=${recomputed}`);
   } else {
@@ -751,7 +761,7 @@ for (const { file, model, walk } of CLASSIFIED) {
     console.error(`FAIL ${file} replaySafety ${recomputed} != manifest ${entry.replaySafety}`);
   }
 
-  const reasons = replayReasonsOf(model, walk);
+  const reasons = replayReasonsOf(model, walk, entry.queryEvaluator);
   if (!Array.isArray(entry.replayReasons)) {
     failures.push(file);
     console.error(`FAIL ${file} replayReasons is absent; §7.5 makes it part of a handler vector's expectation`);

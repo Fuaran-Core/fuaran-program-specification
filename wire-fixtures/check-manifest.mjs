@@ -51,14 +51,18 @@ const DOCUMENTS = new Set([
 const DEFECTS = {
   "opaque-host-call": "unsafe",
   "outbound-notification": "unsafe",
+  "staged-query": "unsafe",
   "relative-addressing": "unknown",
   "non-literal-write": "unknown",
   "undecidable-action": "unknown",
   "unencodable-op": "unknown",
 };
 
-// The five a DOCUMENT can exhibit, and therefore the five this corpus can be
-// held to. §7.5 says why the sixth is not among them: `unencodable-op` names a
+// The six a DOCUMENT can exhibit, and therefore the six this corpus can be
+// held to. One of them, `staged-query`, a document exhibits only under the
+// host's query posture its vector declares (§7.4, `queryEvaluator`) — still a
+// document and a declaration, so still a vector. §7.5 says why the seventh is
+// not among them: `unencodable-op` names a
 // defect in a reader's own rendering of a referenced position, and an op that
 // does not decode is refused as `malformed-referenced-value` before any
 // classification runs — so no conformant document reaches it, and a corpus
@@ -67,6 +71,7 @@ const DEFECTS = {
 const DOCUMENT_REACHABLE = new Set([
   "opaque-host-call",
   "outbound-notification",
+  "staged-query",
   "relative-addressing",
   "non-literal-write",
   "undecidable-action",
@@ -79,7 +84,7 @@ const DOCUMENT_REACHABLE = new Set([
 const SUBJECTS = new Set(["toy"]);
 
 // The tokens a TOY document can exhibit, and therefore the ones the toy
-// families can be held to discriminating. Two fewer than §7.5's six, and both
+// families can be held to discriminating. Two fewer than §7.5's seven, and both
 // absences are properties of the toy rather than gaps (§10.7): `unencodable-op`
 // for the reason it is absent at every subject, and `relative-addressing`
 // because the toy's one op always names its target — a `Relabel` whose
@@ -89,6 +94,7 @@ const SUBJECTS = new Set(["toy"]);
 const TOY_DOCUMENT_REACHABLE = new Set([
   "opaque-host-call",
   "outbound-notification",
+  "staged-query",
   "non-literal-write",
   "undecidable-action",
 ]);
@@ -97,6 +103,11 @@ const TOY_UNREACHABLE = ["relative-addressing", "unencodable-op"];
 // The families whose round-trip vectors carry §7.4/§7.5's derived values: the
 // handler family at each subject.
 const HANDLER_FAMILIES = new Set(["handler", "toy-handler"]);
+
+// §7.4 — the host query postures a handler vector may declare its derived
+// values under. Closed, on the subjects' argument: a posture a reader has never
+// heard of would be read as the fold, and a staged read certified as a pure one.
+const QUERY_POSTURES = new Set(["reaching", "pure-read"]);
 
 const CLASSES = new Set([
   "null-member",
@@ -138,6 +149,26 @@ const countStages = (path) => {
   try {
     const document = JSON.parse(readFileSync(path, "utf8"));
     return Array.isArray(document.stages) ? document.stages.length : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * The ordinals of a handler document's read stages (`RunQuery` effects), or
+ * `null` where the file is not a readable handler. A vector declaring the
+ * `reaching` posture must name exactly these stages as `staged-query`: the
+ * join between the posture a vector declares and the reasons it declares,
+ * which no emitter can make for a reader because each takes both from its own
+ * model.
+ */
+const readStages = (path) => {
+  try {
+    const document = JSON.parse(readFileSync(path, "utf8"));
+    if (!Array.isArray(document.stages)) return null;
+    return document.stages.flatMap((s, k) =>
+      s.$type === "Effect" && s.effect && s.effect.$type === "RunQuery" ? [k] : [],
+    );
   } catch {
     return null;
   }
@@ -274,7 +305,27 @@ for (const v of manifest.vectors ?? []) {
 
     const seen = new Set(v.replayReasons.map((r) => `${r.stage}:${r.defect}`));
     if (seen.size !== v.replayReasons.length) fail(`${id}: the same reason is declared twice for one stage`);
+
+    // §7.4 — the host posture the values are read under. Absent is the
+    // in-memory fold. `staged-query` is the posture's token and no other's:
+    // declared exactly at the document's read stages under `reaching`, and
+    // nowhere otherwise.
+    if (v.queryEvaluator !== undefined && !QUERY_POSTURES.has(v.queryEvaluator))
+      fail(`${id}: queryEvaluator ${JSON.stringify(v.queryEvaluator)} is not a posture §7.4 names`);
+    const staged = v.replayReasons
+      .filter((r) => r.defect === "staged-query")
+      .map((r) => r.stage)
+      .sort((a, b) => a - b);
+    const reads = readStages(join(here, v.file));
+    const expected = v.queryEvaluator === "reaching" ? reads : [];
+    if (expected !== null && staged.join(",") !== expected.join(","))
+      fail(
+        `${id}: declares staged-query at [${staged}] under queryEvaluator ${v.queryEvaluator ?? "(absent)"}, ` +
+          `but its read stages under that posture are [${expected}]`,
+      );
   }
+  if (!wantsSafety && v.queryEvaluator !== undefined)
+    fail(`${id}: declares queryEvaluator, which only a handler round-trip vector carries`);
 }
 
 // --- the scenario enumeration ---------------------------------------------

@@ -764,7 +764,9 @@ An audit replay is therefore effect-free unconditionally, whatever the handlers 
 
 A host in resume-replay MUST:
 - apply the recorded ops as audit-replay does;
-- re-evaluate **only** `RunQuery` stages, and only for the handlers it is resuming;
+- re-evaluate **only** `RunQuery` stages, and only for the handlers it is resuming — a read under the
+  `reaching` posture (§7.4) is a reach rather than a read for this purpose, and the next obligation is
+  what keeps it from being re-asked;
 - issue **no** host call, ship **no** notification, and apply **no** op a re-run would duplicate;
 - refuse to resume a handler whose derived replay safety (§7.4) is `unsafe`, unless the host has been
   explicitly configured to accept re-execution — in which case it MUST record that it did.
@@ -785,17 +787,35 @@ this section's.
 A handler's replay safety MUST be computed from its stage list. It is never declared, because a
 declaration is free to drift from the thing it describes and this one need not exist at all.
 
+**One input is the HOST's, and only one: its query posture.** A `RunQuery` stage names a source and a
+pipeline; what answers it is the host's. A host answers through the in-memory fold, or through an
+evaluator of its own, and only the host can say whether that evaluator is a pure read — nothing in
+the document states it and no reader can infer it. So the derivation reads the stage list under the
+host's **query posture**, one of two values:
+
+| Posture | When | What a `RunQuery` stage is |
+|---|---|---|
+| `pure-read` | the host answers through the in-memory fold, or through an evaluator it declares a pure read | a read: answered while planning, recomputed on a re-run, reaching nothing |
+| `reaching` | the host answers through an evaluator it cannot declare a pure read | a reach: staged like a `HostCall` — asked only after the plan completes, journaled as one, never undone |
+
+A host with no evaluator is `pure-read`; an evaluator its host has not declared a pure read is
+`reaching`, because staging fails closed — a host that wrongly declares a pure read can re-run a side
+effect, where one wrongly left reaching pays only placement. A host MUST derive a handler's
+replay safety under the posture it actually runs that handler under. The posture is a declaration
+about the host, not a member of any document, so no document changes with it; a conformance vector
+states the posture its derived values are read under (§10.1).
+
 Three values, and the middle one is the point:
 
 | Value | When | Why |
 |---|---|---|
 | `safe` | every stage is provably re-runnable | see the table below |
-| `unsafe` | any stage provably reaches outside — a `HostCall`, or a `Notify` | re-running duplicates a message or an external commitment |
+| `unsafe` | any stage provably reaches outside — a `HostCall`, a `Notify`, or a `RunQuery` under the `reaching` posture | re-running duplicates a message, an external commitment, or a question put to something the host does not own |
 | `unknown` | anything the walk cannot decide | reported as undecided, never guessed |
 
 A stage is provably re-runnable when it is:
 
-- a `RunQuery` — it reads;
+- a `RunQuery` under the `pure-read` posture — it reads;
 - an `ApplyOps` or `EmitPatch` whose every op is **absolutely addressed** (an op naming a target
   node, not a position relative to a sibling count);
 - a compute stage whose action is a **chain every action of which is itself provably re-runnable by
@@ -832,21 +852,24 @@ A reason is a **stage ordinal** and a **defect token**.
 
 The ordinal addresses a stage by position, because a stage carries no identifier of its own and a
 position is the only locator that names one without echoing something the document chose. The token
-is drawn from a **closed** vocabulary of six, and the split between them is the same one §7.4's
+is drawn from a **closed** vocabulary of seven, and the split between them is the same one §7.4's
 table makes:
 
 | Token | What the walk demonstrated | Grade it forces |
 |---|---|---|
 | `opaque-host-call` | the stage is a `HostCall` — it commits somewhere this host does not own | `unsafe` |
 | `outbound-notification` | the stage is a `Notify` — a second run ships the message a second time | `unsafe` |
+| `staged-query` | the stage is a `RunQuery` and the host's posture is `reaching` — a second run asks the host's evaluator a second time | `unsafe` |
 | `relative-addressing` | an op is not provably absolutely addressed: it names no target node, so the walk cannot tell an absolute address from a position relative to a sibling count | `unknown` |
 | `non-literal-write` | a state write takes its value from a binding, resolved at dispatch against a store that has moved | `unknown` |
 | `undecidable-action` | an action arm this walk does not decide | `unknown` |
 | `unencodable-op` | an op does not render at all, so there is no document to read an address off | `unknown` |
 
-The two `unsafe` tokens are the only PROOFS; the other four are places the walk could not decide, and
-§7.4's rule that `unknown` is never rounded to a neighbour is precisely the statement that those four
-are not the first two in a weaker form.
+The three `unsafe` tokens are the only PROOFS; the other four are places the walk could not decide,
+and §7.4's rule that `unknown` is never rounded to a neighbour is precisely the statement that those
+four are not the first three in a weaker form. `staged-query` is a proof on the terms
+`opaque-host-call` is: what it proves is the host's own declaration that the stage reaches somewhere
+the host does not own, read together with the document.
 
 **The classification MUST be derived from the reasons rather than walked a second time.** No reason is
 the only proof of `safe`; otherwise the value is the strongest grade any reason forces, by the ranking
@@ -858,12 +881,13 @@ read as the explanation of it.
 carrying nine relatively-addressed ops is one fact about that stage, not nine. Two stages carrying the
 same defect are two places to go and look, and both are reported.
 
-**Five of the six are exhibited by a document; the sixth is not, and that is a property of the
-vocabulary rather than a gap in it.** `unencodable-op` names a defect in the READER's own rendering of
+**Six of the seven are exhibited by a document — one of them, `staged-query`, only under the posture
+a host declares, which is why a vector carrying it states that posture (§10.1); the seventh is not,
+and that is a property of the vocabulary rather than a gap in it.** `unencodable-op` names a defect in the READER's own rendering of
 a referenced position (§3) — reached when a host holds an op it cannot put back on the wire. A
 conformant document cannot produce it: an op that does not decode is refused as
 `malformed-referenced-value` (Appendix A) before any classification runs, so the arm is reachable only
-from a value a host constructed itself. The corpus therefore pins the other five against handler
+from a value a host constructed itself. The corpus therefore pins the other six against handler
 vectors and leaves this one to a host's own suite, which is the only place it can be reached at all.
 Saying so here is the point: an arm certified nowhere and an arm certified elsewhere are different
 facts, and only the first is a hole.
@@ -1132,7 +1156,10 @@ An implementation conforms by:
    reason is not a pass: it would let a reader certify by being broken in a convenient way.
 3. **Reproducing** every derived value a vector declares — today, the `replaySafety` a handler vector
    carries (§7.4) and the `replayReasons` beside it (§7.5), both recomputed from the decoded document
-   rather than read off the manifest. The reasons are the finer expectation and are the one that
+   rather than read off the manifest, under the host query posture the vector names in its optional
+   `queryEvaluator` member (`reaching` or `pure-read`; absent is the in-memory fold, `pure-read`). The
+   posture is an INPUT the vector states, never a derived value: a reader recomputes under it and
+   never writes it. The reasons are the finer expectation and are the one that
    discriminates *within* a grade: two defects of the same grade produce the same `replaySafety`, so a
    reader that confused them would pass a corpus pinning only the value.
 4. **Implementing §6** — the two phases, the atomicity unit, the staging boundary, and §6.4's
@@ -1689,11 +1716,13 @@ across stages, and the verdict is the strongest grade any reason forces.
 The corpus's toy handler vectors each carry at most one distinct token per stage, so no vector pins
 the order of two tokens within one stage.
 
-**Four of §7.5's six tokens are reachable from a toy document.** `unencodable-op` is not, for the
-reason it is reachable from no document at all. `relative-addressing` is not either, and that is a
+**Five of §7.5's seven tokens are reachable from a toy document** — `staged-query` among them, under
+the `reaching` posture its vector declares, exactly as at the referenced subject: a `RunQuery`'s
+`source` and `pipeline` are the substrate's vocabulary at both subjects. `unencodable-op` is not, for
+the reason it is reachable from no document at all. `relative-addressing` is not either, and that is a
 property of the toy rather than a gap: its one op names its target, and a `Relabel` whose `target` is
 not an identifier does not decode, so nothing reaches the classification without an absolute
-address. The manifest check holds the `toy-handler` family to discriminating the four, and asserts
+address. The manifest check holds the `toy-handler` family to discriminating the five, and asserts
 that no toy vector carries either of the other two.
 
 #### The vocabulary-free documents
@@ -1805,7 +1834,17 @@ cases, never from §7.4's spellings of the referenced vocabulary's.
 **Versioning.** Adding an arm to a closed vocabulary, adding a required member, or changing a member's
 type or ordering is a **breaking** change and takes a new format version. Adding an optional member,
 adding a refusal class for a document that was already ill-formed, or adding a vector is **additive**.
-This specification is format version **2**; `manifest.json` carries `formatVersion`.
+This specification is format version **3**; `manifest.json` carries `formatVersion`.
+
+**Version 3 adds `staged-query` to §7.5's closed defect vocabulary, and the host query posture (§7.4)
+that reaches it; no document moves.** Every version-2 document is a version-3 document, byte-identical
+and meaning what it always meant. A handler vector gains an optional `queryEvaluator` member naming
+the posture its derived values are read under, and a vector without one is read under `pure-read`, so
+every version-2 vector's expectation is unchanged. The widening is breaking in the direction §11.1's
+rule names for a closed vocabulary: a version-2 reader recomputing a `reaching` vector's reasons does
+not produce the token, because it has no posture to read them under. That is the reader being a
+version behind, and the diagnosis lives where this section puts it — in the corpus a host certifies
+against, never in a document.
 
 **Version 2 adds `Print` and `Confirm` to §5.2's closed client-effect vocabulary, and adds nothing
 else.** Every version-1 document is a version-2 document, byte-identical and meaning what it always
