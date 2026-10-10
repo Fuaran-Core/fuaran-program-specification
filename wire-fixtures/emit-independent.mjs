@@ -178,13 +178,15 @@ const aBoundedDiagnostic = (type, fields) => ({ $type: type, ...fields });
 const computeStage = (action) => ({ $type: "Compute", action });
 const effectStage = (effect) => ({ $type: "Effect", effect });
 
-// §5.1 — the five server-effect arms. `into` is optional and, when absent, is
+// §5.1 — the six server-effect arms. `into` is optional and, when absent, is
 // absent: `undefined` here is what §2.5's omission looks like in a model.
 const runQuery = (name, source, pipeline) => ({ $type: "RunQuery", name, pipeline, source });
 const applyOps = (ops) => ({ $type: "ApplyOps", ops });
 const hostCall = (fn, args, into) => ({ $type: "HostCall", args, fn, into });
 const emitPatch = (ops) => ({ $type: "EmitPatch", ops });
 const notify = (channel, payload) => ({ $type: "Notify", channel, payload });
+// The sixth (format version 3): the host's two tokens and the message.
+const reportFinding = (code, severity, message) => ({ $type: "Report", code, message, severity });
 
 // §4.1 — a name and an ordered stage list, and nothing else.
 const handlerDoc = (name, stages) => ({ $type: "Handler", name, stages });
@@ -277,6 +279,10 @@ const effectDefects = (effect, posture) => {
       return ["opaque-host-call"];
     case "Notify":
       return ["outbound-notification"];
+    // A finding is recorded, not delivered: nothing a second run would do
+    // differently, so no reason.
+    case "Report":
+      return [];
     default:
       return ["undecidable-action"];
   }
@@ -378,6 +384,11 @@ const HANDLERS = {
   "handler/chain-bound-write.json": handlerDoc("orders.stage", [
     computeStage(aChain([aSetStateLiteral("stage", "picking"), aSetStateBound("chosen-id", aSelection("orders-grid", "id"))])),
   ]),
+  // A state-only document — effect stages alone — carrying a finding.
+  "handler/state-only-report.json": handlerDoc("orders.archive", [
+    effectStage(applyOps([aRemoveNode("orders-empty")])),
+    effectStage(reportFinding("orders.archived", "info", "")),
+  ]),
 };
 
 const SERVER_EFFECTS = {
@@ -389,6 +400,7 @@ const SERVER_EFFECTS = {
   "server-effect/host-call-bare.json": hostCall("risk.score", { subject: "acct-91" }, undefined),
   "server-effect/emit-patch.json": emitPatch([aRemoveNode("orders-spinner")]),
   "server-effect/notify.json": notify("audit", { event: "settled" }),
+  "server-effect/report.json": reportFinding("orders.stale", "warning", "3 orders are older than 30 days"),
   // The opaque payload is the one position whose key set this specification
   // leaves open, so it is where §2.3 has to be applied to keys the document
   // never declared. These three straddle the only boundary at which Ordinal
@@ -617,6 +629,10 @@ const TOY_HANDLERS = {
   "toy-handler/each-literal.json": handlerDoc("title.each", [
     computeStage(tForEach(["a", "b"], "item", tPutFrom("last", tHole("item")))),
   ]),
+  "toy-handler/state-only-report.json": handlerDoc("title.archive", [
+    effectStage(applyOps([tRelabel("title", "Archived")])),
+    effectStage(reportFinding("title.archived", "info", "the title is archived")),
+  ]),
 };
 
 const TOY_SERVER_EFFECTS = {
@@ -627,6 +643,7 @@ const TOY_SERVER_EFFECTS = {
   "toy-server-effect/host-call-bare.json": hostCall("decline", {}, undefined),
   "toy-server-effect/emit-patch.json": emitPatch([tRelabel("footer", "Ready")]),
   "toy-server-effect/notify.json": notify("chimes", { event: "relabelled" }),
+  "toy-server-effect/report.json": reportFinding("bell.cracked", "problem", "the bell did not ring"),
   "toy-server-effect/notify-ordinal-divergence.json": notify("chimes", {
     event: "rang",
     "\u{20000}": "supplementary",

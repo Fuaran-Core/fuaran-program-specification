@@ -432,7 +432,7 @@ const covers = (family, needles) => {
   }
 };
 
-covers("server-effect", ["RunQuery", "ApplyOps", "HostCall", "EmitPatch", "Notify"]);
+covers("server-effect", ["RunQuery", "ApplyOps", "HostCall", "EmitPatch", "Notify", "Report"]);
 covers("client-effect", [
   "Navigate",
   "PushState",
@@ -457,9 +457,9 @@ for (const document of vocabularyFreeSet) {
       fail(`vocabulary-free document "${document}" has no ${kind} vector for a host of either subject to run`);
 }
 
-// The toy subject's own closed vocabularies (§10.7): the five server-effect
+// The toy subject's own closed vocabularies (§10.7): the six server-effect
 // arms again, and the toy's one client effect.
-covers("toy-server-effect", ["RunQuery", "ApplyOps", "HostCall", "EmitPatch", "Notify"]);
+covers("toy-server-effect", ["RunQuery", "ApplyOps", "HostCall", "EmitPatch", "Notify", "Report"]);
 covers("toy-client-effect", ["Sound"]);
 
 // --- every document-reachable defect token is discriminated -----------------

@@ -2,13 +2,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fuaran.com/program-wire/v2/server-effect.schema.json",
   "title": "Program wire — server effect (§5.1)",
-  "description": "The logic host's closed effect vocabulary. Five arms; `additionalProperties: false` on each is what makes §5.1's derived-capability rule enforceable structurally — a document declaring its own `capability` fails here as well as normatively.",
+  "description": "The logic host's closed effect vocabulary. Six arms; `additionalProperties: false` on each is what makes §5.1's derived-capability rule enforceable structurally — a document declaring its own `capability` fails here as well as normatively.",
   "oneOf": [
     { "$ref": "#/$defs/runQuery" },
     { "$ref": "#/$defs/applyOps" },
     { "$ref": "#/$defs/hostCall" },
     { "$ref": "#/$defs/emitPatch" },
-    { "$ref": "#/$defs/notify" }
+    { "$ref": "#/$defs/notify" },
+    { "$ref": "#/$defs/report" }
   ],
   "$defs": {
     "runQuery": {
@@ -62,6 +63,18 @@
         "$type": { "const": "Notify" },
         "channel": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
         "payload": { "$ref": "common.schema.json#/$defs/opaquePayload" }
+      }
+    },
+    "report": {
+      "description": "A finding the program reports into its trace (format version 3). `code` and `severity` are the host's own tokens, never a vocabulary this specification fixes; `message` is the finding's text and may be empty.",
+      "type": "object",
+      "required": ["$type", "code", "message", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "$type": { "const": "Report" },
+        "code": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+        "message": { "type": "string" },
+        "severity": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
       }
     }
   }

@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"orders.archive","stages":[{"$type":"Effect","effect":{"$type":"ApplyOps","ops":[{"$type":"RemoveNode","target":"orders-empty"}]}},{"$type":"Effect","effect":{"$type":"Report","code":"orders.archived","message":"","severity":"info"}}]}

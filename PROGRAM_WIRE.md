@@ -292,7 +292,7 @@ write down:
 
 ### 5.1 Server effects — the logic host's closed vocabulary
 
-Five arms. The vocabulary is **closed**: a document naming a sixth MUST be refused
+Six arms. The vocabulary is **closed**: a document naming a seventh MUST be refused
 (`unknown-effect-arm`).
 
 | Arm | Members | What it does |
@@ -302,6 +302,7 @@ Five arms. The vocabulary is **closed**: a document naming a sixth MUST be refus
 | `HostCall` | `fn` (string), `args` (opaque payload), `into` (string, optional) | The named, registered, policy-gated escape to computation the total algebra cannot express. The one arm that reaches outside. |
 | `EmitPatch` | `ops` (array, referenced) | Ships ops to a connected rendering surface **without** touching domain state. |
 | `Notify` | `channel` (string), `payload` (opaque payload) | An out-of-band host-channel message. The host performs delivery; the handler records that it asked. |
+| `Report` | `code` (string), `severity` (string), `message` (string) | **Reports a finding into the handler's trace.** Nothing is delivered and nothing is performed: the host records the finding, and derives the invocation's outcome from what the program reported. Format version 3. |
 
 `EmitPatch` is kept distinct from `ApplyOps` so that "what the surface sees" and "what is durable" can
 never be confused for one another. `Notify` here is a handler's own declaration and is **not** the
@@ -312,7 +313,7 @@ conformant host MUST compute it:
 
 | Arm | Capability |
 |---|---|
-| `RunQuery` / `ApplyOps` / `EmitPatch` / `Notify` | the arm's own discriminator, verbatim |
+| `RunQuery` / `ApplyOps` / `EmitPatch` / `Notify` / `Report` | the arm's own discriminator, verbatim |
 | `HostCall` | `"host:" + fn` |
 
 The `host:` prefix keeps the two namespaces disjoint, so a host function named `ApplyOps` can never
@@ -322,7 +323,23 @@ host derives, under the control of the untrusted side — the same defect as a w
 (§9.5), one layer down.
 
 `into` names a state slot the host call's result lands in. It is optional; omitted, the result is
-discarded and only the fact of the call is recorded. `fn`, `name` and `channel` MUST be non-empty.
+discarded and only the fact of the call is recorded. `fn`, `name`, `channel`, `code` and `severity`
+MUST be non-empty; a `Report` whose `code` or `severity` is empty MUST be refused (`missing-member`).
+A finding's `message` may be empty.
+
+**`Report` carries the HOST's vocabulary, not this document's.** No code and no severity is fixed
+here, and none will be: what a finding means is the business of the host whose verb reported it, and
+a closed list in this document would be a second vocabulary every host had to translate into its own.
+A host declares the codes and severities it has as a bound on the `Report` capability's `code` and
+`severity` arguments — the same argument policy it declares for any other capability, out of band and
+never in a document — and a finding outside that bound is refused while planning, before anything is
+performed, naming the bound and never the token. A host reads the tokens back through its own types.
+
+A report is not an act. It is recorded in program order while planning (§6.1), it is not staged, it
+contributes no replay reason (§7.4), and an undo has no inverse to run for it. A host that keeps a
+run's findings keeps those reported before a halt as well: a finding is the record of what the
+program found on its way to a refusal, not work the halt undoes. The outcome document does not carry
+findings (§6.3).
 
 ### 5.2 Client effects — the rendering surface's closed vocabulary
 
@@ -575,7 +592,8 @@ meaningful against it.
 A handler run has a **PLAN** phase and a **PERFORM** phase.
 
 **PLAN.** Every stage runs in declared order. A compute stage folds. A read effect evaluates. An
-op-applying effect edits an in-memory tree. A patch and a notification accumulate as values. A host
+op-applying effect edits an in-memory tree. A patch and a notification accumulate as values, and a
+report records its finding. A host
 call is **gated, resolved to a performer, and its landing slot checked — and then STAGED, not
 invoked**. Everything this phase does is either a read or a value the caller can discard.
 
@@ -593,9 +611,9 @@ patches, notifications and client effects are discarded in favour of the state t
 from. **A partially-applied handler is unrepresentable in the outcome**, which is a stronger guarantee
 than rolling back on error, because there is no code path that could forget to.
 
-Of the five server-effect arms, **only `HostCall` is staged**, and that is the honest boundary: a read
-reads, an op-apply edits an in-memory tree the caller may discard, and a patch and a notification are
-values the host performs after the handler returns. None of them can be performed too early because
+Of the six server-effect arms, **only `HostCall` is staged**, and that is the honest boundary: a read
+reads, an op-apply edits an in-memory tree the caller may discard, a patch and a notification are
+values the host performs after the handler returns, and a report performs nothing at all. None of them can be performed too early because
 none of them is performed by the handler at all. Deferring the reads as well would be a purer reading
 of "two-phase" and a worse design: it would break the read → compute → mutate shape that is the entire
 reason a handler is a stage list.
@@ -633,6 +651,13 @@ happened and when.
 
 On an uncommitted outcome, `patches`, `notifications` and the domain state are the entry state, and
 `performed` is empty — **except** in the one case §6.4 names.
+
+**A finding is not a member of this document.** A `Report` the plan reached appears in `performed` as
+`Report`, as every arm the plan phase ran does, so the audit trail says that the program reported.
+What it reported is the host's: the finding is in the host's vocabulary (§5.1), the host derives the
+invocation's outcome from it, and what the host then tells its caller is the host's own document.
+Carrying findings here would put a host's private vocabulary into the projection every caller
+receives, and would move every outcome document's bytes to say so.
 
 ### 6.4 The one case where an uncommitted handler performed something
 
@@ -816,6 +841,7 @@ Three values, and the middle one is the point:
 A stage is provably re-runnable when it is:
 
 - a `RunQuery` under the `pure-read` posture — it reads;
+- a `Report` — it records a finding and reaches nothing, and a second run records the same finding;
 - an `ApplyOps` or `EmitPatch` whose every op is **absolutely addressed** (an op naming a target
   node, not a position relative to a sibling count);
 - a compute stage whose action is a **chain every action of which is itself provably re-runnable by
@@ -1837,8 +1863,10 @@ adding a refusal class for a document that was already ill-formed, or adding a v
 This specification is format version **3**; `manifest.json` carries `formatVersion`.
 
 **Version 3 adds `staged-query` to §7.5's closed defect vocabulary, and the host query posture (§7.4)
-that reaches it; no document moves.** Every version-2 document is a version-3 document, byte-identical
-and meaning what it always meant. A handler vector gains an optional `queryEvaluator` member naming
+that reaches it; and it adds `Report` to §5.1's closed server-effect vocabulary.** Every version-2
+document is a version-3 document, byte-identical and meaning what it always meant. A version-2 reader
+handed a `Report` refuses it as `unknown-effect-arm`, by the rule stated below for a version-1 reader
+handed a version-2 document. A handler vector gains an optional `queryEvaluator` member naming
 the posture its derived values are read under, and a vector without one is read under `pure-read`, so
 every version-2 vector's expectation is unchanged. The widening is breaking in the direction §11.1's
 rule names for a closed vocabulary: a version-2 reader recomputing a `reaching` vector's reasons does
@@ -1970,7 +1998,7 @@ Every class a `reject` vector may name. A conformant reader refuses **for the na
 |---|---|
 | `null-member` | any member's value is the JSON token `null` (§2.5) |
 | `undeclared-member` | a document carries a member this specification does not declare (§2.9) — including a self-declared `capability` (§5.1), an inline body in a reference (§9.2), and an `origin` on a denial that never consulted a destination (§5.3) |
-| `missing-member` | a required member is absent |
+| `missing-member` | a required member is absent — or, for a finding's `code` or `severity` (§5.1), present and empty |
 | `unknown-stage-kind` | a stage's `$type` is neither `Compute` nor `Effect` (§4.2) |
 | `unknown-effect-arm` | an effect names an arm outside the closed vocabulary (§5.1, §5.2) |
 | `empty-name` / `name-too-long` | a handler's registration key is empty or over 256 characters (§4.1) |

@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"title.archive","stages":[{"$type":"Effect","effect":{"$type":"ApplyOps","ops":[{"$type":"Relabel","label":"Archived","target":"title"}]}},{"$type":"Effect","effect":{"$type":"Report","code":"title.archived","message":"the title is archived","severity":"info"}}]}

@@ -343,6 +343,11 @@ def notify(channel, payload):
     return {"$type": "Notify", "channel": channel, "payload": payload}
 
 
+def report_finding(code, severity, message):
+    """§5.1's sixth arm (format version 3): the host's two tokens and the message."""
+    return {"$type": "Report", "code": code, "message": message, "severity": severity}
+
+
 def handler(name, stages):
     return {"$type": "Handler", "name": name, "stages": stages}
 
@@ -415,6 +420,9 @@ def effect_defects(e, query=None):
         return ["opaque-host-call"]
     if kind == "Notify":
         return ["outbound-notification"]
+    # A finding is recorded, never delivered: a re-run records the same one.
+    if kind == "Report":
+        return []
     return ["undecidable-action"]
 
 
@@ -529,6 +537,14 @@ HANDLERS = {
             )
         ],
     ),
+    # A state-only document carrying a finding: effect stages alone.
+    "handler/state-only-report.json": handler(
+        "orders.archive",
+        [
+            effect(apply_ops([a_remove_node("orders-empty")])),
+            effect(report_finding("orders.archived", "info", "")),
+        ],
+    ),
 }
 
 SERVER_EFFECTS = {
@@ -538,6 +554,7 @@ SERVER_EFFECTS = {
     "server-effect/host-call-bare.json": host_call("risk.score", {"subject": "acct-91"}, None),
     "server-effect/emit-patch.json": emit_patch([a_remove_node("orders-spinner")]),
     "server-effect/notify.json": notify("audit", {"event": "settled"}),
+    "server-effect/report.json": report_finding("orders.stale", "warning", "3 orders are older than 30 days"),
     # §2.3's ordering rule, at the one position this specification leaves the
     # key set OPEN. An opaque payload's members are domain-supplied, so this is
     # where the rule has to be applied to keys nobody enumerated in advance —
@@ -779,6 +796,13 @@ TOY_HANDLERS = {
     "toy-handler/each-literal.json": handler(
         "title.each", [compute(t_for_each(["a", "b"], "item", t_put_from("last", t_hole("item"))))]
     ),
+    "toy-handler/state-only-report.json": handler(
+        "title.archive",
+        [
+            effect(apply_ops([t_relabel("title", "Archived")])),
+            effect(report_finding("title.archived", "info", "the title is archived")),
+        ],
+    ),
 }
 
 TOY_SERVER_EFFECTS = {
@@ -788,6 +812,7 @@ TOY_SERVER_EFFECTS = {
     "toy-server-effect/host-call-bare.json": host_call("decline", {}, None),
     "toy-server-effect/emit-patch.json": emit_patch([t_relabel("footer", "Ready")]),
     "toy-server-effect/notify.json": notify("chimes", {"event": "relabelled"}),
+    "toy-server-effect/report.json": report_finding("bell.cracked", "problem", "the bell did not ring"),
     # §2.3 at the open payload position, at this subject too: the supplementary
     # key precedes `ﬀ` Ordinally and would follow it by code point.
     "toy-server-effect/notify-ordinal-divergence.json": notify(

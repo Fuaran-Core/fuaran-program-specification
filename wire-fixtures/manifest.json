@@ -109,7 +109,7 @@
       "file": "handler/reject-unknown-effect.json",
       "sha256": "7e8b9133919e399108d1022db997e77d84638c70ebe1e553acd1de0a45c8c047",
       "reject": "unknown-effect-arm",
-      "description": "A sixth server-effect arm. The vocabulary is closed by registration, and no document widens it."
+      "description": "An arm outside the closed server-effect vocabulary. The vocabulary is closed by registration, and no document widens it."
     },
     {
       "id": "handler/reject-null-member",
@@ -249,6 +249,17 @@
       "description": "A chain composing a literal write and a binding-valued one. A reader taking the chain clause unconditionally classifies this safe, one level above the write that decides it."
     },
     {
+      "id": "handler/state-only-report",
+      "family": "handler",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "handler/state-only-report.json",
+      "sha256": "c54d23635b45c856161f0d137b8ec9f8d32ea9e1e8e509adc280881399d35d95",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A state-only handler document - effect stages alone, so a composition with no dispatch axis decodes it - carrying a finding (format version 3). The report contributes no reason: a second run records the same finding, so an absolutely-addressed op and a report are safe."
+    },
+    {
       "id": "server-effect/run-query",
       "family": "server-effect",
       "kind": "round-trip",
@@ -303,6 +314,15 @@
       "description": "A host-channel message the handler asked for. Not the action algebra's notify arm, which is a documented no-op at every placement."
     },
     {
+      "id": "server-effect/report",
+      "family": "server-effect",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "server-effect/report.json",
+      "sha256": "0c7f4a8bf876c0e7c1b764369cf857b7ea1c7c91d9c77a82ed626daa65c22d87",
+      "description": "A finding the program reports into its trace (format version 3): the host's code and severity, never a vocabulary this specification fixes, and the message."
+    },
+    {
       "id": "server-effect/notify-ordinal-divergence",
       "family": "server-effect",
       "kind": "round-trip",
@@ -320,6 +340,16 @@
       "sha256": "f0e306745f2952e0b89e3fc6f1bbe15978cac208f3b47c7d12301792dec125ff",
       "reject": "missing-member",
       "description": "A host call naming no function. The registration key is what the whole arm resolves through."
+    },
+    {
+      "id": "server-effect/reject-empty-code",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-empty-code.json",
+      "sha256": "9b94d323eef7749db55dc5d61bffd5a0606cd8058ed3a3ca3cc7d0399a28dcfb",
+      "reject": "missing-member",
+      "description": "A finding whose code is present and empty. An empty token names nothing a host's vocabulary could hold."
     },
     {
       "id": "server-effect/reject-declared-capability",
@@ -864,6 +894,18 @@
       "description": "A ForEach over a literal collection whose body writes from the placeholder's Hole. Substituting an element changes no case, so each element contributes the body's non-literal write (§10.7)."
     },
     {
+      "id": "toy-handler/state-only-report",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "handler",
+      "file": "toy-handler/state-only-report.json",
+      "sha256": "222cf8d9a6f8100fba2688fa301f6db1ccd8308833cf4f952bcf61616a633c8d",
+      "replaySafety": "safe",
+      "replayReasons": [],
+      "description": "A state-only toy handler carrying a finding: a relabel and a report, safe."
+    },
+    {
       "id": "toy-handler/reject-unknown-stage",
       "family": "toy-handler",
       "subject": "toy",
@@ -1023,6 +1065,16 @@
       "description": "The notification arm."
     },
     {
+      "id": "toy-server-effect/report",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "round-trip",
+      "document": "server-effect",
+      "file": "toy-server-effect/report.json",
+      "sha256": "4571be3da168f938fc7ef2a8acd63cd6c76ca4c1b88f20723a14a8bef02038b8",
+      "description": "The finding arm."
+    },
+    {
       "id": "toy-server-effect/notify-ordinal-divergence",
       "family": "toy-server-effect",
       "subject": "toy",
@@ -1042,6 +1094,17 @@
       "sha256": "9ef8d15030e5d881362ceb1ce55135c427d546aeb95bc2fad7b95ccb2db4aaea",
       "reject": "missing-member",
       "description": "A host call naming no host function."
+    },
+    {
+      "id": "toy-server-effect/reject-empty-severity",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-empty-severity.json",
+      "sha256": "8804f6d23b5511fb2d1b1ac3020f1bce5be52a8afe56844eb8ea97799443b1bb",
+      "reject": "missing-member",
+      "description": "A finding whose severity is present and empty."
     },
     {
       "id": "toy-server-effect/reject-declared-capability",

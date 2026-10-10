@@ -168,6 +168,8 @@ const applyOps = (ops) => ({ $type: "ApplyOps", ops });
 const hostCall = (fn, args, into) => ({ $type: "HostCall", args, fn, into });
 const emitPatch = (ops) => ({ $type: "EmitPatch", ops });
 const notify = (channel, payload) => ({ $type: "Notify", channel, payload });
+// Format version 3: a finding the program reports into its trace (§5.1).
+const finding = (code, severity, message) => ({ $type: "Report", code, message, severity });
 
 const handler = (name, stages) => ({ $type: "Handler", name, stages });
 
@@ -235,6 +237,10 @@ const effectDefects = (e, query) => {
       return ["opaque-host-call"];
     case "Notify":
       return ["outbound-notification"];
+    // A report records a finding and reaches nothing: a second run records the
+    // same finding (§7.4).
+    case "Report":
+      return [];
     default:
       return ["undecidable-action"];
   }
@@ -364,6 +370,15 @@ const handlers = {
   "handler/chain-bound-write.json": handler("orders.stage", [
     compute(chain([setState("stage", "picking"), setStateFrom("chosen-id", selection("orders-grid", "id"))])),
   ]),
+
+  // Format version 3 — a STATE-ONLY handler document carrying a finding: no
+  // compute stage, so a composition with no dispatch axis decodes it too. An
+  // absolutely-addressed op and a report, and nothing a second run would do
+  // differently: the report contributes no reason, so the vector is `safe`.
+  "handler/state-only-report.json": handler("orders.archive", [
+    effect(applyOps([removeNode("orders-empty")])),
+    effect(finding("orders.archived", "info", "")),
+  ]),
 };
 
 const serverEffects = {
@@ -373,6 +388,7 @@ const serverEffects = {
   "server-effect/host-call-bare.json": hostCall("risk.score", { subject: "acct-91" }, undefined),
   "server-effect/emit-patch.json": emitPatch([removeNode("orders-spinner")]),
   "server-effect/notify.json": notify("audit", { event: "settled" }),
+  "server-effect/report.json": finding("orders.stale", "warning", "3 orders are older than 30 days"),
 
   // §2.3's ordering rule at the one position this specification leaves the key
   // set OPEN. An opaque payload's members are domain-supplied, so this is the
@@ -612,6 +628,10 @@ const toyHandlers = {
   "toy-handler/each-literal.json": handler("title.each", [
     compute(forEach(["a", "b"], "item", putFrom("last", hole("item")))),
   ]),
+  "toy-handler/state-only-report.json": handler("title.archive", [
+    effect(applyOps([relabel("title", "Archived")])),
+    effect(finding("title.archived", "info", "the title is archived")),
+  ]),
 };
 
 const toyServerEffects = {
@@ -621,6 +641,7 @@ const toyServerEffects = {
   "toy-server-effect/host-call-bare.json": hostCall("decline", {}, undefined),
   "toy-server-effect/emit-patch.json": emitPatch([relabel("footer", "Ready")]),
   "toy-server-effect/notify.json": notify("chimes", { event: "relabelled" }),
+  "toy-server-effect/report.json": finding("bell.cracked", "problem", "the bell did not ring"),
   // §2.3 at the open payload position, as the referenced subject's vector
   // pins it: the rule is the encoder's, and a toy-subject host has an encoder.
   "toy-server-effect/notify-ordinal-divergence.json": notify("chimes", {
