@@ -1259,9 +1259,9 @@
         "expectation": "driver-semantics/chain-folds/expectation.json"
       },
       "sha256": {
-        "tree": "8b2be480fbe1a2f4c11217e73b51b54c381b460197a2afe00d44d47beda21d92",
+        "tree": "a833034903cfc6d216eb30e85a1ff6440857836fd37199062e27b935ec8f185f",
         "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
-        "expectation": "2203c451a35e3ec98257305c22017d6b0ad4e3b2320ea38290ffb042a56d8842"
+        "expectation": "bd23bde8690906eaebb1461fb862392d87c47c9c6bcb7e4c84488ead56bc3ddf"
       },
       "steps": 2,
       "description": "A chain of two writes to one key, where the second wins. Ordered composition pinned as ORDER rather than merely as both-applied."
@@ -1279,9 +1279,9 @@
         "expectation": "driver-semantics/closure-free-effects/expectation.json"
       },
       "sha256": {
-        "tree": "116865a3b76737f725f5925b1f5940d279405b31f31c5deedb5eee01c5924cfd",
+        "tree": "545e124fe148f4c1737fe6a55a10afc9228a29fbbd89f35d03a78dd3db1a9523",
         "events": "23a62cc070f44cea84281c490bef382e6ee559324fc5d9b4b710cb7c1a68abe2",
-        "expectation": "b18e5d3ca5be0139ba9b9bff80dca7953dc9a1a779d77bc769f69d777aa8f525"
+        "expectation": "65b00281850ee5fcfd001a7b5b4c9d502b023bb258bca916d4ed19237cd9f755"
       },
       "steps": 3,
       "description": "Two surface effects, one per step, recorded in the as-emitted envelope of the client-effect family. The effect a step reached is the shared fact; what a surface then does with it is not (§5.5)."
@@ -1299,9 +1299,9 @@
         "expectation": "driver-semantics/coverage-floor-passthrough/expectation.json"
       },
       "sha256": {
-        "tree": "8d8ab3f55accf2d3696b7ea63ff24986e443dada69ad86f43c26315413f5dbe4",
+        "tree": "146088462302cab4f38ede3e92b2962007a691b7e0231805318a507b3d7b132e",
         "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
-        "expectation": "5ac0fec1cdc5e37dd27581236b1a113d1183645f144c45df72c0d7f08da7baa8"
+        "expectation": "db284e2d9f48fcb48170936046b3fce165bd94dc08ff2a769c9dcb821fcf4d1d"
       },
       "steps": 2,
       "description": "The kinds a re-resolution pass deliberately does NOT reach. A negative result recorded on purpose, so a later widening of the floor changes an expectation rather than moving behaviour silently."
@@ -1319,9 +1319,9 @@
         "expectation": "driver-semantics/coverage-floor-reactive/expectation.json"
       },
       "sha256": {
-        "tree": "6d40fea61c26d880c73b5bfc88315d6e5e1f0dd817639af257db859ca533ad92",
+        "tree": "2acdb9d9d564fb271714b59ca7ef2b2213ecf536a61440fc1449ebd5b108bcfa",
         "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
-        "expectation": "0e8d7c9db3556af0d1988d0a1aca5af448f764aaeb0263f525db6f787521ec2f"
+        "expectation": "e741cbc38154f89a6eaa41d2578877e439e4f63cff9ed418bc9fb303c291fa0a"
       },
       "steps": 2,
       "description": "One state write and several bound fields, every one of which must re-resolve — the floor a conformant loop reaches."
@@ -1339,9 +1339,9 @@
         "expectation": "driver-semantics/documented-no-ops/expectation.json"
       },
       "sha256": {
-        "tree": "ef1270aa52b06a9c21a4c82d63ab1c4bd4b4296f3c3b038833ce968a7b72a521",
+        "tree": "a5c848b3b8abdf5f885b024e28843f4d20904273c3c951f54250a8cabd9507ce",
         "events": "57768c0ee3995edffcd20be11304cd4924ebd9ff881e2825446706eec4194fae",
-        "expectation": "26d88daa9eac2addf377dfadf54775857f91fb9136e95c7c38dfc7530e7434a6"
+        "expectation": "305a60758de1e34156656b67a6670f95c1da3d1b0170abdbe8fa385b656a9c26"
       },
       "steps": 4,
       "description": "Three arms that are inert on the bounded path by design. A placement that quietly grew an implementation of one of them diverges here rather than passing as a richer host."
@@ -1359,9 +1359,9 @@
         "expectation": "driver-semantics/fixed-base-reresolution/expectation.json"
       },
       "sha256": {
-        "tree": "09e1898211c3d34e785b7f789ab7835d68f3bf15045f3b2784c7c86d639b5c21",
+        "tree": "74a9a8c8a4f3637acb3ea4108b8657ed6cdf3523988bf140c7de7b069d0ab335",
         "events": "c1bf1a9944665ae850267cf97c7912d84cc891beb4d01ba3d5b3187375090407",
-        "expectation": "ab19fff870bd064b830e31e6e5177924a356bffdbba03b47a801fdf7ddacf028"
+        "expectation": "48d0f9f25e51335b7482d153755f087d9fdab9d0e13b4db99c0ff27fb802a1b0"
       },
       "steps": 3,
       "description": "Two writes to one key, one per EVENT. Re-resolution is against the fixed base tree (§10.5): a host folding its own output resolves the binding away at step 1 and cannot reach it at step 2, which every one-event scenario passes over."
@@ -1379,9 +1379,9 @@
         "expectation": "driver-semantics/nested-handler-call/expectation.json"
       },
       "sha256": {
-        "tree": "6b0ec24250e9dba9c531b8a9ba9f0f2f6be7915e4bd175ef68a84d70cb6ef89e",
+        "tree": "8b8b51b64bbdf04fb92519c87892f9c1881e2e8d02ae8b496011c638e3f96786",
         "events": "a67b0e99d64013d8c945c71a2d8956bd4a804b2299a794d00ccc95a4bc0d4787",
-        "expectation": "e18afa857da793f085ffa338b9318e6a61afa6a71c0fea90eae1ff25cc7715a8"
+        "expectation": "65e8f43f36792be462d81004a833b40115be49516224b9f70087f87feb4b2efc"
       },
       "steps": 2,
       "description": "A call action nested inside a chain between two writes. With no handler registered it resolves to the documented no-op of §4.2 and the chain folds around it untouched — the position a top-level-only recognition could not produce."
@@ -1399,9 +1399,9 @@
         "expectation": "driver-semantics/refused-navigate/expectation.json"
       },
       "sha256": {
-        "tree": "93d05c9024978c54ee6811bad427312280a9719d61dfb0944744f0ff22bfbeb2",
+        "tree": "6dbae3d35e30c0c8ba61be8d6f61db0f38a7c28778243a77a9714882b3da43c5",
         "events": "f077c4fc1155fe0da910d319996c5a53726380a80edb6eda90cb06bdbe53c271",
-        "expectation": "d59fa4d7ce4576c7bfce2c62f46ff0812a64368795e414248c42a93e3f979a00"
+        "expectation": "a210fb636575b4a2d41e8f30558ece8a272ad1fa9fc278585878d7eb65f94c60"
       },
       "steps": 2,
       "description": "An unsafe route is refused rather than silently neutered, and refused identically everywhere, because the check belongs to the shared algebra rather than to a surface."
@@ -1420,9 +1420,9 @@
         "expectation": "driver-semantics/refused-destination/expectation.json"
       },
       "sha256": {
-        "tree": "e95c95df73bac2aa658ec5831e168f17f562d6386d9479c578e6242800e63347",
+        "tree": "d655fe341f51c9c1a6f0300f908da25ad519bbf68703fcb18b0ebc05a5885464",
         "events": "cff8ef36d7429159ffa2a4af4b16109b9c7277f3d511b8acdeb12c4fa257397b",
-        "expectation": "99f9cfe0cca735d0268a78984b95e141b3552ba6c3a409a4f5529586bb9fe345"
+        "expectation": "c3fbf72d939a51fc7e15b80507dbc6a20fd6e074345053af566200ceb69a6ee4"
       },
       "steps": 3,
       "description": "A destination the fold ADMITS and the performer seam declines. The scheme floor passes a well-formed https route, so the effect is reached with the value the program named — and the denial beside it records that this host does not send it there. The one shape that could not be recorded before denials existed: identical to a permissive host in every member but one."
@@ -1440,9 +1440,9 @@
         "expectation": "driver-semantics/server-handler-call/expectation.json"
       },
       "sha256": {
-        "tree": "5668372b48fd6ed4e40958f69a374c1cd26f7025087e4ceaef667d37a2464339",
+        "tree": "080bb622e5ee91b1d68e256b62c04f128c749a20ccdf06898f78f70302fadc29",
         "events": "a67b0e99d64013d8c945c71a2d8956bd4a804b2299a794d00ccc95a4bc0d4787",
-        "expectation": "ce663de198b6f8f469efa675345391c8d9893fb098d5fa381ca77abff047c75c"
+        "expectation": "5463a3d93f6364637307cae365aea91cfc8c7fd41a6e867f95aa869434c0a446"
       },
       "steps": 2,
       "description": "A tree naming a handler endpoint. Where no handler is registered the arm reaches nothing, which is what makes a logic host's divergence from the other placements exactly the handler and nothing else."
@@ -1460,9 +1460,9 @@
         "expectation": "driver-semantics/setstate-rebinds/expectation.json"
       },
       "sha256": {
-        "tree": "531997d8520141ac84e0d3a4e794758a7eeedc183168eb5fc76bb2390cdde6fe",
+        "tree": "cf7550b48fee62a3818260384dd8d2d4b10c50b2c4645529453321929b948c43",
         "events": "bcc244a975e5d24fed0279c18e3a4489e4c306fee478f07c0adcc88276a8809e",
-        "expectation": "8fa5a266bf46644d68f5e74dca30b64c644fcddd52061726e02dca4733150fbf"
+        "expectation": "2715de9ae95a58afd8dd703324a04b358d25644b4eb8fd0a11bde31960fac67d"
       },
       "steps": 2,
       "description": "A single state write and the re-resolution that makes it visible — the smallest complete step a bounded loop takes."
@@ -1480,9 +1480,9 @@
         "expectation": "driver-semantics/confirm-answer-yes/expectation.json"
       },
       "sha256": {
-        "tree": "7e73b1faaef3193ff03461c56207014d49dc8d98069bd5c113ee6cc6adf72715",
+        "tree": "1213f8ab85735dff74ba7067a15ce7c4598a2c0f572d3417bdc8067fbd573029",
         "events": "347ad9fc6c34af376e4d2364e8dd278a88f548579ed8656d75ac54c140bde7bf",
-        "expectation": "e6026f4d3103afeb1466fa0fec59957eb50345c6de41e5ce14dd8a2ce6f15e08"
+        "expectation": "46267d78ae3eb76556dbdb9b5c9831f3530e4a9efc12aa5f257be89a7855449d"
       },
       "steps": 3,
       "description": "A confirm is TWO events on the bounded path. The gesture asks (the Confirm effect, its token the confirm's address — here the empty path, so the node id and a bare #) and runs no continuation; the answer, the originating event re-delivered with confirmToken and confirmAccepted true, runs onConfirm as the core's Choose over the answer (§10.5)."
@@ -1500,9 +1500,9 @@
         "expectation": "driver-semantics/confirm-answer-no/expectation.json"
       },
       "sha256": {
-        "tree": "1dc844e0ff66a611c5c8d0dfff2a49c42ddc52fc2ec05bdf1756495fe4110903",
+        "tree": "b7f2f2edb7eafb169e845e8ca9f293185b448fbc4ec6bca7b9ab19242f0cfe17",
         "events": "432e18f1d873cce97a3ee8d0e88337f05cf69351def8ac05af88d79f0a0b4890",
-        "expectation": "a3e8fec7621529f618bb5d40279f06790e389b8640625e2f5fdea2508cb46937"
+        "expectation": "df4e60ec8432c9ce796a47e347edaef4a0b2115b02e85da6e67f229fb2c6baaf"
       },
       "steps": 3,
       "description": "The answer false runs onCancel. The confirm sits second in a chain, so the gesture's first member runs on the ask and the question's token is the confirm's position in the chain."
@@ -1520,9 +1520,9 @@
         "expectation": "driver-semantics/confirm-withdrawn/expectation.json"
       },
       "sha256": {
-        "tree": "15b14728f4d7e0a88bf613b1c25c056746e757918f52f54d56000d9567a06bad",
+        "tree": "a7af2bdcb059015bab941d8bd61df3a7cfc87ffc4e4e50d42680bd22d7de79f0",
         "events": "ba44755fd10ed3e88a07072380eb712e331e39090afe7c4be3c2529ef2927aa9",
-        "expectation": "fc6d026f755d0d12059e98cf9339a7988b5d1a723245b370124796e384151348"
+        "expectation": "dd50e553a91cce60809a52d0d33f87f5d303183e919c5aad13972bba4d7e20db"
       },
       "steps": 4,
       "description": "An admitted event that is not the answer WITHDRAWS the pending question, so the late answer is refused as an event and its continuation never runs — the reader moved on (§10.5)."
@@ -1540,9 +1540,9 @@
         "expectation": "driver-semantics/confirm-duplicate-answer/expectation.json"
       },
       "sha256": {
-        "tree": "7e73b1faaef3193ff03461c56207014d49dc8d98069bd5c113ee6cc6adf72715",
+        "tree": "1213f8ab85735dff74ba7067a15ce7c4598a2c0f572d3417bdc8067fbd573029",
         "events": "49ab64e4df8223dcb891e1bc5cbd6638bde1f5a38b60b024923caf8e36773d33",
-        "expectation": "e340c0b4c55a15b4b04004be738fa952e76411c387cef571f29bc32aba8eb8f0"
+        "expectation": "0707df52737d4f24264424d986265722868bc5392a721a3ea044629fd4c610ca"
       },
       "steps": 4,
       "description": "An answer CONSUMES its question: the same answer delivered again is refused as an event, so a replayed yes does not run the continuation twice (§10.5)."
