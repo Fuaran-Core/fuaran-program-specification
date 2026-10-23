@@ -1279,6 +1279,28 @@
       "description": "A finding whose severity is present and empty."
     },
     {
+      "id": "toy-server-effect/reject-empty-query-name",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-empty-query-name.json",
+      "sha256": "9c3d9e78c0bcc4db92cbf11ea8d2862aa82b789ebf5b2a25c22a2be4d1fcd0a1",
+      "reject": "missing-member",
+      "description": "A read whose query slot name is present and empty (§5.1: `name` MUST be non-empty). An empty name names no slot the result could land in."
+    },
+    {
+      "id": "toy-server-effect/reject-empty-channel",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-empty-channel.json",
+      "sha256": "9cfeed8977833d020440260e777eec4411b220d26c11cc53faeb57f7aaf1a594",
+      "reject": "missing-member",
+      "description": "A notification whose channel is present and empty (§5.1: `channel` MUST be non-empty). An empty channel names nothing a host could deliver to."
+    },
+    {
       "id": "toy-server-effect/reject-declared-capability",
       "family": "toy-server-effect",
       "subject": "toy",
