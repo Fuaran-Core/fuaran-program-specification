@@ -352,6 +352,26 @@
       "description": "A finding whose code is present and empty. An empty token names nothing a host's vocabulary could hold."
     },
     {
+      "id": "server-effect/reject-empty-query-name",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-empty-query-name.json",
+      "sha256": "ff0e619e9bd4e6e12fe27111c3870f4ba108ecc6561da3dad02a6176831bfb60",
+      "reject": "missing-member",
+      "description": "A read whose query slot name is present and empty (§5.1: `name` MUST be non-empty). An empty name names no slot the result could land in."
+    },
+    {
+      "id": "server-effect/reject-empty-channel",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-empty-channel.json",
+      "sha256": "fb0a7f4364d9495644e65bef1dba2026c40961ad56e839e1ba28452db453bd88",
+      "reject": "missing-member",
+      "description": "A notification whose channel is present and empty (§5.1: `channel` MUST be non-empty). An empty channel names nothing a host could deliver to."
+    },
+    {
       "id": "server-effect/reject-declared-capability",
       "family": "server-effect",
       "kind": "reject",
