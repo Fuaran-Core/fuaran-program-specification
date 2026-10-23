@@ -126,11 +126,21 @@ const CLASSES = new Set([
   "tree-declared-result-target",
   "malformed-referenced-value",
   "malformed-content-address",
+  "malformed-json",
+  "limit-exceeded",
   // `content-address-mismatch` is in Appendix A and deliberately NOT here: the
   // document it addresses is not in this corpus, so no reject vector can name
   // it and admitting it would advertise a class this corpus cannot certify.
   // Same shape as `unencodable-op` above.
 ]);
+
+// §2.10 and §2.11 — the bounds a `limit-exceeded` vector may name as the one it
+// passes. Closed, on the classes' argument: a vector naming a bound the text
+// does not state would be certified by every host as whatever it happened to
+// refuse first. `stringLength`, `arrayLength`, `objectMembers` and
+// `documentBytes` are stated and deliberately NOT reachable here: a vector one
+// past any of them is megabytes, so a host's own suite certifies them (§10.1).
+const LIMITS = new Set(["depth", "actionDepth", "actionsPerProgram", "repeatBound", "eachCollection"]);
 
 // §7.4's ranking, needed here to recompute a vector's verdict from its own
 // declared reasons.
@@ -264,6 +274,13 @@ for (const v of manifest.vectors ?? []) {
   if (v.kind === "reject" && !v.reject) fail(`${id}: a reject vector must name its refusal class`);
   if (v.kind !== "reject" && v.reject) fail(`${id}: names a refusal class but is kind ${JSON.stringify(v.kind)}`);
   if (v.reject && !CLASSES.has(v.reject)) fail(`${id}: refusal class ${JSON.stringify(v.reject)} is not in Appendix A`);
+
+  // A limit vector names the bound it passes, and only a limit vector does: the
+  // class says "a bound", and a harness that checks the bound needs to know which.
+  if (v.reject === "limit-exceeded" && !LIMITS.has(v.limit))
+    fail(`${id}: a limit-exceeded vector must name its limit from ${[...LIMITS].join(" / ")}`);
+  if (v.reject !== "limit-exceeded" && v.limit !== undefined)
+    fail(`${id}: names a limit, which only a limit-exceeded vector carries`);
 
   // §7.4 — every handler ROUND-TRIP vector carries the derived classification a
   // harness must reproduce. Required on that family and forbidden elsewhere, so

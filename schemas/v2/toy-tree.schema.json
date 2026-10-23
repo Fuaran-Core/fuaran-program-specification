@@ -79,10 +79,16 @@
       ]
     },
     "count": { "type": "integer", "minimum": 0 },
+    "repeatCount": {
+      "description": "A repeat's literal bound, or a parameter bound's `hi`: at most §2.11's repeat-bound ceiling, 1024 (`limit-exceeded`).",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1024
+    },
     "bound": {
       "description": "A repeat's bound: a literal count, or a parameter read from the store within a declared range.",
       "oneOf": [
-        { "$ref": "#/$defs/count" },
+        { "$ref": "#/$defs/repeatCount" },
         {
           "type": "object",
           "required": ["$type", "count", "hi", "lo"],
@@ -90,7 +96,7 @@
           "properties": {
             "$type": { "const": "Parameter" },
             "count": { "$ref": "#/$defs/expr" },
-            "hi": { "$ref": "#/$defs/count" },
+            "hi": { "$ref": "#/$defs/repeatCount" },
             "lo": { "$ref": "#/$defs/count" }
           }
         }
@@ -167,7 +173,12 @@
           "properties": {
             "$type": { "const": "ForEach" },
             "body": { "$ref": "#/$defs/action" },
-            "collection": { "type": "array", "items": { "not": { "type": "null" } } },
+            "collection": {
+              "description": "At most §2.11's each-collection ceiling, 1024 elements (`limit-exceeded`).",
+              "type": "array",
+              "maxItems": 1024,
+              "items": { "not": { "type": "null" } }
+            },
             "placeholder": { "$ref": "common.schema.json#/$defs/nonEmptyString" }
           }
         },

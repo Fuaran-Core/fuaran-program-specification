@@ -1005,6 +1005,178 @@
       "description": "A toy call declaring a result target, inside a sequence. The codec reads the target through the subject's own declared reading, so the refusal is the referenced subject's class at the same point (§9.5, §10.7)."
     },
     {
+      "id": "toy-handler/reject-repeated-member",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-repeated-member.json",
+      "sha256": "8dfa30405a51e8e548f9f2cb79e9aeed5335b4be2807e513e7de2d8c878778c3",
+      "reject": "malformed-json",
+      "description": "A repeated member name in the envelope. Two readers that each took a different occurrence would register two different handlers from one document; §2 refuses the text instead (Core row 1)."
+    },
+    {
+      "id": "toy-handler/reject-repeated-member-nested",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-repeated-member-nested.json",
+      "sha256": "6887ab2b539a5569272c34768ed424379fd9c4bfc9595cb59df068bc83f97588",
+      "reject": "malformed-json",
+      "description": "A repeated member inside a literal value a compute stage writes: the refusal reaches every depth, a position this document does not decompose included (Core row 1)."
+    },
+    {
+      "id": "toy-handler/reject-trailing-content",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-trailing-content.json",
+      "sha256": "08509cade8372321435ad665cc13b1ed9158a30e18291dca0f512418fa0fd2bc",
+      "reject": "malformed-json",
+      "description": "A second value after the root. A reader that stopped at the first would act on half the bytes it was handed (Core row 2)."
+    },
+    {
+      "id": "toy-handler/reject-number-grammar",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-number-grammar.json",
+      "sha256": "d25f8da34075f471ab5d195bdab35df7b3460ae423891b515e44d3bd5c9c8f10",
+      "reject": "malformed-json",
+      "description": "A literal repeat bound with a leading zero, outside the RFC 8259 number grammar (Core row 3)."
+    },
+    {
+      "id": "toy-handler/reject-bare-nonfinite",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-bare-nonfinite.json",
+      "sha256": "148a5f710b89001019b1d10db3a9a22880d60c090af44236b04454851a7e06e1",
+      "reject": "malformed-json",
+      "description": "A bare NaN literal, which is not a JSON token (Core row 4)."
+    },
+    {
+      "id": "toy-handler/reject-raw-control",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-raw-control.json",
+      "sha256": "ccc94ffe7cb3b02af0aab42ba0f4abe9454eb1ab93c19c13698184c82dee57d6",
+      "reject": "malformed-json",
+      "description": "A raw TAB inside the registration key, unescaped. §2.7's encoder escapes the whole control range, so no conformant encoder emits it (Core row 5)."
+    },
+    {
+      "id": "toy-handler/reject-unpaired-surrogate",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-unpaired-surrogate.json",
+      "sha256": "a87f7d37f3724398a8460720f8a5c1b47ed1355db6f1b6fa649bfa992a8b47d5",
+      "reject": "malformed-json",
+      "description": "An escaped high surrogate with no low surrogate after it: a string no UTF-8 document can carry (Core row 6)."
+    },
+    {
+      "id": "toy-handler/reject-overflowing-exponent",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-overflowing-exponent.json",
+      "sha256": "45e470bc0d9db9bebdc1b9b00c4cd0d4b882261f45804de89b60838d3041d25c",
+      "reject": "malformed-json",
+      "description": "A number whose exponent overflows every finite float. The program wire takes Core's answer and refuses it; §2 states that it diverges from the tree wire's section 20 here (Core row 7)."
+    },
+    {
+      "id": "toy-handler/reject-limit-json-depth",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-json-depth.json",
+      "sha256": "09c05f3a37eb01311ee8ce98657e0ad21d0a8230ab891c43aa3f7b69c8634930",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A literal value nested so that the document's 257th container opens: one past §2.10's JSON depth of 256, refused at that bracket before it is read."
+    },
+    {
+      "id": "toy-handler/reject-limit-action-depth",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-action-depth.json",
+      "sha256": "94ea147998788849e60d732e90018dc28c46ee835f7f3fc685d1940a419b21ef",
+      "reject": "limit-exceeded",
+      "limit": "actionDepth",
+      "description": "Thirty-three nested sequences: one past §2.11's action depth of 32, refused at the 33rd before anything beneath it is walked."
+    },
+    {
+      "id": "toy-handler/reject-limit-actions-per-program",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-actions-per-program.json",
+      "sha256": "d9fa57e2e3d1ba5e9cd2378e9f24cd92a02cf15d3c7f4071b845f3182010ea4e",
+      "reject": "limit-exceeded",
+      "limit": "actionsPerProgram",
+      "description": "One sequence of 1024 actions — 1025 with the sequence itself, one past §2.11's 1024 actions per program."
+    },
+    {
+      "id": "toy-handler/reject-limit-actions-across-stages",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-actions-across-stages.json",
+      "sha256": "d9d4cc7300eac0cde7eddaf6a3afa3bae33ee2147c200c3c4b811a86f491b5c0",
+      "reject": "limit-exceeded",
+      "limit": "actionsPerProgram",
+      "description": "Two compute stages of 601 actions each: each within §2.11's bound alone, 1202 together. The bound is the handler's, refused at the second stage."
+    },
+    {
+      "id": "toy-handler/reject-limit-repeat-bound",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-repeat-bound.json",
+      "sha256": "fa18c9dc0dec392b45426023d5b2276cb08e2dd4683ac4d7e52652cda3a2e26d",
+      "reject": "limit-exceeded",
+      "limit": "repeatBound",
+      "description": "A literal repeat bound of 1025, one past §2.11's repeat-bound ceiling of 1024."
+    },
+    {
+      "id": "toy-handler/reject-limit-parameter-hi",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-parameter-hi.json",
+      "sha256": "81bf89d9c5bd0d72e8cfac649cd0b8f1e4779c1de6cdaae1dfb2b4ebdf4e3422",
+      "reject": "limit-exceeded",
+      "limit": "repeatBound",
+      "description": "A parameter bound whose hi is 1025: the budget prices a parameter bound at the top of its range, so the ceiling binds hi, whatever the store will hold."
+    },
+    {
+      "id": "toy-handler/reject-limit-each-collection",
+      "family": "toy-handler",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-limit-each-collection.json",
+      "sha256": "d81cc388e4e1a79e61b91d9b6fa537b63d48e4e049ac238994ae5c36f70861bd",
+      "reject": "limit-exceeded",
+      "limit": "eachCollection",
+      "description": "A literal collection of 1025 elements, one past §2.11's each-collection ceiling of 1024."
+    },
+    {
       "id": "toy-server-effect/run-query",
       "family": "toy-server-effect",
       "subject": "toy",
@@ -1129,6 +1301,17 @@
       "description": "An op stage carrying an op of the other subject's vocabulary. At the toy subject an op is a Relabel, and anything else does not decode under its vocabulary (§10.7)."
     },
     {
+      "id": "toy-server-effect/reject-repeated-member",
+      "family": "toy-server-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-repeated-member.json",
+      "sha256": "e259c443c89a288eafc55d121859ad781296f10b32ed92c637d5c42f05c5a925",
+      "reject": "malformed-json",
+      "description": "A notification naming its channel twice. Which channel it reaches would be the reader's choice; §2 makes it no reader's (Core row 1)."
+    },
+    {
       "id": "toy-client-effect/sound",
       "family": "toy-client-effect",
       "subject": "toy",
@@ -1159,6 +1342,17 @@
       "sha256": "dae8dbd2b275743f44b17515d9026e7af1e2b712deb04d7f88464fdf7ce57f76",
       "reject": "missing-member",
       "description": "A Sound with no volume. All three members are required."
+    },
+    {
+      "id": "toy-client-effect/reject-repeated-member",
+      "family": "toy-client-effect",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "toy-client-effect/reject-repeated-member.json",
+      "sha256": "870e884970b27b4873b411859f8ada5f612eb7f371c2b1d40a00e6edfa2c4796",
+      "reject": "malformed-json",
+      "description": "A client effect naming its volume twice, once inside the toy's bound and once past it — the parser differential §2 closes, at the envelope §5.2 does not otherwise respecify (Core row 1)."
     },
     {
       "id": "toy-outcome/committed",
@@ -1243,6 +1437,17 @@
       "sha256": "37dbe5445516366a64cbe7aa5bd8cf3c5066e5d909adbd2147fe4996e83c3b0b",
       "reject": "malformed-referenced-value",
       "description": "Patches carrying an op of the other subject's vocabulary: at the toy subject a patch is a Relabel (§10.7)."
+    },
+    {
+      "id": "toy-outcome/reject-repeated-member",
+      "family": "toy-outcome",
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-repeated-member.json",
+      "sha256": "afc304a027c7dd618c212dceec54a28e7f5cfb979861be9df5baeb788633c9f6",
+      "reject": "malformed-json",
+      "description": "An outcome that says it committed and that it did not. A caller reading the first would believe the work stands (Core row 1)."
     }
   ],
   "scenarios": [

@@ -76,6 +76,11 @@ values are read under, `reaching` or `pure-read`. It is an INPUT, not a derived 
 recomputes under it and never writes it — and a vector without one is read under `pure-read`, the
 in-memory fold.
 
+A `limit-exceeded` reject vector carries **`limit`** (§2.10, §2.11): the bound it passes, from the
+closed list the manifest check holds it to. The class is what a reader must refuse it for; the limit
+lets a host whose refusal names its bound check that it was that one — a depth vector refused for
+its action count would otherwise pass on the class alone.
+
 The reasons are the finer of the two, and they are what makes the expectation discriminate an arm
 rather than a grade: two defect tokens of one grade produce one `replaySafety`, so a reader that
 confused `relative-addressing` with `non-literal-write` would pass a corpus pinning only the value.

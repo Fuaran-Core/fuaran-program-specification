@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fuaran.com/program-wire/v2/common.schema.json",
   "title": "Program wire — shared shapes",
-  "description": "Structural definitions shared by the family schemas. These are SUBORDINATE to PROGRAM_WIRE.md: a schema can say that a member is a string, and cannot say that a capability is derived rather than carried, that `performed` is execution order, or that an uncommitted outcome reporting work must carry a perform-phase failure. Where a schema and the normative text disagree, the text wins and the schema is the defect.",
+  "description": "Structural definitions shared by the family schemas. These are SUBORDINATE to PROGRAM_WIRE.md: a schema can say that a member is a string, and cannot say that a capability is derived rather than carried, that `performed` is execution order, or that an uncommitted outcome reporting work must carry a perform-phase failure. Where a schema and the normative text disagree, the text wins and the schema is the defect. Nor can a schema state §2's syntax layer (a repeated member, content after the root) or most of §2.10–§2.11's limits (a nesting depth, an action count): every document these schemas describe is ALSO held to them, and a schema that admits a document past one does not make it conformant.",
   "$defs": {
     "nonEmptyString": {
       "type": "string",

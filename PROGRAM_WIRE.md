@@ -76,9 +76,33 @@ compatible.
 
 ## 2. Canonical encoding
 
-The documents this specification **introduces** — every family in §1 except **client-effect** — adopt
-the canonical JSON discipline of the tree wire specification. The rules that bite here are restated;
-they are not new, and an implementation that already emits canonical trees is already compliant.
+**The JSON syntax layer is cited, not stated here.** Every document on this wire — every family in
+§1, **client-effect** included — is one RFC 8259 text read under the strict grammar of the Fuaran
+Core JSON-syntax layer: the section *The JSON-syntax layer every wire cites* of Fuaran Core's
+conformance-corpus document (`docs/conformance-corpus.md`), which Core's reference reader answers at
+every one of its entry points and Core's model of that reader proves (a parsed object's member names
+are pairwise distinct). This specification restates none of its rows. A document Core's grammar
+refuses is refused here as **`malformed-json`**, at any nesting depth, an opaque payload position
+(§5.1) included — among others, and named because each is a parser differential: **a repeated member
+name in one object**, content after the root value, a number outside the RFC 8259 grammar, a bare
+`NaN` / `Infinity` / `-Infinity`, a raw control character inside a string, and an unpaired surrogate.
+A repeated member is the one most worth the sentence: two readers that each kept a different
+occurrence of `name`, `channel` or `committed` would act on two different documents built from the
+same bytes, and no rule below this layer can recover which one the author meant. **This wire takes
+Core's answer on every row, the overflowing exponent (`1e999`, Core's row 7) included**: the tree
+wire specification's section 20 admits that token and this wire refuses it, which is the one place the
+two wires' syntax layers differ — no conformant encoder emits it, since a non-finite float has no
+rendering under rule 8. What this specification states for itself is everything above the syntax
+layer: rule 5's no-null rule (Core's grammar admits `null`; this wire does not), rule 9's
+undeclared-member rule, rule 6's `$type` dispatch, and the limits of rules 10 and 11 — Core supplies
+the mechanism that enforces a bound while the document is read, and states no value; the VALUES are
+this specification's.
+
+**The canonical form.** The documents this specification **introduces** — every family in §1 except
+**client-effect** — are written in the canonical form below. Rules 1–9 coincide with the tree wire
+specification's canonical discipline and are restated rather than adopted, so this document is the
+one place they are read from; an implementation that already emits canonical trees is already
+compliant.
 
 1. **UTF-8, no byte-order mark.** Structural punctuation is ASCII. Non-ASCII characters inside
    strings pass through as their literal UTF-8 sequence — no `\uXXXX` escaping of non-control
@@ -120,6 +144,54 @@ they are not new, and an implementation that already emits canonical trees is al
    declare MUST be refused (`undeclared-member`). This is stricter than a must-ignore rule and it is
    deliberate: §4.4 explains why, and it is the mechanism that keeps §5.1's capability derived rather
    than asserted.
+10. **Syntactic limits.** Every document on this wire, every family included, is read under these
+    bounds, each enforced **while the document is read** — before the container, string, item or
+    member it guards is read — never by measuring what was built. A document past any of them MUST
+    be refused **`limit-exceeded`**, never `malformed-json`: it is well-formed and merely too large
+    to walk, and calling it malformed sends its author to repair the wrong thing.
+
+    | Limit | Value | Bounds, and where a breach is raised |
+    |---|---|---|
+    | `depth` | **256** | nested objects and arrays, the root counting as one; at the bracket of the container opened past it |
+    | `stringLength` | **1 048 576** | Unicode code points in one decoded string or member key, a surrogate pair counting as one; at the code point that passes it |
+    | `arrayLength` | **100 000** | items in one array; where the item past it would start |
+    | `objectMembers` | **100 000** | members in one object; at the key of the member past it |
+    | `documentBytes` | **33 554 432** | UTF-8 bytes of the whole document; before anything is read |
+
+    **The values are the tree wire specification's own** (its section 21), and deliberately so. A
+    referenced position (§3) carries a value of that specification spliced verbatim, and a program
+    wire tighter than it would refuse a value its own specification calls valid — two languages for
+    one value, which is the differential this rule exists to remove; one looser would buy nothing,
+    because the referenced value is held to its own specification anyway. A host MAY apply a
+    stricter **operational** ceiling — a constrained device sizing its stack and arena will — as
+    deployment policy: it documents the ceiling, and it never describes a document it refuses under
+    it as non-conformant or malformed.
+11. **Program-shape limits.** A handler's compute stages carry actions, and the shape of what a
+    program declares is bounded too, read through the action vocabulary's own reading of its
+    composition (§3: a sequence, a branch, a bounded repeat, an iteration, and the single steps).
+    Each bound is checked **top-down, before the action beneath it is read**, and a handler past any
+    of them MUST be refused **`limit-exceeded`**.
+
+    | Limit | Value | Bounds |
+    |---|---|---|
+    | `actionDepth` | **32** | the nesting of one compute stage's action, the action itself counting as 1 |
+    | `actionsPerProgram` | **1 024** | the actions one handler declares, summed in stage order across every compute stage, each composition counting as one action beside its members |
+    | `repeatBound` | **1 024** | a bounded repeat's literal bound, and a parameter bound's `hi` |
+    | `eachCollection` | **1 024** | the elements of an iteration's literal collection, and the declared ceiling of one over a collection the store holds |
+
+    The **declared** form is measured, not the run: an iteration's body counts once whatever its
+    extent, and a repeat's body once whatever its bound. What a run costs is a host's budget, which
+    prices the same document before it runs; these bounds are the size of the document, so a host
+    can size its recognizer before it has read a single value. A parameter bound is bounded at `hi`
+    because that is what a budget prices it at, whatever the store will hold.
+
+    **The refusal is addressed, and never echoes the document.** The detail of a `limit-exceeded`
+    refusal names the limit, its value, and where it was passed: for rule 10, the position in the
+    document; for rule 11, the stage's ordinal and an ordinal path through the composition
+    (`stages[1].action/0/whenTrue/body` — a member's index in a sequence and the composition's own
+    arm names). Neither carries a member name or a string the document chose (§4.4). A reader
+    refuses **for the class** (§10.1); a `limit-exceeded` vector also names the limit it passes, and
+    a host whose refusal names its limit SHOULD check that it is that one.
 
 **The one enumerated exception is the client-effect family (§5.2)**, whose wire form predates this
 document. It uses a `kind` member rather than `$type` and orders its members by declaration rather
@@ -1195,6 +1267,19 @@ An implementation conforms by:
    number of vectors it ran equals the number the manifest enumerates for its role and subject (§10.7),
    and that a mutated fixture makes it go red.
 
+**What the corpus reaches of §2's syntax layer and limits, and what a host certifies itself.** The
+corpus carries a `malformed-json` vector per Core row at the handler document, a repeated member at
+every document kind the toy subject certifies, and a `limit-exceeded` vector — naming its `limit` —
+for `depth` and for each of rule 11's bounds, all at the **toy** subject (§10.7). Three things it does
+not carry, each deliberately. A vector one past `stringLength`, `arrayLength`, `objectMembers` or
+`documentBytes` is megabytes, so those four bounds, and every bound's acceptance AT its value, are
+certified by a host's own suite, as `content-address-mismatch` is. A rule-11 bound over a collection
+the store holds needs a spelling the toy vocabulary does not have. And the **referenced** subject's
+families and the two vocabulary-free documents (§10.7) carry none yet: the hosts certifying those
+vectors must move with them in one change-set (§11.1), and a vector they have not caught up with
+would be a specification of nothing. Until they do, a host still MUST refuse those documents by
+rules 10 and 11 and by the cited grammar — the corpus not pinning a case does not make it optional.
+
 [`wire-fixtures/manifest.json`](wire-fixtures/manifest.json) is the **authoritative enumeration** of
 families, vectors, scenario families and scenarios. Do not count any of them from a prose description
 of the corpus, including this one — counts drift, and a manifest cannot.
@@ -1862,6 +1947,19 @@ type or ordering is a **breaking** change and takes a new format version. Adding
 adding a refusal class for a document that was already ill-formed, or adding a vector is **additive**.
 This specification is format version **3**; `manifest.json` carries `formatVersion`.
 
+**§2's cited syntax layer and its limits (rules 10 and 11) take no format version, and the reason is
+stated rather than assumed.** The two refusal classes they add, `malformed-json` and
+`limit-exceeded`, are refusals of documents no conformant encoder emits: every row of the cited grammar
+is an input class no encoder can produce (that is the grammar's own admission test), and every limit
+sits above every document this corpus, its emitters and its certifying hosts produce. That is
+additive by the rule above. The one narrowing is real and recorded: a document a reader decoded
+before these rules — a handler declaring two thousand actions, say — is now refused, and before them
+it was refused by no stated rule only because no rule bounded it at all. A text that bounds nothing
+admits a different language at every host, which is the defect; the bound closes it. A reader one
+version of this text behind refuses the same documents as `malformed-referenced-value` where it
+reported a parse failure on that class, and admits the documents past rule 11: being behind is
+diagnosed by the corpus a host certifies against, exactly as for an added arm.
+
 **Version 3 adds `staged-query` to §7.5's closed defect vocabulary, and the host query posture (§7.4)
 that reaches it; and it adds `Report` to §5.1's closed server-effect vocabulary.** Every version-2
 document is a version-3 document, byte-identical and meaning what it always meant. A version-2 reader
@@ -1996,6 +2094,8 @@ Every class a `reject` vector may name. A conformant reader refuses **for the na
 
 | Class | Raised when |
 |---|---|
+| `malformed-json` | the document is not JSON under the strict grammar §2 cites — a repeated member name, content after the root value, a number outside the grammar, a bare `NaN`/`Infinity`, a raw control character in a string, an unpaired surrogate, or any other text that grammar refuses (§2) |
+| `limit-exceeded` | the document passes a syntactic limit (§2.10) or a handler passes a program-shape limit (§2.11); the vector names which in its `limit` member |
 | `null-member` | any member's value is the JSON token `null` (§2.5) |
 | `undeclared-member` | a document carries a member this specification does not declare (§2.9) — including a self-declared `capability` (§5.1), an inline body in a reference (§9.2), and an `origin` on a denial that never consulted a destination (§5.3) |
 | `missing-member` | a required member is absent — or, for a finding's `code` or `severity` (§5.1), present and empty |
