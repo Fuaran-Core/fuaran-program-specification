@@ -21,6 +21,34 @@
     "driver-semantics",
     "driver-semantics-toy"
   ],
+  "adoption": {
+    "fuaran-program-rs": {
+      "repository": "Fuaran-Core/fuaran-program-rs",
+      "sha": "f7767143401f719ee3ac2fd08ee306ca2b5ad215",
+      "subject": "toy",
+      "families": [
+        "toy-handler",
+        "toy-server-effect",
+        "toy-client-effect",
+        "toy-outcome"
+      ],
+      "vocabularyFreeDocuments": [
+        "invocation",
+        "logic-tree-ref"
+      ],
+      "scenarioFamilies": [
+        "driver-semantics-toy"
+      ],
+      "requires": [
+        "bounded-loop",
+        "handler-loop"
+      ],
+      "hostHandlers": [
+        "toy-relabel"
+      ],
+      "description": "Program's generic core in Rust (Phase 2267). Certifies the codec at the toy subject and the vocabulary-free documents as they stand, and implements the bounded path: it reproduces every driver-semantics-toy scenario, the bounded-loop ones at a placement that answers no call and the handler-loop ones at a placement constructing toy-relabel. The run counts are asserted against this manifest."
+    }
+  },
   "vectors": [
     {
       "id": "handler/minimal",
