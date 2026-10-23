@@ -168,6 +168,12 @@ scenarios have no counterpart in the other and why.
    the manifest enumerates, asserting the same two things about your harness that steps 2 and 3 ask
    for vectors. A host that does not implement the loop skips this step and is not thereby
    non-conformant; it is out of scope for the family.
+6. **Optionally, record your adoption** in the manifest's top-level `adoption` object, under your
+   host's name (`PROGRAM_WIRE.md` §10.1): `repository`, the `sha` of the commit that certified,
+   `subject`, the codec `families` and `vocabularyFreeDocuments` you run, and — if you made the §10.2
+   declaration — `scenarioFamilies`, `requires`, `hostHandlers`, and a short `description`. It is your
+   own statement, read by no checker; your harness at that commit is the evidence. Edit only your own
+   entry.
 
 ## Verifying the corpus itself
 

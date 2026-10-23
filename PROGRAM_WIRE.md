@@ -1284,6 +1284,16 @@ rules 10 and 11 and by the cited grammar — the corpus not pinning a case does 
 families, vectors, scenario families and scenarios. Do not count any of them from a prose description
 of the corpus, including this one — counts drift, and a manifest cannot.
 
+**The manifest may also carry an `adoption` record**, a top-level object keyed by host. Each entry
+is a host's own statement of what it certifies against this corpus: `repository`, the `sha` of the
+host commit whose suite certified it, the `subject` it certifies at (§10.7), the codec `families` it
+runs, the `vocabularyFreeDocuments` it runs as they stand, and — only for a host that has made the
+§10.2 declaration — the `scenarioFamilies` it reproduces, the obligations in `requires` it meets, the
+`hostHandlers` names it constructs, and a one-sentence `description`. It is a record, not a check: no
+checker reads it, no vector or digest depends on it, and it certifies nothing on its own — the
+evidence is the host's harness at that commit, which asserts the run counts and the go-red probes
+above. A host adds or updates its own entry when it certifies, and never another host's.
+
 **Dispatch on a vector's `document`, not on its family.** A family is an organising grouping; the
 `document` member names the top-level document a vector actually is. The two coincide everywhere except
 in `cross-layer`, which deliberately carries a **handler** document to pin §9.5 — a rule about a call
