@@ -153,6 +153,26 @@ which every host constructs from the name (§10.6 registers `toy-relabel`), and 
 answers no call is out of scope for them — not failing them. §10.6 records, per family, which
 scenarios have no counterpart in the other and why.
 
+## Profiles
+
+A host may narrow what it accepts and claim conformance under a **profile** (`PROGRAM_WIRE.md`
+§10.8). Two exist: `canonical-bytes`, which refuses any document whose bytes are not the canonical
+encoding of what they parse to (`non-canonical-bytes`), and `integer-only`, which refuses any number
+token with a fraction or an exponent (`non-integer-number`). A host claiming neither runs exactly what
+it ran before.
+
+The manifest declares each profile in a top-level `profiles` object and enumerates its vectors in a
+top-level `profileVectors` array, filed under `profiles/<profile>/`, apart from `vectors` so that a
+host claiming no profile never meets one. Every profile vector is a `reject` vector at the toy subject
+that the **base** reader accepts, carrying one profile's defect and no other. A profile's `outside`
+list names the base vectors whose verdict it changes; both are empty today, because every round-trip
+vector is canonical and every non-canonical reject vector is refused by the syntax layer first.
+`check-manifest.mjs` recomputes each list with a one-pass recognizer, the shape the profile is
+written for.
+
+A host under profiles runs its subject's base run and adds the vectors of each profile it claims.
+Tighter limits are not a profile: they are deployment policy, declared beside the claim (§10.8).
+
 ## Certifying
 
 1. Run every vector the manifest enumerates, by its `kind`.
@@ -171,7 +191,9 @@ scenarios have no counterpart in the other and why.
 6. **Optionally, record your adoption** in the manifest's top-level `adoption` object, under your
    host's name (`PROGRAM_WIRE.md` §10.1): `repository`, the `sha` of the commit that certified,
    `subject`, the codec `families` and `vocabularyFreeDocuments` you run, and — if you made the §10.2
-   declaration — `scenarioFamilies`, `requires`, `hostHandlers`, and a short `description`. It is your
+   declaration — `scenarioFamilies`, `requires`, `hostHandlers`, and a short `description`. A host
+   claiming a profile names it in `profiles`, and one with tighter limits records them in
+   `declaredLimits`. It is your
    own statement, read by no checker; your harness at that commit is the evidence. Edit only your own
    entry.
 
@@ -240,7 +262,10 @@ walk. Write the second model from the specification rather than by copying the
 first: a vector both emitters derived from one reading is a vector neither of them triangulates, and
 it will look exactly like the others. Reject vectors are **hand-authored** and
 deliberately absent from the emitter — reproducing the bytes of a document that must be refused
-demonstrates nothing about the refusal.
+demonstrates nothing about the refusal. A profile vector is hand-authored too, under
+`profiles/<profile>/`, with its entry in `profileVectors`: write a document the base reader accepts,
+with exactly one defect of its profile. `check-manifest.mjs` confirms the defect; only a reader can
+confirm the acceptance, so a host's profile leg asserts it.
 
 ## Adding a scenario
 

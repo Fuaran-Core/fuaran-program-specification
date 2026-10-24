@@ -530,6 +530,278 @@ covers("toy-client-effect", ["Sound"]);
   }
 }
 
+// --- conformance profiles (§10.8) -------------------------------------------
+// A profile narrows what a host accepts, and a claim naming one is checked
+// against the profile's own vectors, enumerated apart from `vectors` so that a
+// host claiming no profile never meets one. Three questions live here: is each
+// profile vector in the tree and digested, does each carry its profile's
+// defect AND NO OTHER — a vector carrying two would certify whichever class a
+// host happened to check first — and is each profile's `outside` list exactly
+// the base vectors whose verdict that profile changes, so the claim stays
+// falsifiable as the base corpus grows.
+//
+// The defects are found by a forward recognizer, the shape §10.8 is written
+// for: one pass, nothing built, every judgement made at the token it is about.
+// It is applied only to documents the syntax layer and §2.5 admit, which is
+// the order §10.8 fixes, so it may assume a well-formed text.
+
+// Closed, on the subjects' argument: a profile a host has never heard of would
+// be a claim nobody can check.
+const PROFILES = { "canonical-bytes": "non-canonical-bytes", "integer-only": "non-integer-number" };
+
+/** .NET's round-trip float layout, which §2.8's pinned layout is: JS's own digits in [1e-4, 1e17), an exponent of at least two digits outside it. */
+const floatLayout = (x) => {
+  if (x === 0) return "0";
+  const a = Math.abs(x);
+  if (a >= 1e-4 && a < 1e17) return String(x);
+  const [mantissa, exponent] = x.toExponential().split("e");
+  const sign = exponent.startsWith("-") ? "-" : "+";
+  return mantissa + "E" + sign + exponent.replace(/^[-+]/, "").padStart(2, "0");
+};
+
+/**
+ * The profile defects of a well-formed text, in reading order, as
+ * `{ profile, at }`. `declared` is true for a client effect, whose members are
+ * in declaration order (§5.2) — that order is the family reader's to hold, so
+ * the recognizer checks no member order there — and whose encoder spells three
+ * control characters with their short escapes.
+ */
+const profileDefects = (text, declared) => {
+  const found = [];
+  const note = (profile, at) => found.push({ profile, at });
+  let i = 0;
+
+  const SHORT = { n: "\n", r: "\r", t: "\t" };
+  const string = () => {
+    // At the opening quote; returns the decoded string and leaves i past the closing one.
+    let out = "";
+    i++;
+    while (text[i] !== '"') {
+      if (text[i] !== "\\") {
+        out += text[i++];
+        continue;
+      }
+      const at = i;
+      const e = text[i + 1];
+      let ch;
+      if (e === "u") {
+        ch = String.fromCharCode(parseInt(text.slice(i + 2, i + 6), 16));
+        i += 6;
+        const lower = text.slice(at + 2, at + 6) === text.slice(at + 2, at + 6).toLowerCase();
+        const shortForm = declared && Object.values(SHORT).includes(ch);
+        if (ch >= " " || !lower || shortForm) note("canonical-bytes", at);
+      } else {
+        ch = e === "n" || e === "r" || e === "t" ? SHORT[e] : { '"': '"', "\\": "\\", "/": "/", b: "\b", f: "\f" }[e];
+        i += 2;
+        const sanctioned = e === '"' || e === "\\" || (declared && SHORT[e] !== undefined);
+        if (!sanctioned) note("canonical-bytes", at);
+      }
+      out += ch;
+    }
+    i++;
+    return out;
+  };
+
+  const number = () => {
+    const at = i;
+    while (i < text.length && /[-+0-9.eE]/.test(text[i])) i++;
+    const token = text.slice(at, i);
+    if (/[.eE]/.test(token)) {
+      note("integer-only", at);
+      if (token !== floatLayout(Number(token))) note("canonical-bytes", at);
+    } else if (token === "-0") note("canonical-bytes", at);
+  };
+
+  const value = () => {
+    const c = text[i];
+    if (c === "{") {
+      i++;
+      let previous = null;
+      while (text[i] !== "}") {
+        if (previous !== null) i++; // the comma
+        const at = i;
+        const key = string();
+        if (!declared && previous !== null && !(previous < key)) note("canonical-bytes", at);
+        previous = key;
+        i++; // the colon
+        value();
+      }
+      i++;
+    } else if (c === "[") {
+      i++;
+      let first = true;
+      while (text[i] !== "]") {
+        if (!first) i++;
+        first = false;
+        value();
+      }
+      i++;
+    } else if (c === '"') string();
+    else if (c === "-" || (c >= "0" && c <= "9")) number();
+    else {
+      const literal = text.startsWith("true", i) || text.startsWith("null", i) ? 4 : 5;
+      i += literal;
+    }
+  };
+
+  // Insignificant whitespace is a canonical-bytes defect wherever it stands;
+  // strip it first, keeping the position of the first, and read the rest.
+  const ws = /[ \t\r\n]/;
+  let inString = false;
+  let stripped = "";
+  for (let k = 0; k < text.length; k++) {
+    const ch = text[k];
+    if (inString) {
+      stripped += ch;
+      if (ch === "\\") stripped += text[++k];
+      else if (ch === '"') inString = false;
+    } else if (ws.test(ch)) {
+      if (!found.some((f) => f.profile === "canonical-bytes")) note("canonical-bytes", k);
+    } else {
+      if (ch === '"') inString = true;
+      stripped += ch;
+    }
+  }
+  const whitespace = found.slice();
+  found.length = 0;
+  text = stripped;
+  value();
+  return [...whitespace, ...found];
+};
+
+// The recognizer, proved able to go red before it is trusted: one sample per
+// defect, and one canonical sample it must pass.
+{
+  const samples = [
+    ['{"b":1,"a":2}', false, "canonical-bytes"],
+    ['{"a":1, "b":2}', false, "canonical-bytes"],
+    ['{"a":1}\n', false, "canonical-bytes"],
+    ['{"a":"\\u0041"}', false, "canonical-bytes"],
+    ['{"a":"\\n"}', false, "canonical-bytes"],
+    ['{"a":1.5}', false, "integer-only"],
+    ['{"a":1E+21}', false, "integer-only"],
+  ];
+  for (const [text, declared, profile] of samples) {
+    const got = profileDefects(text, declared).map((d) => d.profile);
+    if (!got.includes(profile)) fail(`the profile recognizer misses a ${profile} defect in ${JSON.stringify(text)}`);
+  }
+  for (const [text, declared] of [
+    ['{"$type":"Put","key":"k","value":{"a":[1,-2,"x\\u001f"]}}', false],
+    ['{"kind":"WriteToClipboard","text":"a\\tb\\r\\n"}', true],
+    ['{"a":1E+21,"b":0.25}', false],
+  ]) {
+    const got = profileDefects(text, declared).filter((d) => d.profile === "canonical-bytes");
+    if (got.length) fail(`the profile recognizer reports a canonical sample as non-canonical: ${JSON.stringify(text)}`);
+  }
+}
+
+const profiles = manifest.profiles ?? {};
+for (const [name, decl] of Object.entries(profiles)) {
+  if (!(name in PROFILES)) {
+    fail(`profile ${JSON.stringify(name)} is not one §10.8 declares`);
+    continue;
+  }
+  if (decl.reject !== PROFILES[name]) fail(`profile ${name} refuses for ${JSON.stringify(decl.reject)}, and §10.8 names ${PROFILES[name]}`);
+  if (CLASSES.has(decl.reject)) fail(`profile ${name}'s class is a base class: a host claiming no profile would refuse for it`);
+  if (!Array.isArray(decl.outside)) fail(`profile ${name} declares no outside list`);
+  if (!decl.description) fail(`profile ${name}: no description`);
+}
+for (const name of Object.keys(PROFILES)) if (!(name in profiles)) fail(`the manifest does not declare the ${name} profile (§10.8)`);
+
+// The profile vectors: shape, digest, and the one defect each is for.
+const profileFiles = new Set();
+const profileIds = new Set();
+const baseIds = new Set((manifest.vectors ?? []).map((v) => v.id));
+for (const v of manifest.profileVectors ?? []) {
+  const id = v.id ?? "(anonymous profile vector)";
+  if (profileIds.has(id) || baseIds.has(id)) fail(`${id}: enumerated more than once`);
+  profileIds.add(id);
+  if (!(v.profile in PROFILES)) fail(`${id}: profile ${JSON.stringify(v.profile)} is not one §10.8 declares`);
+  if (v.kind !== "reject") fail(`${id}: a profile vector is a reject vector`);
+  if (v.reject !== PROFILES[v.profile]) fail(`${id}: refused for ${JSON.stringify(v.reject)}, and its profile names ${PROFILES[v.profile]}`);
+  // Toy only: a referenced-subject profile vector would be certified by the
+  // hosts that read the tree wire's vocabulary, which move in their own
+  // change-sets (§11.1).
+  if (v.subject !== "toy") fail(`${id}: a profile vector sits at the toy subject`);
+  if (!DOCUMENTS.has(v.document) || vocabularyFreeSet.has(v.document))
+    fail(`${id}: document ${JSON.stringify(v.document)} is not one the toy subject carries`);
+  if (!v.description) fail(`${id}: no description`);
+  if (!v.file || !v.file.startsWith(`profiles/${v.profile}/`)) {
+    fail(`${id}: file ${JSON.stringify(v.file)} does not sit in profiles/${v.profile}/`);
+    continue;
+  }
+  if (profileFiles.has(v.file) || enumerated.has(v.file)) fail(`${id}: file "${v.file}" is enumerated more than once`);
+  profileFiles.add(v.file);
+
+  let bytes;
+  try {
+    bytes = readFileSync(join(here, v.file));
+  } catch {
+    fail(`${id}: file "${v.file}" is enumerated but not present`);
+    continue;
+  }
+  const got = createHash("sha256").update(bytes).digest("hex");
+  if (got !== v.sha256) fail(`${id}: sha256 is ${v.sha256} but the file hashes to ${got}`);
+  if (bytes.includes(0x0d)) fail(`${id}: file contains a CR — the checkout is not honouring the LF pin`);
+
+  const defects = new Set(profileDefects(bytes.toString("utf8"), v.document === "client-effect").map((d) => d.profile));
+  if (!defects.has(v.profile)) fail(`${id}: carries no ${v.profile} defect, so a host under the profile accepts it`);
+  for (const other of defects)
+    if (other !== v.profile) fail(`${id}: also carries a ${other} defect — a profile vector carries one profile's defect`);
+}
+for (const name of Object.keys(PROFILES))
+  if (!(manifest.profileVectors ?? []).some((v) => v.profile === name)) fail(`profile ${name} has no vector`);
+
+// Every file under profiles/ is enumerated.
+for (const name of Object.keys(PROFILES)) {
+  let entries = [];
+  try {
+    entries = readdirSync(join(here, "profiles", name));
+  } catch {
+    continue;
+  }
+  for (const entry of entries) {
+    const rel = posix.join("profiles", name, entry);
+    if (!profileFiles.has(rel)) fail(`${rel} is present in the tree but enumerated by no profile vector`);
+  }
+}
+
+// `outside`, recomputed: the base vectors a toy-subject host runs whose
+// verdict a profile changes. A vector the syntax layer or §2.5 refuses is
+// refused for that class under every profile (§10.8), so it is never outside.
+{
+  const syntaxFirst = (v) =>
+    v.reject === "malformed-json" || v.reject === "null-member" || (v.reject === "limit-exceeded" && v.limit === "depth");
+  const toyRun = (manifest.vectors ?? []).filter(
+    (v) => v.subject === "toy" || (v.subject === undefined && vocabularyFreeSet.has(v.document)),
+  );
+  for (const [name, decl] of Object.entries(profiles)) {
+    if (!(name in PROFILES) || !Array.isArray(decl.outside)) continue;
+    const computed = toyRun
+      .filter((v) => !syntaxFirst(v))
+      .filter((v) => {
+        // A file missing from the tree is reported above; it changes no verdict here.
+        let text;
+        try {
+          text = readFileSync(join(here, v.file), "utf8");
+        } catch {
+          return false;
+        }
+        return profileDefects(text, v.document === "client-effect").some((d) => d.profile === name);
+      })
+      .map((v) => v.id)
+      .sort();
+    const listed = [...decl.outside].sort();
+    if (computed.join(",") !== listed.join(","))
+      fail(`profile ${name}'s outside list is [${listed}], and the base vectors it changes are [${computed}]`);
+  }
+}
+
+// An adoption entry's profiles are ones the manifest declares.
+for (const [host, entry] of Object.entries(manifest.adoption ?? {}))
+  for (const name of entry.profiles ?? [])
+    if (!(name in profiles)) fail(`adoption ${host} claims profile ${JSON.stringify(name)}, which the manifest does not declare`);
+
 if (failures.length) {
   console.error(`manifest invariants violated (${failures.length}):`);
   for (const f of failures) console.error(`  ${f}`);
@@ -551,5 +823,6 @@ const toyRuns = manifest.vectors.filter(
 console.log(
   `manifest describes its tree: ${manifest.vectors.length} vectors (${shape}) across ${families.length} families, ` +
     `and ${(manifest.scenarios ?? []).length} scenarios across ${scenarioFamilies.length} scenario families. ` +
-    `A referenced-subject host runs ${referencedRuns} vectors; a toy-subject host runs ${toyRuns}.`,
+    `A referenced-subject host runs ${referencedRuns} vectors; a toy-subject host runs ${toyRuns}, ` +
+    `and a host claiming a profile (§10.8) adds that profile's vectors: ${Object.keys(PROFILES).map((p) => `${(manifest.profileVectors ?? []).filter((v) => v.profile === p).length} for ${p}`).join(", ")}.`,
 );

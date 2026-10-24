@@ -122,7 +122,9 @@ compliant.
    implementation that sorts by code point is correct on every key an implementer is likely to try.
    `server-effect/notify-ordinal-divergence` is the corpus vector that tells them apart.
    `$type` (U+0024) sorts before every lower-case data key, so a discriminated
-   object always begins with it. **A decoder MUST accept any member order**; lookup is by name. The
+   object always begins with it. **A decoder MUST accept any member order**; lookup is by name. A host
+   claiming the `canonical-bytes` profile is the one exception, and refuses a document that is not
+   in this order (§10.8). The
    rule reaches **every object at every depth**, an opaque payload position (§5.1) included: a
    payload this document declines to *decompose* is still a JSON object on this wire, and an encoder
    that passed one back out in whatever order it arrived would break the byte-identity §10.1
@@ -165,7 +167,7 @@ compliant.
     because the referenced value is held to its own specification anyway. A host MAY apply a
     stricter **operational** ceiling — a constrained device sizing its stack and arena will — as
     deployment policy: it documents the ceiling, and it never describes a document it refuses under
-    it as non-conformant or malformed.
+    it as non-conformant or malformed. §10.8 says how such a ceiling is declared beside a claim.
 11. **Program-shape limits.** A handler's compute stages carry actions, and the shape of what a
     program declares is bounded too, read through the action vocabulary's own reading of its
     composition (§3: a sequence, a branch, a bounded repeat, an iteration, and the single steps).
@@ -1289,7 +1291,8 @@ is a host's own statement of what it certifies against this corpus: `repository`
 host commit whose suite certified it, the `subject` it certifies at (§10.7), the codec `families` it
 runs, the `vocabularyFreeDocuments` it runs as they stand, and — only for a host that has made the
 §10.2 declaration — the `scenarioFamilies` it reproduces, the obligations in `requires` it meets, the
-`hostHandlers` names it constructs, and a one-sentence `description`. It is a record, not a check: no
+`hostHandlers` names it constructs, and a one-sentence `description`. A host claiming a profile names it in
+`profiles`, and one with declared limits records them in `declaredLimits` (§10.8). It is a record, not a check: no
 checker reads it, no vector or digest depends on it, and it certifies nothing on its own — the
 evidence is the host's harness at that commit, which asserts the run counts and the go-red probes
 above. A host adds or updates its own entry when it certifies, and never another host's.
@@ -1308,7 +1311,9 @@ a host that runs handlers necessarily reaches all six — so partitioning would 
 needs. It is whole-corpus **for the subject a host certifies at** (§10.7): a subject is a choice of
 vocabulary for the referenced positions, not a profile of the families, and a host at either subject
 reaches all six. That statement is about the six; §10.2 is the one place this specification admits a scope
-question, and it admits it because the answer there is genuinely different.
+question, and it admits it because the answer there is genuinely different. A profile (§10.8) is not a
+partition either: it narrows what a host accepts and adds vectors of its own, and takes none of the six
+away.
 
 ### 10.2 The bounded-path declaration
 
@@ -1899,6 +1904,113 @@ carrying a member beyond its three. §5.2 names the class for an extra member ar
 names none for `Sound`, so the class is not decided by this text — and a corpus does not pin a class
 the text has not chosen.
 
+### 10.8 Conformance profiles
+
+§2.3 obliges a decoder to accept any member order, and §2.8 lets a number carry a fraction. So a
+recognizer that accepts only canonical bytes, or a host with no floating point, could make no codec
+claim at all, although each is a deliberate and useful design. The canonical recognizer checks order
+in one forward pass instead of sorting, and the hash of the bytes it received is the hash of the
+document, so a signature over a document needs no re-encoding to check. A host on a device without a
+floating-point unit never meets a float it cannot hold. A **profile** lets such a host make an honest
+claim: conformance under a name, checked against vectors of its own.
+
+**A profile is opt-in, and a claim naming none is the base claim, unchanged.** Every vector, scenario
+and rule above this section reads exactly as it did. A profile only narrows what a host accepts. It
+never widens it, and it never changes a verdict the base corpus pins except where this section lists
+that verdict as outside the profile. A conformance claim names its subject (§10.7) and its profiles:
+*this host conforms at the toy subject under `canonical-bytes` and `integer-only`*. A claim under a
+profile that does not name the profile cannot be checked, since the refusals that define the profile
+are not in the base run.
+
+#### The profiles
+
+| Profile | A host under it refuses | Class |
+|---|---|---|
+| `canonical-bytes` | every document whose bytes are not the canonical encoding of the value they parse to: any insignificant whitespace, a byte after the document's last `}` or `]` (§2.2), members out of Ordinal order at any depth, an opaque payload position included (§2.3), a string escape other than the ones §2.7 writes, and a number in any layout other than §2.8's | `non-canonical-bytes` |
+| `integer-only` | every document carrying a number token with a fraction or an exponent, at any depth, an opaque payload position included | `non-integer-number` |
+
+**Canonical is per document, and the client-effect family keeps its exception.** A client effect's
+canonical bytes are the bytes its emitter writes (§5.2): members in declaration order, with that
+family's short escapes. Its member order is already the family reader's to enforce, so under
+`canonical-bytes` a client effect is refused for whitespace, escapes and number layout, and not
+refused a second time for an order its reader refuses on its own.
+
+**`integer-only` reads the token, not the value.** `2.0` and `1E+21` are refused although both
+values are whole. An integer token is admitted whatever its magnitude. How large an integer a host
+can hold is a declared limit (below), not this profile's concern. A referenced position whose
+vocabulary needs a float cannot be carried to an `integer-only` host at all. That is the profile's
+cost, stated rather than hidden.
+
+#### The order in which a host under a profile reads
+
+1. **The syntax layer and §2.5 decide first.** A document that §2's cited grammar, rule 10's limits or
+   the no-null rule refuses is refused for that class under every profile. The judgement is made on
+   the whole document: a forward recognizer may stop building at a profile defect, but it reports its
+   class only once the text is known to be well-formed. So a malformed document is malformed to every
+   host. A repeated member is the case worth naming. A recognizer checking that keys strictly
+   increase meets a key EQUAL to its predecessor, and that is a repeated member (`malformed-json`),
+   never an order defect.
+2. **Then the claimed profiles**, before any rule this specification states above the syntax layer
+   (rules 6, 9 and 11, and every family's own reader). A document a profile refuses is refused for the
+   profile's class, whatever else is wrong with it.
+3. **Then everything else**, exactly as the base claim reads it.
+
+A document carrying the defects of two profiles a host claims may be refused for either class. No
+vector carries two, so the corpus never asks a host to choose.
+
+#### What the corpus carries
+
+The manifest declares each profile in a top-level `profiles` object: its class (`reject`), its
+`outside` list and a description. It enumerates the profile's vectors in a top-level `profileVectors`
+array, apart from `vectors`, so that a host claiming no profile never meets one. Each profile vector
+is a `reject` vector at the **toy** subject (§10.7) and names its `profile`. Each is a document the
+base reader **accepts**, and that is what makes it a test of the profile rather than a base refusal
+under another name. Each carries its own profile's defect and no other, and is otherwise canonical
+and free of fractions. Between them the vectors reach every document kind the toy subject carries that can hold the
+defect, at the root, in a nested position and in an opaque payload. A toy client effect cannot hold a
+fraction, since its one number is a volume its reader holds to an integer, so `integer-only` has no
+client-effect vector.
+
+**A profile's `outside` list names the base vectors whose verdict the profile changes.** A host under
+the profile refuses each of them for the profile's class, and no other base verdict moves. The list
+keeps the claim falsifiable as the base corpus grows. A base vector that ever carries a float, or
+pins acceptance of a non-canonical document, must be listed, and the manifest check recomputes every
+list from the bytes. **Both lists are empty today, and that is a finding rather than an omission.**
+Every round-trip vector is canonical by construction, since it must re-encode to itself. Every base
+reject vector whose bytes carry a profile defect is refused by the syntax layer first: the repeated
+members, and `1e999`, whose token the grammar refuses before `integer-only` reads its exponent. No
+base vector pins §2.3's obligation to accept any member order (§11.2).
+
+A host under profiles runs the base run of its subject (§10.7), reading each outside vector as the
+profile reads it, and adds every profile vector of each profile it claims. It asserts that count as §10.1 point 6 asks, and that a profile
+vector restored to canonical bytes, or rid of its fraction, turns its harness red.
+
+**Profile vectors are carried at the toy subject only.** The referenced subject's hosts certify
+against the tree wire specification's vocabulary and move in their own change-sets (§11.1). A
+profile vector there would be one they had not caught up with. A referenced-subject host may still
+claim a profile and is held to the rules above, but the corpus carries no vector it can run under
+one yet (§11.2).
+
+#### Declared limits are deployment policy, never conformance
+
+A host MAY declare limits tighter than §2.10's and §2.11's: a stack depth its device can afford, a
+largest document, a largest integer. The rule is the tree wire specification's own (its section 21.2,
+rule 6), read here. A tighter limit is **deployment policy, not a conformance claim and not a
+profile**. The host documents each value beside its claim. A document past a declared limit is
+refused `limit-exceeded`, naming the limit and the declared value, never `malformed-json`, and the
+host never describes it as non-conformant. No vector pins a declared limit, because no value is
+right for every device. A host with declared limits runs every vector of its run that lies within
+them, counts the ones that do not, and names the limit each passes, so a vector within its limits is
+never quietly skipped.
+
+#### Recording a claim
+
+An adoption entry (§10.1) records the profiles a host claims in an optional `profiles` member, from
+the profiles the manifest declares, and a host with declared limits records them in an optional
+`declaredLimits` object from limit name to value. An entry without `profiles` claims none. Like the
+rest of the record it certifies nothing on its own: the evidence is the host's harness at the
+recorded commit.
+
 ---
 
 ## 11. Versioning, forward coupling, and what is left open
@@ -2057,6 +2169,16 @@ document and trace recorded before this change is byte-identical after it.
   What the address does NOT buy is the thing governance would: two hosts can agree byte-for-byte on a
   document neither of them reads the same way. That is the residue, and it is why this bullet stays
   open rather than being narrowed to "the envelope".
+- **No vector pins §2.3's obligation to accept any member order.** Every round-trip vector is
+  canonical, as it must be to re-encode to itself, and every reject vector is refused for something
+  else. So a base reader that refused out-of-order members would pass the whole corpus. Pinning it
+  needs a vector kind no host reads today, a document that decodes and re-encodes to DIFFERENT bytes,
+  and so a change-set across every certifying host (§11.1). Until then the obligation is held by the
+  text alone, and §10.8 records the same fact as the reason its `canonical-bytes` profile changes no
+  base verdict.
+- **Profile vectors exist at the toy subject only (§10.8).** A host at the referenced subject may
+  claim a profile, but the corpus carries no vector it can run under one. Carrying them there means
+  the hosts that certify the tree wire's vocabulary moving with the vectors, in one change-set.
 _(**CLOSED at format version 2.** The two client-effect arms a conformant emitter shipped while §5.2
 declared only six — a payload-free print instruction and a confirmation — are declared arms seven and
 eight, with their members, refusal classes, derived values and, for the confirmation, its answer's
@@ -2121,4 +2243,6 @@ Every class a `reject` vector may name. A conformant reader refuses **for the na
 | `malformed-content-address` | a reference's `hash` is not `sha256:` followed by 64 lower-case hex digits (§9.2) |
 | `content-address-mismatch` | a pinned reference and the document published under its `ref` are both held, and the recomputed address differs from the declared one (§9.2). **Not corpus-reachable** — the addressed document is not in this corpus, so no `reject` vector can name this class; it is certified by a host that holds both documents, exactly as `unencodable-op` (§7.5) is certified by a host's own suite |
 | `tree-declared-result-target` | a call action declares a result target (§9.5) |
+| `non-canonical-bytes` | **Profile-scoped.** Raised only by a host claiming `canonical-bytes`: the bytes are not the canonical encoding of the value they parse to (§10.8). A host claiming no profile never raises it, and no base vector names it |
+| `non-integer-number` | **Profile-scoped.** Raised only by a host claiming `integer-only`: a number token carries a fraction or an exponent (§10.8). A host claiming no profile never raises it, and no base vector names it |
 | `malformed-referenced-value` | a referenced position (§3) does not decode under its own vocabulary. A distinct class because the defect is in the other specification's document, not this one's, and a reader that reported it as a shape error here would send the reporter to the wrong text |

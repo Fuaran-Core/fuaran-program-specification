@@ -47,6 +47,48 @@
         "toy-relabel"
       ],
       "description": "Program's generic core in Rust (Phase 2267). Certifies the codec at the toy subject and the vocabulary-free documents as they stand, and implements the bounded path: it reproduces every driver-semantics-toy scenario, the bounded-loop ones at a placement that answers no call and the handler-loop ones at a placement constructing toy-relabel. The run counts are asserted against this manifest."
+    },
+    "fuaran-program": {
+      "repository": "Fuaran-Core/fuaran-program-dotnet",
+      "sha": "67aa354ce886c89d93fe3ebe4e8fa68496ba2e30",
+      "subject": "toy",
+      "families": [
+        "toy-handler",
+        "toy-server-effect",
+        "toy-client-effect",
+        "toy-outcome"
+      ],
+      "vocabularyFreeDocuments": [
+        "invocation",
+        "logic-tree-ref"
+      ],
+      "profiles": [
+        "canonical-bytes",
+        "integer-only"
+      ],
+      "scenarioFamilies": [
+        "driver-semantics-toy"
+      ],
+      "requires": [
+        "bounded-loop",
+        "handler-loop"
+      ],
+      "hostHandlers": [
+        "toy-relabel"
+      ],
+      "description": "The .NET reference (Phase 2263 records it). Certifies the codec at the toy subject and the vocabulary-free documents as they stand, both profiles in a profile-scoped leg whose profile reader is composed over the published strict reader and canonical encoder, and the bounded path: it reproduces every driver-semantics-toy scenario. The run counts are asserted against this manifest."
+    }
+  },
+  "profiles": {
+    "canonical-bytes": {
+      "reject": "non-canonical-bytes",
+      "outside": [],
+      "description": "Refuses every document whose bytes are not the canonical encoding of the value they parse to (§10.8). No base vector is outside it: every round-trip vector is canonical by construction, and every base reject vector whose bytes are not canonical is refused by the syntax layer first."
+    },
+    "integer-only": {
+      "reject": "non-integer-number",
+      "outside": [],
+      "description": "Refuses every document carrying a number token with a fraction or an exponent (§10.8). No base vector is outside it: the one base vector carrying such a token is refused by the syntax layer first."
     }
   },
   "vectors": [
@@ -1498,6 +1540,140 @@
       "sha256": "afc304a027c7dd618c212dceec54a28e7f5cfb979861be9df5baeb788633c9f6",
       "reject": "malformed-json",
       "description": "An outcome that says it committed and that it did not. A caller reading the first would believe the work stands (Core row 1)."
+    }
+  ],
+  "profileVectors": [
+    {
+      "id": "profile/canonical-bytes/handler-member-order",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/handler-member-order.json",
+      "sha256": "a380a09e04978792bf47bbf40647a1b10567cad111f4102ce0aede26f5fcaf5d",
+      "reject": "non-canonical-bytes",
+      "description": "Top-level members out of Ordinal order: name before $type. The base reader accepts any member order (§2.3); a canonical-bytes host refuses the order itself."
+    },
+    {
+      "id": "profile/canonical-bytes/handler-nested-member-order",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/handler-nested-member-order.json",
+      "sha256": "81e4cc69629cd12a7e58ad70ebd58db67c5958eddc61a18a97ff9dded2610b4f",
+      "reject": "non-canonical-bytes",
+      "description": "A member order defect one composition deep: a Put whose value precedes its key. A recognizer that checks order only at the root passes the first vector and fails here."
+    },
+    {
+      "id": "profile/canonical-bytes/handler-whitespace",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/handler-whitespace.json",
+      "sha256": "faadbe5e38972a38e84be5ff632156c77f980936228d0052cfb3e23c099f3c7c",
+      "reject": "non-canonical-bytes",
+      "description": "One insignificant space after a comma. JSON admits it; the canonical form has none (§2.1)."
+    },
+    {
+      "id": "profile/canonical-bytes/handler-trailing-newline",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/handler-trailing-newline.json",
+      "sha256": "9e97352f048b70cb92ca4872beb9b6fefee3f9065b9efa3fa2384ae2d67888c8",
+      "reject": "non-canonical-bytes",
+      "description": "A canonical document followed by one LF. JSON admits trailing whitespace; a document's bytes end at its last } (§2.2), so the hash of what was received is not the hash of the document."
+    },
+    {
+      "id": "profile/canonical-bytes/handler-escaped-character",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/handler-escaped-character.json",
+      "sha256": "1f0ef5f90774429a01c355344c52a822b38bc45af82cc49ce9961b5633fc62dd",
+      "reject": "non-canonical-bytes",
+      "description": "A Put whose literal value spells A as \\u0041. It decodes to the canonical vector's value; the canonical form escapes only \", \\ and the control range (§2.7)."
+    },
+    {
+      "id": "profile/canonical-bytes/server-effect-payload-member-order",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "server-effect",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/server-effect-payload-member-order.json",
+      "sha256": "cd5350bbd1485b519d2381abb0f0eed1bea61ea216eb786d8f0a9fec284bd321",
+      "reject": "non-canonical-bytes",
+      "description": "A Notify whose opaque payload carries its members out of Ordinal order. §2.3 reaches an opaque position, so the profile does too: a payload is not decomposed, and it is still canonical JSON."
+    },
+    {
+      "id": "profile/canonical-bytes/client-effect-whitespace",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "client-effect",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/client-effect-whitespace.json",
+      "sha256": "83beeec41ef88e87251e706595fb4e1b54edd970f3cf3fc46b7ee0dbdcf411cb",
+      "reject": "non-canonical-bytes",
+      "description": "The toy Sound effect in its declared member order with one space after a colon. The client-effect family keeps §5.2's envelope; canonical-bytes holds it to the bytes its emitter writes."
+    },
+    {
+      "id": "profile/canonical-bytes/outcome-member-order",
+      "profile": "canonical-bytes",
+      "kind": "reject",
+      "document": "outcome",
+      "subject": "toy",
+      "file": "profiles/canonical-bytes/outcome-member-order.json",
+      "sha256": "c657f49f3a81393e3b7720be00e752f32c88ba6eef7fb628a14e213ed46b3763",
+      "reject": "non-canonical-bytes",
+      "description": "An unregistered handler's report with committed before $type. The outcome family's defect at the root."
+    },
+    {
+      "id": "profile/integer-only/handler-fraction",
+      "profile": "integer-only",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/integer-only/handler-fraction.json",
+      "sha256": "f8a2970df6248f1dd51a7598acb7dc789cb11f9af70614713dbc0df25046e9bf",
+      "reject": "non-integer-number",
+      "description": "A Put whose literal value is 1.5, in canonical bytes. The base wire carries it; an integer-only host refuses the token."
+    },
+    {
+      "id": "profile/integer-only/handler-exponent",
+      "profile": "integer-only",
+      "kind": "reject",
+      "document": "handler",
+      "subject": "toy",
+      "file": "profiles/integer-only/handler-exponent.json",
+      "sha256": "3cf83d946db8bda8efc7308a5d9b327125001ad3d8291105573ef0de73602d21",
+      "reject": "non-integer-number",
+      "description": "A Put whose literal value is 1E+21, the pinned layout of that float. The token has no fraction and is still refused: integer-only reads the token's exponent, not whether the value is whole."
+    },
+    {
+      "id": "profile/integer-only/server-effect-payload-fraction",
+      "profile": "integer-only",
+      "kind": "reject",
+      "document": "server-effect",
+      "subject": "toy",
+      "file": "profiles/integer-only/server-effect-payload-fraction.json",
+      "sha256": "814948ddf7b56faae19bc11e77ba7f484ecbbc408864d6d629fd1ed9dfa9f0ec",
+      "reject": "non-integer-number",
+      "description": "A Notify whose opaque payload carries 0.25. The profile reaches an opaque position: a host that refuses floats does not hold one in a payload either."
+    },
+    {
+      "id": "profile/integer-only/outcome-notification-fraction",
+      "profile": "integer-only",
+      "kind": "reject",
+      "document": "outcome",
+      "subject": "toy",
+      "file": "profiles/integer-only/outcome-notification-fraction.json",
+      "sha256": "c1906f5dbc276fd96f553546e13b2550cb9f90df024cc3b3553c91fc74674e57",
+      "reject": "non-integer-number",
+      "description": "A committed report whose notification payload carries 0.5. The defect in a document a logic host writes and a rendering surface reads."
     }
   ],
   "scenarios": [
