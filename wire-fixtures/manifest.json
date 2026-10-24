@@ -550,6 +550,26 @@
       "description": "A key over the 128-character cap. An unbounded key is an unbounded index entry on an untrusted input."
     },
     {
+      "id": "invocation/reject-empty-endpoint",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-empty-endpoint.json",
+      "sha256": "4ea082c112b425a22e1b9b679880a024a19d422060188861edb3664185094f7b",
+      "reject": "missing-member",
+      "description": "An invocation whose endpoint is present and empty (§8.3: `endpoint` is a non-empty string). An empty endpoint names no entry point a host could dispatch to."
+    },
+    {
+      "id": "invocation/reject-empty-node-id",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-empty-node-id.json",
+      "sha256": "2c87106e73225b4e3c82f63ede0250051c76693cc9c74af525d3f995552b6fd1",
+      "reject": "missing-member",
+      "description": "An invocation whose nodeId is present and empty (§8.3: `nodeId` is a non-empty string). An empty nodeId names no originating node to thread to the evaluator."
+    },
+    {
       "id": "outcome/committed",
       "family": "outcome",
       "kind": "round-trip",
