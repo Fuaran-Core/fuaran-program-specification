@@ -430,6 +430,26 @@
       "description": "A finding whose code is present and empty. An empty token names nothing a host's vocabulary could hold."
     },
     {
+      "id": "server-effect/reject-empty-query-name",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-empty-query-name.json",
+      "sha256": "ff0e619e9bd4e6e12fe27111c3870f4ba108ecc6561da3dad02a6176831bfb60",
+      "reject": "missing-member",
+      "description": "A read whose query slot name is present and empty (§5.1: `name` MUST be non-empty). An empty name names no slot the result could land in."
+    },
+    {
+      "id": "server-effect/reject-empty-channel",
+      "family": "server-effect",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-empty-channel.json",
+      "sha256": "fb0a7f4364d9495644e65bef1dba2026c40961ad56e839e1ba28452db453bd88",
+      "reject": "missing-member",
+      "description": "A notification whose channel is present and empty (§5.1: `channel` MUST be non-empty). An empty channel names nothing a host could deliver to."
+    },
+    {
       "id": "server-effect/reject-declared-capability",
       "family": "server-effect",
       "kind": "reject",
@@ -606,6 +626,26 @@
       "sha256": "2de45c39919e518beb5a5d3877a01010ef75299170a359db8f7625ba32adb88d",
       "reject": "idempotency-key-too-long",
       "description": "A key over the 128-character cap. An unbounded key is an unbounded index entry on an untrusted input."
+    },
+    {
+      "id": "invocation/reject-empty-endpoint",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-empty-endpoint.json",
+      "sha256": "4ea082c112b425a22e1b9b679880a024a19d422060188861edb3664185094f7b",
+      "reject": "missing-member",
+      "description": "An invocation whose endpoint is present and empty (§8.3: `endpoint` is a non-empty string). An empty endpoint names no entry point a host could dispatch to."
+    },
+    {
+      "id": "invocation/reject-empty-node-id",
+      "family": "invocation",
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-empty-node-id.json",
+      "sha256": "2c87106e73225b4e3c82f63ede0250051c76693cc9c74af525d3f995552b6fd1",
+      "reject": "missing-member",
+      "description": "An invocation whose nodeId is present and empty (§8.3: `nodeId` is a non-empty string). An empty nodeId names no originating node to thread to the evaluator."
     },
     {
       "id": "outcome/committed",
