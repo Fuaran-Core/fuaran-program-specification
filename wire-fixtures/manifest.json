@@ -24,7 +24,7 @@
   "adoption": {
     "fuaran-program-rs": {
       "repository": "Fuaran-Core/fuaran-program-rs",
-      "sha": "f7767143401f719ee3ac2fd08ee306ca2b5ad215",
+      "sha": "e83f7ecb36ee3d8795a782f94bb7559d201c044f",
       "subject": "toy",
       "families": [
         "toy-handler",
@@ -46,7 +46,7 @@
       "hostHandlers": [
         "toy-relabel"
       ],
-      "description": "Program's generic core in Rust (Phase 2267). Certifies the codec at the toy subject and the vocabulary-free documents as they stand, and implements the bounded path: it reproduces every driver-semantics-toy scenario, the bounded-loop ones at a placement that answers no call and the handler-loop ones at a placement constructing toy-relabel. The run counts are asserted against this manifest."
+      "description": "Program's generic core in Rust (Phase 2267). Certifies the codec at the toy subject and the vocabulary-free documents as they stand, and implements the bounded path: it reproduces every driver-semantics-toy scenario, the bounded-loop ones at a placement that answers no call and the handler-loop ones at a placement constructing toy-relabel. Since Phase 2268 it carries the server placement's gate, and runs every toy-server-effect and toy-handler vector through it: each effect denied by a host permitting nothing and reached by one permitting it, every outcome the gate produces read back through the outcome codec. The run counts are asserted against this manifest."
     },
     "fuaran-program": {
       "repository": "Fuaran-Core/fuaran-program-dotnet",
