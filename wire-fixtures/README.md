@@ -173,6 +173,21 @@ written for.
 A host under profiles runs its subject's base run and adds the vectors of each profile it claims.
 Tighter limits are not a profile: they are deployment policy, declared beside the claim (§10.8).
 
+## Durable scenarios
+
+A host that records each performance where a restart cannot reach, and resumes an interrupted run
+from that record, may certify it against the **`kill-and-resume-toy`** family (`PROGRAM_WIRE.md`
+§10.9). It presumes a third obligation, **`durable-journal`**, so it is enumerated apart from both
+arrays above — in `durableScenarioFamilies` and `durableScenarios`, under the kind `kill-resume` —
+and a host that declared no durable journal never meets it. A scenario is a directory of three
+canonical files: `run.json` and `resume.json`, toy handler documents whose every stage calls a
+function of the named **`hostPerformers`** set (§10.9 registers `toy-counting`), and
+`expectation.json`. The host runs `run.json`, ends the process after `kill.afterPerformances`
+recorded performances, resumes `resume.json` under the same run in a fresh process, and compares what
+each process performed, what the resume was served, whether it committed and, when it did not, the
+refusal it named. `check-manifest.mjs` checks the index and each file's shape; the hosts certify the
+behaviour.
+
 ## Certifying
 
 1. Run every vector the manifest enumerates, by its `kind`.

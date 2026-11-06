@@ -1,0 +1,1 @@
+{"$type":"Handler","name":"journaled.pair","stages":[{"$type":"Effect","effect":{"$type":"HostCall","args":{"note":"first"},"fn":"first"}},{"$type":"Effect","effect":{"$type":"HostCall","args":{"note":"second"},"fn":"second"}}]}

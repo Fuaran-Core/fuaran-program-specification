@@ -21,6 +21,9 @@
     "driver-semantics",
     "driver-semantics-toy"
   ],
+  "durableScenarioFamilies": [
+    "kill-and-resume-toy"
+  ],
   "adoption": {
     "fuaran-program-rs": {
       "repository": "Fuaran-Core/fuaran-program-rs",
@@ -2309,6 +2312,48 @@
       },
       "steps": 2,
       "description": "The handler's call nested in a sequence: it sees the write before it and is seen by the write after it, which reads the status the handler wrote - the answer spliced in place."
+    }
+  ],
+  "durableScenarios": [
+    {
+      "id": "kill-and-resume-toy/resumes-without-repeating",
+      "family": "kill-and-resume-toy",
+      "name": "resumes-without-repeating",
+      "kind": "kill-resume",
+      "requires": "durable-journal",
+      "hostPerformers": "toy-counting",
+      "dir": "kill-and-resume-toy/resumes-without-repeating",
+      "files": {
+        "run": "kill-and-resume-toy/resumes-without-repeating/run.json",
+        "resume": "kill-and-resume-toy/resumes-without-repeating/resume.json",
+        "expectation": "kill-and-resume-toy/resumes-without-repeating/expectation.json"
+      },
+      "sha256": {
+        "run": "dec8ae5c277ea08a59ac338e842b4399420687e2acd3a195aeb40c6929d65d3d",
+        "resume": "dec8ae5c277ea08a59ac338e842b4399420687e2acd3a195aeb40c6929d65d3d",
+        "expectation": "55ce2674cd9f4a5d5c0f8c95abdf48b65c23b0b0e921e2c25018d519e3704dea"
+      },
+      "description": "A run of two host calls is killed after the first call's result is recorded and before the second is attempted. A fresh process resumes the same run from the store: it is served the first call's recorded answer, performs only the second, and commits, so across both processes each call is performed exactly once."
+    },
+    {
+      "id": "kill-and-resume-toy/changed-plan-refused",
+      "family": "kill-and-resume-toy",
+      "name": "changed-plan-refused",
+      "kind": "kill-resume",
+      "requires": "durable-journal",
+      "hostPerformers": "toy-counting",
+      "dir": "kill-and-resume-toy/changed-plan-refused",
+      "files": {
+        "run": "kill-and-resume-toy/changed-plan-refused/run.json",
+        "resume": "kill-and-resume-toy/changed-plan-refused/resume.json",
+        "expectation": "kill-and-resume-toy/changed-plan-refused/expectation.json"
+      },
+      "sha256": {
+        "run": "dec8ae5c277ea08a59ac338e842b4399420687e2acd3a195aeb40c6929d65d3d",
+        "resume": "bfc43b9af6d3ab903686dfab9820c46b6accfaf7a31a4f690f166b937148f288",
+        "expectation": "ab4e6e37b09dd8f62de646125356d08f902aba58f21defd2c6dacf77ac57aa97"
+      },
+      "description": "The same kill, then a resume whose program now calls another function at the first position. The record holds a different call at that ordinal, so the resume is refused under durable-replay-divergence before anything is performed, and the handler does not commit."
     }
   ]
 }
