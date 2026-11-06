@@ -2011,6 +2011,68 @@ the profiles the manifest declares, and a host with declared limits records them
 rest of the record it certifies nothing on its own: the evidence is the host's harness at the
 recorded commit.
 
+### 10.9 Kill and resume — a durable journal across a restart
+
+§7.2's resume-replay continues a **session** from its recorded ops. A host may also run a single
+handler **durably**: it records each performance a re-run cannot reproduce — a host call's answer —
+as it happens, and a run interrupted part-way through its perform phase is resumed from that record,
+under the same run, rather than started again. Such a host promises something no other family can
+see, because the interruption is a **process ending**: whatever the host kept in memory is gone, and
+only what it recorded where a restart cannot reach survives. The `kill-and-resume-toy` family
+certifies that promise at the toy subject (§10.7).
+
+**It is a third obligation, `durable-journal`, and it is opt-in on §10.2's terms.** A host that does
+not record performances durably — every host that runs only the bounded path, or answers calls only
+within one process — is **out of scope**, not non-conformant. So the family is enumerated apart from
+both other arrays, in the manifest's `durableScenarioFamilies` and `durableScenarios`, under the kind
+`kill-resume`, which neither `vectors` nor `scenarios` may spell; a host that declared no durable
+journal never meets one.
+
+#### The documents
+
+A scenario is a directory of three files, each in canonical bytes:
+
+| File | What it is |
+|---|---|
+| `run.json` | a toy handler document (§10.7): the program the first process runs |
+| `resume.json` | a toy handler document: the program the second process runs, under the same run |
+| `expectation.json` | what each process does, below |
+
+Every stage of both handlers is a `HostCall` of a function the scenario's **`hostPerformers`** names.
+One name is registered:
+
+| `hostPerformers` | What a host constructs |
+|---|---|
+| `toy-counting` | a gate admitting every capability; host functions `first`, `second` and `other`, each answering the string `"done"`; ops applied in memory; and a count of every function's performances, in order |
+
+#### What a host does
+
+1. **Run** `run.json` under a fresh run, recording durably, and **end the process** once
+   `kill.afterPerformances` performances have been recorded — after the record of the last of them is
+   durable and before the next is attempted. Ending it is the point: a host that resumes from memory
+   it still holds has certified nothing.
+2. **Resume** in a fresh process: run `resume.json` under the **same run**, reading only what the
+   first process recorded.
+3. **Compare** with `expectation.json`: `beforeKill.performed` is the functions the first process
+   performed, in order; `resume.performed` the functions the second performed, in order;
+   `resume.served` how many recorded performances the resume was given instead of performing;
+   `resume.committed` whether the resumed handler committed; and `resume.refusal`, present exactly
+   when it did not, the token it was refused under.
+
+A resume is **served** a recorded performance only where it reaches the **same call at the same
+position** — the same capability at the same ordinal of the perform phase. Where the resumed program
+reaches another call at a recorded position, serving the record would deliver one call's answer to
+another, so the call is refused there under **`durable-replay-divergence`**, nothing at or after it is
+performed, and the handler, being the unit of atomicity (§6), does not commit. A position recorded as attempted
+with no answer — the process ended inside the call — cannot be decided, and a host that refuses it
+names **`durable-indeterminate-step`**; no scenario pins that window today, since whether to re-invoke
+there is a host's declared policy.
+
+The family pins the two halves of the promise: a run killed after its first call **resumes and
+completes, performing that call exactly once across both processes**; and a run whose program changed
+between the processes is **refused by name**. A host MAY retire a run's record once its outcome is in
+hand; the family does not observe that.
+
 ---
 
 ## 11. Versioning, forward coupling, and what is left open

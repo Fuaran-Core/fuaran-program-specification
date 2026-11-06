@@ -797,6 +797,124 @@ for (const name of Object.keys(PROFILES)) {
   }
 }
 
+// --- the durable scenario enumeration (§10.9) ------------------------------
+// A kill-and-resume scenario certifies a DURABLE placement — one that records
+// what it performed where a restart cannot reach — and is out of scope at
+// every other host. So it is enumerated apart from both arrays above, under a
+// kind neither spells, as profile vectors are: a host that declared no durable
+// journal never meets one. Checked here: the index (every scenario named,
+// present, digested, and nothing in the family's tree unaccounted for) and the
+// shape §10.9 gives each file, because no other checker reads them.
+const DURABLE_KIND = "kill-resume";
+const DURABLE_OBLIGATION = "durable-journal";
+// §10.9 — the one performer set a scenario may name, and what it registers.
+const DURABLE_PERFORMERS = { "toy-counting": new Set(["first", "second", "other"]) };
+// §10.9 — the refusals a resume may end in.
+const DURABLE_REFUSALS = new Set(["durable-replay-divergence", "durable-indeterminate-step"]);
+const durableFamilies = manifest.durableScenarioFamilies ?? [];
+const durableDeclared = new Set(durableFamilies);
+const durableDirs = new Set();
+const durableFiles = new Set();
+
+for (const family of durableFamilies)
+  if (declared.has(family) || scenarioDeclared.has(family))
+    fail(`durable scenario family "${family}" is also declared as a document or step-trace family`);
+
+for (const s of manifest.durableScenarios ?? []) {
+  const id = s.id ?? "(anonymous durable scenario)";
+  if (s.kind !== DURABLE_KIND) fail(`${id}: a durable scenario's kind is "${DURABLE_KIND}", not ${JSON.stringify(s.kind)}`);
+  if (s.requires !== DURABLE_OBLIGATION) fail(`${id}: requires ${JSON.stringify(s.requires)}, not "${DURABLE_OBLIGATION}"`);
+  if (!durableDeclared.has(s.family)) fail(`${id}: durable scenario family ${JSON.stringify(s.family)} is not declared`);
+  const performers = DURABLE_PERFORMERS[s.hostPerformers];
+  if (!performers) fail(`${id}: hostPerformers ${JSON.stringify(s.hostPerformers)} is not a name §10.9 registers`);
+  if (!s.description) fail(`${id}: no description`);
+  if (!s.name || s.dir !== posix.join(s.family ?? "", s.name)) fail(`${id}: dir "${s.dir}" is not "${s.family}/${s.name}"`);
+  if (s.id !== s.dir) fail(`${id}: id is not its dir`);
+  durableDirs.add(s.dir);
+
+  const docs = {};
+  for (const member of ["run", "resume", "expectation"]) {
+    const file = (s.files ?? {})[member];
+    if (file !== posix.join(s.dir ?? "", member + ".json")) {
+      fail(`${id}: files.${member} is ${JSON.stringify(file)}, not "${s.dir}/${member}.json"`);
+      continue;
+    }
+    if (enumerated.has(file) || durableFiles.has(file)) fail(`${id}: file "${file}" is enumerated more than once`);
+    durableFiles.add(file);
+    let bytes;
+    try {
+      bytes = readFileSync(join(here, file));
+    } catch {
+      fail(`${id}: file "${file}" is enumerated but not present`);
+      continue;
+    }
+    const got = createHash("sha256").update(bytes).digest("hex");
+    if (got !== (s.sha256 ?? {})[member]) fail(`${id}: ${member} sha256 is ${(s.sha256 ?? {})[member]} but the file hashes to ${got}`);
+    const text = bytes.toString("utf8");
+    if (profileDefects(text, false).length) fail(`${id}: ${member} is not in canonical bytes (§10.8)`);
+    try {
+      docs[member] = JSON.parse(text);
+    } catch (e) {
+      fail(`${id}: ${member} does not parse (${e.message})`);
+    }
+  }
+  if (!docs.run || !docs.resume || !docs.expectation || !performers) continue;
+
+  // run and resume are toy handler documents whose every stage calls a host
+  // function the named set registers — the calls are what is counted.
+  const calls = (member) => {
+    const h = docs[member];
+    if (h.$type !== "Handler" || !Array.isArray(h.stages) || !h.stages.length) {
+      fail(`${id}: ${member} is not a handler document with stages`);
+      return [];
+    }
+    return h.stages.map((st, i) => {
+      const fn = st?.$type === "Effect" && st.effect?.$type === "HostCall" ? st.effect.fn : undefined;
+      if (!performers.has(fn)) fail(`${id}: ${member} stage ${i} is not a HostCall of a function ${s.hostPerformers} registers`);
+      return fn;
+    });
+  };
+  const runCalls = calls("run");
+  const resumeCalls = calls("resume");
+
+  const e = docs.expectation;
+  const after = e.kill?.afterPerformances;
+  if (!Number.isInteger(after) || after < 1 || after >= runCalls.length)
+    fail(`${id}: kill.afterPerformances must be an integer from 1 to one less than the run's ${runCalls.length} calls`);
+  else if (JSON.stringify(e.beforeKill?.performed) !== JSON.stringify(runCalls.slice(0, after)))
+    fail(`${id}: beforeKill.performed is not the run's first ${after} call(s)`);
+  const r = e.resume ?? {};
+  if (typeof r.committed !== "boolean") fail(`${id}: resume.committed is not a boolean`);
+  if (!Array.isArray(r.performed) || r.performed.some((fn) => !resumeCalls.includes(fn)))
+    fail(`${id}: resume.performed names a call the resumed program does not make`);
+  if (!Number.isInteger(r.served) || r.served < 0 || r.served > after)
+    fail(`${id}: resume.served must be an integer no greater than the performances recorded before the kill`);
+  if (r.committed === true && r.refusal !== undefined) fail(`${id}: a committed resume carries no refusal`);
+  if (r.committed === false && !DURABLE_REFUSALS.has(r.refusal))
+    fail(`${id}: an uncommitted resume names a refusal §10.9 lists, not ${JSON.stringify(r.refusal)}`);
+}
+
+for (const family of durableFamilies) {
+  if (!(manifest.durableScenarios ?? []).some((s) => s.family === family))
+    fail(`durable scenario family "${family}" is declared and enumerates no scenario`);
+  let entries = [];
+  try {
+    entries = readdirSync(join(here, family), { withFileTypes: true });
+  } catch {
+    fail(`durable scenario family "${family}" is declared but has no directory`);
+    continue;
+  }
+  for (const entry of entries) {
+    const rel = posix.join(family, entry.name);
+    if (!entry.isDirectory() || !durableDirs.has(rel)) {
+      fail(`${rel} is present in the tree but enumerated by no durable scenario`);
+      continue;
+    }
+    for (const file of readdirSync(join(here, rel)))
+      if (!durableFiles.has(posix.join(rel, file))) fail(`${posix.join(rel, file)} is present in the tree but enumerated by no durable scenario`);
+  }
+}
+
 // An adoption entry's profiles are ones the manifest declares.
 for (const [host, entry] of Object.entries(manifest.adoption ?? {}))
   for (const name of entry.profiles ?? [])
@@ -822,7 +940,8 @@ const toyRuns = manifest.vectors.filter(
 ).length;
 console.log(
   `manifest describes its tree: ${manifest.vectors.length} vectors (${shape}) across ${families.length} families, ` +
-    `and ${(manifest.scenarios ?? []).length} scenarios across ${scenarioFamilies.length} scenario families. ` +
+    `and ${(manifest.scenarios ?? []).length} scenarios across ${scenarioFamilies.length} scenario families, ` +
+    `and ${(manifest.durableScenarios ?? []).length} durable scenarios across ${durableFamilies.length} durable scenario families (§10.9). ` +
     `A referenced-subject host runs ${referencedRuns} vectors; a toy-subject host runs ${toyRuns}, ` +
     `and a host claiming a profile (§10.8) adds that profile's vectors: ${Object.keys(PROFILES).map((p) => `${(manifest.profileVectors ?? []).filter((v) => v.profile === p).length} for ${p}`).join(", ")}.`,
 );
