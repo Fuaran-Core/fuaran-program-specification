@@ -920,6 +920,38 @@ for (const [host, entry] of Object.entries(manifest.adoption ?? {}))
   for (const name of entry.profiles ?? [])
     if (!(name in profiles)) fail(`adoption ${host} claims profile ${JSON.stringify(name)}, which the manifest does not declare`);
 
+// §10.10 — every vector, profile vector, scenario and durable scenario names the
+// WITNESS FAMILIES it certifies under, drawn from the declared `witnessFamilies`.
+// A member's coverage is derived from these and nothing else, so an entry that
+// names none, or names one the manifest does not declare, is a member whose
+// coverage cannot be computed. The declaration is checked against what the
+// entry already says about itself: a vector at the toy subject is read by the
+// toy witness, one naming no subject by the UI tier's witness (the referenced
+// subject), and a vocabulary-free one by both (§10.7); a scenario in a `-toy`
+// family is the toy's, any other the UI tier's.
+const witnessFamilies = manifest.witnessFamilies;
+if (!Array.isArray(witnessFamilies) || witnessFamilies.length === 0)
+  fail("the manifest declares no witnessFamilies list (§10.10)");
+const witnessDeclared = new Set(Array.isArray(witnessFamilies) ? witnessFamilies : []);
+if (witnessDeclared.size !== (witnessFamilies ?? []).length) fail("witnessFamilies names a family twice (§10.10)");
+const checkWitnesses = (id, witnesses, owed) => {
+  if (!Array.isArray(witnesses) || witnesses.length === 0) {
+    fail(`${id}: names no witnesses (§10.10)`);
+    return;
+  }
+  if (new Set(witnesses).size !== witnesses.length) fail(`${id}: names a witness family twice (§10.10)`);
+  for (const w of witnesses)
+    if (!witnessDeclared.has(w)) fail(`${id}: witness family ${JSON.stringify(w)} is not declared in witnessFamilies (§10.10)`);
+  for (const w of owed)
+    if (!witnesses.includes(w)) fail(`${id}: is read by the ${w} witness but does not name it (§10.10)`);
+};
+const owedByVector = (v) =>
+  v.subject === "toy" ? ["toy"] : v.subject === undefined ? (vocabularyFreeSet.has(v.document) ? ["toy", "ui"] : ["ui"]) : [];
+for (const v of [...(manifest.vectors ?? []), ...(manifest.profileVectors ?? [])])
+  checkWitnesses(v.id ?? "(anonymous vector)", v.witnesses, owedByVector(v));
+for (const s of [...(manifest.scenarios ?? []), ...(manifest.durableScenarios ?? [])])
+  checkWitnesses(s.id ?? "(anonymous scenario)", s.witnesses, typeof s.family === "string" && s.family.endsWith("-toy") ? ["toy"] : ["ui"]);
+
 if (failures.length) {
   console.error(`manifest invariants violated (${failures.length}):`);
   for (const f of failures) console.error(`  ${f}`);

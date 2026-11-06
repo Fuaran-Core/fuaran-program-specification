@@ -24,6 +24,10 @@
   "durableScenarioFamilies": [
     "kill-and-resume-toy"
   ],
+  "witnessFamilies": [
+    "toy",
+    "ui"
+  ],
   "adoption": {
     "fuaran-program-rs": {
       "repository": "Fuaran-Core/fuaran-program-rs",
@@ -106,6 +110,9 @@
     {
       "id": "handler/minimal",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/minimal.json",
@@ -117,6 +124,9 @@
     {
       "id": "handler/read-compute-write",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/read-compute-write.json",
@@ -128,6 +138,9 @@
     {
       "id": "handler/host-call",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/host-call.json",
@@ -148,6 +161,9 @@
     {
       "id": "handler/nested-call",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/nested-call.json",
@@ -159,6 +175,9 @@
     {
       "id": "handler/value-from",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/value-from.json",
@@ -175,6 +194,9 @@
     {
       "id": "handler/reject-unknown-stage",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-unknown-stage.json",
@@ -185,6 +207,9 @@
     {
       "id": "handler/reject-unknown-effect",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-unknown-effect.json",
@@ -195,6 +220,9 @@
     {
       "id": "handler/reject-null-member",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-null-member.json",
@@ -205,6 +233,9 @@
     {
       "id": "handler/reject-host-reserved-slot",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-host-reserved-slot.json",
@@ -215,6 +246,9 @@
     {
       "id": "handler/reject-missing-name",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-missing-name.json",
@@ -225,6 +259,9 @@
     {
       "id": "handler/reject-empty-name",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "handler/reject-empty-name.json",
@@ -235,6 +272,9 @@
     {
       "id": "handler/host-call-only",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/host-call-only.json",
@@ -251,6 +291,9 @@
     {
       "id": "handler/notify-only",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/notify-only.json",
@@ -267,6 +310,9 @@
     {
       "id": "handler/relative-op",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/relative-op.json",
@@ -283,6 +329,9 @@
     {
       "id": "handler/undecidable-action",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/undecidable-action.json",
@@ -299,6 +348,9 @@
     {
       "id": "handler/staged-query",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/staged-query.json",
@@ -316,6 +368,9 @@
     {
       "id": "handler/chain-bound-write",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/chain-bound-write.json",
@@ -332,6 +387,9 @@
     {
       "id": "handler/state-only-report",
       "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "handler",
       "file": "handler/state-only-report.json",
@@ -343,6 +401,9 @@
     {
       "id": "server-effect/run-query",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/run-query.json",
@@ -352,6 +413,9 @@
     {
       "id": "server-effect/apply-ops",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/apply-ops.json",
@@ -361,6 +425,9 @@
     {
       "id": "server-effect/host-call",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/host-call.json",
@@ -370,6 +437,9 @@
     {
       "id": "server-effect/host-call-bare",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/host-call-bare.json",
@@ -379,6 +449,9 @@
     {
       "id": "server-effect/emit-patch",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/emit-patch.json",
@@ -388,6 +461,9 @@
     {
       "id": "server-effect/notify",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/notify.json",
@@ -397,6 +473,9 @@
     {
       "id": "server-effect/report",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/report.json",
@@ -406,6 +485,9 @@
     {
       "id": "server-effect/notify-ordinal-divergence",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "server-effect",
       "file": "server-effect/notify-ordinal-divergence.json",
@@ -415,6 +497,9 @@
     {
       "id": "server-effect/reject-missing-fn",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "server-effect",
       "file": "server-effect/reject-missing-fn.json",
@@ -425,6 +510,9 @@
     {
       "id": "server-effect/reject-empty-code",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "server-effect",
       "file": "server-effect/reject-empty-code.json",
@@ -435,6 +523,9 @@
     {
       "id": "server-effect/reject-empty-query-name",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "server-effect",
       "file": "server-effect/reject-empty-query-name.json",
@@ -445,6 +536,9 @@
     {
       "id": "server-effect/reject-empty-channel",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "server-effect",
       "file": "server-effect/reject-empty-channel.json",
@@ -455,6 +549,9 @@
     {
       "id": "server-effect/reject-declared-capability",
       "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "server-effect",
       "file": "server-effect/reject-declared-capability.json",
@@ -465,6 +562,9 @@
     {
       "id": "client-effect/navigate",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/navigate.json",
@@ -474,6 +574,9 @@
     {
       "id": "client-effect/navigate-target",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/navigate-target.json",
@@ -483,6 +586,9 @@
     {
       "id": "client-effect/push-state",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/push-state.json",
@@ -492,6 +598,9 @@
     {
       "id": "client-effect/write-to-clipboard",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/write-to-clipboard.json",
@@ -501,6 +610,9 @@
     {
       "id": "client-effect/focus",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/focus.json",
@@ -510,6 +622,9 @@
     {
       "id": "client-effect/download",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/download.json",
@@ -519,6 +634,9 @@
     {
       "id": "client-effect/read-file-body",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/read-file-body.json",
@@ -528,6 +646,9 @@
     {
       "id": "client-effect/reject-unknown-kind",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "client-effect",
       "file": "client-effect/reject-unknown-kind.json",
@@ -538,6 +659,9 @@
     {
       "id": "client-effect/reject-navigate-target",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "client-effect",
       "file": "client-effect/reject-navigate-target.json",
@@ -548,6 +672,9 @@
     {
       "id": "client-effect/control-characters",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/control-characters.json",
@@ -557,6 +684,9 @@
     {
       "id": "client-effect/print",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/print.json",
@@ -566,6 +696,9 @@
     {
       "id": "client-effect/confirm",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "client-effect",
       "file": "client-effect/confirm.json",
@@ -575,6 +708,9 @@
     {
       "id": "client-effect/reject-print-member",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "client-effect",
       "file": "client-effect/reject-print-member.json",
@@ -585,6 +721,9 @@
     {
       "id": "client-effect/reject-confirm-missing-token",
       "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "client-effect",
       "file": "client-effect/reject-confirm-missing-token.json",
@@ -595,6 +734,10 @@
     {
       "id": "invocation/keyed",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "invocation",
       "file": "invocation/keyed.json",
@@ -604,6 +747,10 @@
     {
       "id": "invocation/unkeyed",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "invocation",
       "file": "invocation/unkeyed.json",
@@ -613,6 +760,10 @@
     {
       "id": "invocation/reject-empty-key",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "invocation",
       "file": "invocation/reject-empty-key.json",
@@ -623,6 +774,10 @@
     {
       "id": "invocation/reject-key-too-long",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "invocation",
       "file": "invocation/reject-key-too-long.json",
@@ -633,6 +788,10 @@
     {
       "id": "invocation/reject-empty-endpoint",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "invocation",
       "file": "invocation/reject-empty-endpoint.json",
@@ -643,6 +802,10 @@
     {
       "id": "invocation/reject-empty-node-id",
       "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "invocation",
       "file": "invocation/reject-empty-node-id.json",
@@ -653,6 +816,9 @@
     {
       "id": "outcome/committed",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "outcome",
       "file": "outcome/committed.json",
@@ -662,6 +828,9 @@
     {
       "id": "outcome/denied",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "outcome",
       "file": "outcome/denied.json",
@@ -671,6 +840,9 @@
     {
       "id": "outcome/perform-failed",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "outcome",
       "file": "outcome/perform-failed.json",
@@ -680,6 +852,9 @@
     {
       "id": "outcome/unregistered",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "outcome",
       "file": "outcome/unregistered.json",
@@ -689,6 +864,9 @@
     {
       "id": "outcome/reject-impossible",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "outcome",
       "file": "outcome/reject-impossible.json",
@@ -699,6 +877,9 @@
     {
       "id": "outcome/reject-endpoint-echoed",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "outcome",
       "file": "outcome/reject-endpoint-echoed.json",
@@ -709,6 +890,9 @@
     {
       "id": "outcome/reject-denial-origin",
       "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "outcome",
       "file": "outcome/reject-denial-origin.json",
@@ -719,6 +903,10 @@
     {
       "id": "cross-layer/logic-tree-ref",
       "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "logic-tree-ref",
       "file": "cross-layer/logic-tree-ref.json",
@@ -728,6 +916,10 @@
     {
       "id": "cross-layer/logic-tree-ref-pinned",
       "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "round-trip",
       "document": "logic-tree-ref",
       "file": "cross-layer/logic-tree-ref-pinned.json",
@@ -737,6 +929,10 @@
     {
       "id": "cross-layer/reject-malformed-content-address",
       "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "logic-tree-ref",
       "file": "cross-layer/reject-malformed-content-address.json",
@@ -747,6 +943,10 @@
     {
       "id": "cross-layer/reject-inline-body",
       "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "logic-tree-ref",
       "file": "cross-layer/reject-inline-body.json",
@@ -757,6 +957,10 @@
     {
       "id": "cross-layer/reject-unknown-slot",
       "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
       "kind": "reject",
       "document": "logic-tree-ref",
       "file": "cross-layer/reject-unknown-slot.json",
@@ -767,6 +971,9 @@
     {
       "id": "cross-layer/reject-result-target",
       "family": "cross-layer",
+      "witnesses": [
+        "ui"
+      ],
       "kind": "reject",
       "document": "handler",
       "file": "cross-layer/reject-result-target.json",
@@ -777,6 +984,9 @@
     {
       "id": "toy-handler/minimal",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -789,6 +999,9 @@
     {
       "id": "toy-handler/read-compute-write",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -801,6 +1014,9 @@
     {
       "id": "toy-handler/host-call",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -822,6 +1038,9 @@
     {
       "id": "toy-handler/nested-call",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -834,6 +1053,9 @@
     {
       "id": "toy-handler/value-from",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -851,6 +1073,9 @@
     {
       "id": "toy-handler/host-call-only",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -868,6 +1093,9 @@
     {
       "id": "toy-handler/notify-only",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -885,6 +1113,9 @@
     {
       "id": "toy-handler/undecidable-action",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -902,6 +1133,9 @@
     {
       "id": "toy-handler/staged-query",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -920,6 +1154,9 @@
     {
       "id": "toy-handler/seq-bound-write",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -937,6 +1174,9 @@
     {
       "id": "toy-handler/guard",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -954,6 +1194,9 @@
     {
       "id": "toy-handler/choose",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -971,6 +1214,9 @@
     {
       "id": "toy-handler/repeat-literal",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -983,6 +1229,9 @@
     {
       "id": "toy-handler/repeat-parameter",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -1000,6 +1249,9 @@
     {
       "id": "toy-handler/each-literal",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -1017,6 +1269,9 @@
     {
       "id": "toy-handler/state-only-report",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "handler",
@@ -1029,6 +1284,9 @@
     {
       "id": "toy-handler/reject-unknown-stage",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1040,6 +1298,9 @@
     {
       "id": "toy-handler/reject-unknown-effect",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1051,6 +1312,9 @@
     {
       "id": "toy-handler/reject-null-member",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1062,6 +1326,9 @@
     {
       "id": "toy-handler/reject-reserved-slot",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1073,6 +1340,9 @@
     {
       "id": "toy-handler/reject-missing-name",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1084,6 +1354,9 @@
     {
       "id": "toy-handler/reject-empty-name",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1095,6 +1368,9 @@
     {
       "id": "toy-handler/reject-foreign-action",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1106,6 +1382,9 @@
     {
       "id": "toy-handler/reject-ring-into",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1117,6 +1396,9 @@
     {
       "id": "toy-handler/reject-result-target",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1128,6 +1410,9 @@
     {
       "id": "toy-handler/reject-repeated-member",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1139,6 +1424,9 @@
     {
       "id": "toy-handler/reject-repeated-member-nested",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1150,6 +1438,9 @@
     {
       "id": "toy-handler/reject-trailing-content",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1161,6 +1452,9 @@
     {
       "id": "toy-handler/reject-number-grammar",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1172,6 +1466,9 @@
     {
       "id": "toy-handler/reject-bare-nonfinite",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1183,6 +1480,9 @@
     {
       "id": "toy-handler/reject-raw-control",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1194,6 +1494,9 @@
     {
       "id": "toy-handler/reject-unpaired-surrogate",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1205,6 +1508,9 @@
     {
       "id": "toy-handler/reject-overflowing-exponent",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1216,6 +1522,9 @@
     {
       "id": "toy-handler/reject-limit-json-depth",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1228,6 +1537,9 @@
     {
       "id": "toy-handler/reject-limit-action-depth",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1240,6 +1552,9 @@
     {
       "id": "toy-handler/reject-limit-actions-per-program",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1252,6 +1567,9 @@
     {
       "id": "toy-handler/reject-limit-actions-across-stages",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1264,6 +1582,9 @@
     {
       "id": "toy-handler/reject-limit-repeat-bound",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1276,6 +1597,9 @@
     {
       "id": "toy-handler/reject-limit-parameter-hi",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1288,6 +1612,9 @@
     {
       "id": "toy-handler/reject-limit-each-collection",
       "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "handler",
@@ -1300,6 +1627,9 @@
     {
       "id": "toy-server-effect/run-query",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1310,6 +1640,9 @@
     {
       "id": "toy-server-effect/apply-ops",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1320,6 +1653,9 @@
     {
       "id": "toy-server-effect/host-call",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1330,6 +1666,9 @@
     {
       "id": "toy-server-effect/host-call-bare",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1340,6 +1679,9 @@
     {
       "id": "toy-server-effect/emit-patch",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1350,6 +1692,9 @@
     {
       "id": "toy-server-effect/notify",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1360,6 +1705,9 @@
     {
       "id": "toy-server-effect/report",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1370,6 +1718,9 @@
     {
       "id": "toy-server-effect/notify-ordinal-divergence",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "server-effect",
@@ -1380,6 +1731,9 @@
     {
       "id": "toy-server-effect/reject-missing-fn",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1391,6 +1745,9 @@
     {
       "id": "toy-server-effect/reject-empty-severity",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1402,6 +1759,9 @@
     {
       "id": "toy-server-effect/reject-empty-query-name",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1413,6 +1773,9 @@
     {
       "id": "toy-server-effect/reject-empty-channel",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1424,6 +1787,9 @@
     {
       "id": "toy-server-effect/reject-declared-capability",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1435,6 +1801,9 @@
     {
       "id": "toy-server-effect/reject-foreign-op",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1446,6 +1815,9 @@
     {
       "id": "toy-server-effect/reject-repeated-member",
       "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "server-effect",
@@ -1457,6 +1829,9 @@
     {
       "id": "toy-client-effect/sound",
       "family": "toy-client-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "client-effect",
@@ -1467,6 +1842,9 @@
     {
       "id": "toy-client-effect/reject-unknown-kind",
       "family": "toy-client-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "client-effect",
@@ -1478,6 +1856,9 @@
     {
       "id": "toy-client-effect/reject-missing-member",
       "family": "toy-client-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "client-effect",
@@ -1489,6 +1870,9 @@
     {
       "id": "toy-client-effect/reject-repeated-member",
       "family": "toy-client-effect",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "client-effect",
@@ -1500,6 +1884,9 @@
     {
       "id": "toy-outcome/committed",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "outcome",
@@ -1510,6 +1897,9 @@
     {
       "id": "toy-outcome/denied",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "outcome",
@@ -1520,6 +1910,9 @@
     {
       "id": "toy-outcome/perform-failed",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "outcome",
@@ -1530,6 +1923,9 @@
     {
       "id": "toy-outcome/unregistered",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "round-trip",
       "document": "outcome",
@@ -1540,6 +1936,9 @@
     {
       "id": "toy-outcome/reject-impossible",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "outcome",
@@ -1551,6 +1950,9 @@
     {
       "id": "toy-outcome/reject-endpoint-echoed",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "outcome",
@@ -1562,6 +1964,9 @@
     {
       "id": "toy-outcome/reject-denial-origin",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "outcome",
@@ -1573,6 +1978,9 @@
     {
       "id": "toy-outcome/reject-foreign-patch",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "outcome",
@@ -1584,6 +1992,9 @@
     {
       "id": "toy-outcome/reject-repeated-member",
       "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
       "subject": "toy",
       "kind": "reject",
       "document": "outcome",
@@ -1600,6 +2011,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/handler-member-order.json",
       "sha256": "a380a09e04978792bf47bbf40647a1b10567cad111f4102ce0aede26f5fcaf5d",
       "reject": "non-canonical-bytes",
@@ -1611,6 +2025,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/handler-nested-member-order.json",
       "sha256": "81e4cc69629cd12a7e58ad70ebd58db67c5958eddc61a18a97ff9dded2610b4f",
       "reject": "non-canonical-bytes",
@@ -1622,6 +2039,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/handler-whitespace.json",
       "sha256": "faadbe5e38972a38e84be5ff632156c77f980936228d0052cfb3e23c099f3c7c",
       "reject": "non-canonical-bytes",
@@ -1633,6 +2053,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/handler-trailing-newline.json",
       "sha256": "9e97352f048b70cb92ca4872beb9b6fefee3f9065b9efa3fa2384ae2d67888c8",
       "reject": "non-canonical-bytes",
@@ -1644,6 +2067,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/handler-escaped-character.json",
       "sha256": "1f0ef5f90774429a01c355344c52a822b38bc45af82cc49ce9961b5633fc62dd",
       "reject": "non-canonical-bytes",
@@ -1655,6 +2081,9 @@
       "kind": "reject",
       "document": "server-effect",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/server-effect-payload-member-order.json",
       "sha256": "cd5350bbd1485b519d2381abb0f0eed1bea61ea216eb786d8f0a9fec284bd321",
       "reject": "non-canonical-bytes",
@@ -1666,6 +2095,9 @@
       "kind": "reject",
       "document": "client-effect",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/client-effect-whitespace.json",
       "sha256": "83beeec41ef88e87251e706595fb4e1b54edd970f3cf3fc46b7ee0dbdcf411cb",
       "reject": "non-canonical-bytes",
@@ -1677,6 +2109,9 @@
       "kind": "reject",
       "document": "outcome",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/canonical-bytes/outcome-member-order.json",
       "sha256": "c657f49f3a81393e3b7720be00e752f32c88ba6eef7fb628a14e213ed46b3763",
       "reject": "non-canonical-bytes",
@@ -1688,6 +2123,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/integer-only/handler-fraction.json",
       "sha256": "f8a2970df6248f1dd51a7598acb7dc789cb11f9af70614713dbc0df25046e9bf",
       "reject": "non-integer-number",
@@ -1699,6 +2137,9 @@
       "kind": "reject",
       "document": "handler",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/integer-only/handler-exponent.json",
       "sha256": "3cf83d946db8bda8efc7308a5d9b327125001ad3d8291105573ef0de73602d21",
       "reject": "non-integer-number",
@@ -1710,6 +2151,9 @@
       "kind": "reject",
       "document": "server-effect",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/integer-only/server-effect-payload-fraction.json",
       "sha256": "814948ddf7b56faae19bc11e77ba7f484ecbbc408864d6d629fd1ed9dfa9f0ec",
       "reject": "non-integer-number",
@@ -1721,6 +2165,9 @@
       "kind": "reject",
       "document": "outcome",
       "subject": "toy",
+      "witnesses": [
+        "toy"
+      ],
       "file": "profiles/integer-only/outcome-notification-fraction.json",
       "sha256": "c1906f5dbc276fd96f553546e13b2550cb9f90df024cc3b3553c91fc74674e57",
       "reject": "non-integer-number",
@@ -1731,6 +2178,9 @@
     {
       "id": "driver-semantics/chain-folds",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "chain-folds",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1751,6 +2201,9 @@
     {
       "id": "driver-semantics/closure-free-effects",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "closure-free-effects",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1771,6 +2224,9 @@
     {
       "id": "driver-semantics/coverage-floor-passthrough",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "coverage-floor-passthrough",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1791,6 +2247,9 @@
     {
       "id": "driver-semantics/coverage-floor-reactive",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "coverage-floor-reactive",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1811,6 +2270,9 @@
     {
       "id": "driver-semantics/documented-no-ops",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "documented-no-ops",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1831,6 +2293,9 @@
     {
       "id": "driver-semantics/fixed-base-reresolution",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "fixed-base-reresolution",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1851,6 +2316,9 @@
     {
       "id": "driver-semantics/nested-handler-call",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "nested-handler-call",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1871,6 +2339,9 @@
     {
       "id": "driver-semantics/refused-navigate",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "refused-navigate",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1891,6 +2362,9 @@
     {
       "id": "driver-semantics/refused-destination",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "refused-destination",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1912,6 +2386,9 @@
     {
       "id": "driver-semantics/server-handler-call",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "server-handler-call",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1932,6 +2409,9 @@
     {
       "id": "driver-semantics/setstate-rebinds",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "setstate-rebinds",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1952,6 +2432,9 @@
     {
       "id": "driver-semantics/confirm-answer-yes",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "confirm-answer-yes",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1972,6 +2455,9 @@
     {
       "id": "driver-semantics/confirm-answer-no",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "confirm-answer-no",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -1992,6 +2478,9 @@
     {
       "id": "driver-semantics/confirm-withdrawn",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "confirm-withdrawn",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2012,6 +2501,9 @@
     {
       "id": "driver-semantics/confirm-duplicate-answer",
       "family": "driver-semantics",
+      "witnesses": [
+        "ui"
+      ],
       "name": "confirm-duplicate-answer",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2032,6 +2524,9 @@
     {
       "id": "driver-semantics-toy/sequence-folds",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "sequence-folds",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2052,6 +2547,9 @@
     {
       "id": "driver-semantics-toy/choose-takes-an-arm",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "choose-takes-an-arm",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2072,6 +2570,9 @@
     {
       "id": "driver-semantics-toy/repeat-bounded",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "repeat-bounded",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2092,6 +2593,9 @@
     {
       "id": "driver-semantics-toy/each-over-literal",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "each-over-literal",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2112,6 +2616,9 @@
     {
       "id": "driver-semantics-toy/require-halts",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "require-halts",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2132,6 +2639,9 @@
     {
       "id": "driver-semantics-toy/leaf-refusal-continues",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "leaf-refusal-continues",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2152,6 +2662,9 @@
     {
       "id": "driver-semantics-toy/closure-free-call",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "closure-free-call",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2172,6 +2685,9 @@
     {
       "id": "driver-semantics-toy/refused-event",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "refused-event",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2192,6 +2708,9 @@
     {
       "id": "driver-semantics-toy/fixed-base-reresolution",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "fixed-base-reresolution",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2212,6 +2731,9 @@
     {
       "id": "driver-semantics-toy/budget-refusal",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "budget-refusal",
       "kind": "step-trace",
       "requires": "bounded-loop",
@@ -2232,6 +2754,9 @@
     {
       "id": "driver-semantics-toy/handler-op-channel",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "handler-op-channel",
       "kind": "step-trace",
       "requires": "handler-loop",
@@ -2253,6 +2778,9 @@
     {
       "id": "driver-semantics-toy/handler-argument-policy",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "handler-argument-policy",
       "kind": "step-trace",
       "requires": "handler-loop",
@@ -2274,6 +2802,9 @@
     {
       "id": "driver-semantics-toy/handler-staged-perform",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "handler-staged-perform",
       "kind": "step-trace",
       "requires": "handler-loop",
@@ -2295,6 +2826,9 @@
     {
       "id": "driver-semantics-toy/handler-nested-call",
       "family": "driver-semantics-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "handler-nested-call",
       "kind": "step-trace",
       "requires": "handler-loop",
@@ -2318,6 +2852,9 @@
     {
       "id": "kill-and-resume-toy/resumes-without-repeating",
       "family": "kill-and-resume-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "resumes-without-repeating",
       "kind": "kill-resume",
       "requires": "durable-journal",
@@ -2338,6 +2875,9 @@
     {
       "id": "kill-and-resume-toy/changed-plan-refused",
       "family": "kill-and-resume-toy",
+      "witnesses": [
+        "toy"
+      ],
       "name": "changed-plan-refused",
       "kind": "kill-resume",
       "requires": "durable-journal",

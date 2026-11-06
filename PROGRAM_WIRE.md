@@ -1283,7 +1283,7 @@ would be a specification of nothing. Until they do, a host still MUST refuse tho
 rules 10 and 11 and by the cited grammar — the corpus not pinning a case does not make it optional.
 
 [`wire-fixtures/manifest.json`](wire-fixtures/manifest.json) is the **authoritative enumeration** of
-families, vectors, scenario families and scenarios. Do not count any of them from a prose description
+families, vectors, scenario families and scenarios, and of the witness families each certifies under (§10.10). Do not count any of them from a prose description
 of the corpus, including this one — counts drift, and a manifest cannot.
 
 **The manifest may also carry an `adoption` record**, a top-level object keyed by host. Each entry
@@ -2072,6 +2072,40 @@ The family pins the two halves of the promise: a run killed after its first call
 completes, performing that call exactly once across both processes**; and a run whose program changed
 between the processes is **refused by name**. A host MAY retire a run's record once its outcome is in
 hand; the family does not observe that.
+
+### 10.10 Witness coverage — a member leaves draft only with two witnesses
+
+A **witness** is a domain an implementation instantiates this specification over, and a **witness
+family** is the name the corpus gives the vectors and scenarios read through one. Two are declared, in
+the manifest's `witnessFamilies`: `toy`, the witness this document owns (§10.6, §10.7), and `ui`, the
+UI tier's, whose vocabulary is the referenced subject's (§3). A further witness is declared there when
+its first vector arrives.
+
+**Every entry names the witness families it certifies under.** Each vector, profile vector, scenario
+and durable scenario carries a `witnesses` array, drawn from `witnessFamilies`, with no repeats. It is
+a declaration the manifest checker holds to what the entry already says about itself: a vector at the
+toy subject names `toy`; a vector naming no subject names `ui`, and also `toy` when its document is
+vocabulary-free (§10.7), since a host of either subject runs it; a scenario in a family ending `-toy`
+names `toy`, and any other names `ui`.
+
+**A contract member is a unit a host certifies.** There are three classes:
+
+| Class | Members | Exercised by |
+|---|---|---|
+| document | each document kind §10.1 certifies | every vector whose `document` it is |
+| obligation | each name a scenario's `requires` spells (§10.2, §10.6, §10.9) | every scenario and durable scenario requiring it |
+| profile | each profile §10.8 declares | every profile vector naming it |
+
+A member's **witness families** are the union of the `witnesses` of every entry exercising it. They are
+derived from the manifest and from nothing else, so a member's coverage cannot be stated apart from the
+vectors that give it.
+
+**A member with fewer than two witness families is PROPOSED.** It is specified and certifiable, and a
+host may claim it, but it records one domain's need in this document's vocabulary rather than a shape
+two domains have been shown to share. It leaves PROPOSED when a second witness family exercises it,
+which is a corpus change, never a re-labelling. A release of an implementation that carries a PROPOSED
+member records the mark beside the member; the mark is a finding about the contract, not a refusal of
+the release.
 
 ---
 
