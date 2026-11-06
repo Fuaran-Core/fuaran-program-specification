@@ -42,6 +42,16 @@ certifies their vectors as they stand. So a host's run is selected by subject:
 §10.7 records, family by family, which vectors of one subject have no counterpart at the other and
 why.
 
+## Witnesses
+
+Every vector, profile vector, scenario and durable scenario names the **witness families** it certifies
+under in a `witnesses` array, drawn from the manifest's `witnessFamilies` (`toy`, `ui`). A vector at the
+toy subject names `toy`; one with no `subject` names `ui`, and `toy` too when its document is
+vocabulary-free; a scenario in a `-toy` family names `toy`, any other `ui`. `check-manifest.mjs`
+holds every entry to that. A contract member's coverage — each document kind, each obligation a
+scenario `requires`, each profile — is the union of the `witnesses` of the entries exercising it, and a
+member with one family is PROPOSED (§10.10).
+
 ## What a vector is
 
 Every vector is one file whose **bytes are the document**: UTF-8, no byte-order mark, no trailing
@@ -270,7 +280,7 @@ corpora. Conformance here asserts that such a position round-trips, not that its
 ## Adding a vector
 
 Round-trip vectors are **generated**: add the model to `emit.mjs`, **to `emit-independent.mjs` and to
-`emit-ordinal.py`**, add its manifest entry by hand (with `"subject": "toy"` at the toy subject), run
+`emit-ordinal.py`**, add its manifest entry by hand (with `"subject": "toy"` at the toy subject, and its `witnesses`), run
 `node emit.mjs --write`, then `node compare-emitters.mjs` and `node check-manifest.mjs`. A toy handler
 is classified in each emitter by §10.7's table of the toy's cases, never by the referenced subject's
 walk. Write the second model from the specification rather than by copying the
@@ -290,7 +300,7 @@ loop does, so the only thing that can write one is a bounded loop. The sequence:
 1. add the scenario to a conformant host's seed set and regenerate — a host's emit path must refuse
    to record a trace while its own placements disagree, since a trace minted from a divergence
    enshrines the bug as the contract;
-2. add the manifest entry by hand (`id`, `family`, `name`, `kind`, `requires`, `dir`, `files`,
+2. add the manifest entry by hand (`id`, `family`, `witnesses`, `name`, `kind`, `requires`, `dir`, `files`,
    `description`, and `hostPolicy` or `hostHandlers` where the scenario presumes one);
 3. `node check-scenarios.mjs --write` to refresh the digests and step counts;
 4. `pwsh ../run.ps1`.
