@@ -195,6 +195,44 @@ compliant.
     refuses **for the class** (§10.1); a `limit-exceeded` vector also names the limit it passes, and
     a host whose refusal names its limit SHOULD check that it is that one.
 
+**A member marked non-empty refuses the empty string, as `missing-member`.** The rule is stated here
+once, for every document this specification declares, and the sections below cite it rather than
+restate it. A member is marked non-empty when its value **names** something a host acts on — a slot,
+a function, a channel, a node, an entry point, a destination, a key — because an empty string names
+nothing, and a reader that accepted one would hand the host a reference it can resolve against
+nothing. Where omission has a meaning of its own (`into` below, `idempotencyKey`), the empty string is
+not a third spelling of it: omission is the one spelling of the absent case, and the empty string is
+refused. A present-and-empty member is refused as **`missing-member`** — the member is there, and what
+the document needed it to name is missing — except where its section names a class of its own.
+
+| Document | Members that MUST be non-empty |
+|---|---|
+| handler (§4.1) | `name` — refused as **`empty-name`**, its own class (§4.1) |
+| server effect (§5.1) | `RunQuery`'s `name`; `HostCall`'s `fn`, and its `into` when present; `Notify`'s `channel`; `Report`'s `code` and `severity` |
+| client effect (§5.2) | `Navigate`'s and `PushState`'s `route`; `Focus`'s and `ReadFileBody`'s `nodeId`; `Download`'s `url` and `name`; `Confirm`'s `prompt` and `token` |
+| outcome (§6.3) | each notification's `channel`; every capability string — each entry of `performed`, and the `capability` of a denial (§5.3) and of a `Failed` or `PerformFailed` diagnostic (§6.5) |
+| invocation (§8.3) | `endpoint` and `nodeId`; `idempotencyKey` when present — refused as **`empty-idempotency-key`**, its own class (§8.3) |
+| cross-layer reference (§9.2) | `ref` |
+| step trace (§10.3) | an event's `nodeId` and `event`; a denial's `capability`, and its `origin` when present; each recorded effect |
+| toy documents (§10.6) | `Read`'s and `Put`'s `key`; `Ring`'s `endpoint`; `Hole`'s and `ForEach`'s `placeholder`; a handler's `event`; every key of a state. A node id and an op target are identifiers, non-empty by their grammar |
+
+A capability string is non-empty by derivation as well (§5.1): every arm's discriminator is, and
+`host:` precedes a non-empty `fn`. The rule makes a reader of an outcome hold a document to what any
+producer of one could have written.
+
+The string members **not** marked are content rather than names, and may be empty: a finding's
+`message` (§5.1), `WriteToClipboard`'s `text` (§5.2), a `Failed` or `PerformFailed` diagnostic's
+`reason` (§6.5), a step event's payload values (§10.3), and the toy's `Fail` `message` and `Relabel`
+`label` (§10.6). `Confirm`'s `prompt` is content too, and is marked all the same: a confirmation that
+puts no question to the reader collects an answer to nothing, which is a consent the surface cannot
+honestly report as given.
+
+The schemas in [`schemas/`](schemas/) constrain exactly these members to non-empty, and no other
+string (`minLength: 1`, through `common.schema.json`'s `nonEmptyString`, `identifier` and `capability`
+definitions, or the toy identifier's pattern). One more string admits no empty value and is not
+marked: a reference's `hash` (§9.2), which its own pattern holds, and which is refused for that
+pattern's class, `malformed-content-address`.
+
 **The one enumerated exception is the client-effect family (§5.2)**, whose wire form predates this
 document. It uses a `kind` member rather than `$type` and orders its members by declaration rather
 than Ordinally. It is specified **as it is emitted**; see §5.2 for why that is not corrected here.
@@ -397,9 +435,11 @@ host derives, under the control of the untrusted side — the same defect as a w
 (§9.5), one layer down.
 
 `into` names a state slot the host call's result lands in. It is optional; omitted, the result is
-discarded and only the fact of the call is recorded. `fn`, `name`, `channel`, `code` and `severity`
-MUST be non-empty; a `Report` whose `code` or `severity` is empty MUST be refused (`missing-member`).
-A finding's `message` may be empty.
+discarded and only the fact of the call is recorded. When present it MUST be non-empty: an empty slot
+names no slot the result could land in, and "discard the result" already has its one spelling, which
+is omission. `fn`, `name`, `channel`, `code` and `severity` MUST be non-empty too. Each of the six is
+refused, present and empty, as `missing-member` (§2's non-empty rule). A finding's `message` may be
+empty.
 
 **`Report` carries the HOST's vocabulary, not this document's.** No code and no severity is fixed
 here, and none will be: what a finding means is the business of the host whose verb reported it, and
@@ -429,6 +469,12 @@ Eight arms, closed on the same terms. A program reaches a rendering surface only
 | `ReadFileBody` | `nodeId`, `encoding` | read the body of a selected file; `encoding` is one of `"Text"`, `"Base64"`, `"DataUrl"` |
 | `Print` | *(none)* | open the reader's own print dialogue |
 | `Confirm` | `prompt`, `token` | ask the reader `prompt`; the answer returns keyed by `token` |
+
+Every member above but `text` and `encoding` is a string that MUST be non-empty, and is refused,
+present and empty, as `missing-member` (§2's non-empty rule): a route, a node id, a URL and a token
+each name something the surface acts on, a suggested filename names the file it writes, and a
+confirmation must put a question. `WriteToClipboard`'s `text` may be empty, and `encoding` is closed
+to its three values.
 
 **Arms seven and eight arrived at format version 2**, and they are the reason that version exists.
 Both were already emitted by a conformant surface before this document declared them — §11.2
@@ -711,12 +757,16 @@ leaves its predecessors run, and no fold can undo them. What conformance require
 | `$type` | yes | `"HandlerReport"` | the document discriminator |
 | `committed` | yes | boolean | whether the handler ran to completion |
 | `diagnostics` | yes | array of **diagnostic** (§6.5) | why what happened, happened |
-| `notifications` | yes | array of `{"channel":…,"payload":…}` | host-channel messages the handler asked for, in order |
+| `notifications` | yes | array of `{"channel":…,"payload":…}`, `channel` non-empty | host-channel messages the handler asked for, in order |
 | `patches` | yes | array (referenced) | ops the handler asked to be shipped to a rendering surface, in order |
 | `performed` | yes | array of capability strings | the audit trail — see below |
 
 Every member is required even when empty: an omitted array and an empty array would be two spellings
-of one fact, and a reader would have to guess which producer it was talking to.
+of one fact, and a reader would have to guess which producer it was talking to. An entry is another
+matter: a notification's `channel` and each capability string in `performed` MUST be non-empty, and
+are refused, present and empty, as `missing-member` (§2's non-empty rule). A notification is the
+record of a `Notify` the handler reached, whose `channel` §5.1 already holds to non-empty, so an empty
+one names a channel no conformant handler could have asked for.
 
 **`performed` is EXECUTION order, not stage order.** Staging defers every host call to the perform
 phase, so a host call declared first appears *after* every capability the plan phase ran. Reading this
@@ -1050,6 +1100,9 @@ NOT report at-most-once admission it does not provide.
 | `endpoint` | yes | string, non-empty | the entry point named — the one string that always comes off the wire |
 | `idempotencyKey` | no | string, 1–128 characters | §8.2's key |
 | `nodeId` | yes | string, non-empty | the originating node, threaded to the evaluator exactly as every placement threads it |
+
+An empty `endpoint` or `nodeId` MUST be refused (`missing-member`, §2's non-empty rule): an empty
+endpoint names no entry point a host could dispatch to, and an empty node id no node to thread.
 
 An empty `idempotencyKey` MUST be refused (`empty-idempotency-key`) rather than read as absent — the
 two are different claims, and only omission means "this caller is not asking for deduplication". A key
@@ -1885,19 +1938,39 @@ same name.
 | `handler/undecidable-action` | `toy-handler/undecidable-action` — a leaf, `Beep`, standing for an action the walk does not decide |
 | `handler/reject-host-reserved-slot` | `toy-handler/reject-reserved-slot`, under `sys.` |
 | `handler/relative-op` | **none.** `relative-addressing` is not reachable from a toy document (above) |
+| `server-effect/reject-empty-code` | `toy-server-effect/reject-empty-severity` — the finding's other non-empty token, so between them the two subjects pin both of `Report`'s |
 | `client-effect/navigate`, `navigate-target`, `push-state`, `write-to-clipboard`, `focus`, `download`, `read-file-body`, `print`, `confirm` | **none.** Arms of the referenced client vocabulary. The toy's is closed at `Sound`, which `toy-client-effect/sound` covers |
 | `client-effect/control-characters` | **none.** The short escapes need a string member able to hold a control character, and the toy effect's one string member is a node id — an identifier (§10.6) |
 | `client-effect/reject-navigate-target`, `reject-print-member` | **none.** Each is a rule about an arm the toy does not have |
 | `client-effect/reject-confirm-missing-token` | `toy-client-effect/reject-missing-member` |
 | `outcome/denied` | `toy-outcome/denied`, **without** the `Bounded` diagnostic — the toy has no diagnostic vocabulary for that position |
 | `cross-layer/reject-result-target` | `toy-handler/reject-result-target` — the toy's call declares its target in its required `targeted`, and the codec refuses `targeted: true` for the same class (refusal 4 above). Its call sits inside a sequence, so the vector also pins that the codec reads through the composition shapes. In a **program** the refusal stays in the fold at both subjects (§9.5), which `driver-semantics-toy/closure-free-call` pins |
-| `invocation/*`, and `cross-layer`'s `logic-tree-ref` vectors | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
+| `invocation/*`, and the `cross-layer` reference vectors `cross-layer/logic-tree-ref`, `logic-tree-ref-pinned`, `reject-malformed-content-address`, `reject-inline-body`, `reject-unknown-slot` | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
 
 | Toy vector | Referenced counterpart, or why there is none |
 |---|---|
 | `toy-handler/guard`, `choose`, `repeat-literal`, `repeat-parameter`, `each-literal` | **none.** The referenced vocabulary views no action as a guard, a branch, a repeat or an iteration (§10.6) |
 | `toy-handler/reject-foreign-action`, `toy-server-effect/reject-foreign-op`, `toy-outcome/reject-foreign-patch` | **none.** Each puts the other subject's value in a toy position; the corpus carries no referenced vector refused as `malformed-referenced-value`, because such a vector would have to spell a value the tree wire specification decides is malformed |
 | `toy-handler/reject-ring-into` | **none.** An undeclared member inside the action, which at the referenced subject is the tree wire specification's rule to state. Its class is `undeclared-member` and not `tree-declared-result-target`: `into` is not the toy's spelling of a target, and §2.9 refuses the member before any reading of the action is made (§9.5) |
+| `toy-handler/reject-repeated-member`, `reject-repeated-member-nested`, `reject-trailing-content`, `reject-number-grammar`, `reject-bare-nonfinite`, `reject-raw-control`, `reject-unpaired-surrogate`, `reject-overflowing-exponent`, `toy-server-effect/reject-repeated-member`, `toy-client-effect/reject-repeated-member`, `toy-outcome/reject-repeated-member` | **none, yet.** §2's cited syntax layer, which the corpus carries at the toy subject only: the referenced subject's hosts must move with any such vector in one change-set (§10.1, §11.1) |
+| `toy-handler/reject-limit-json-depth`, `reject-limit-action-depth`, `reject-limit-actions-per-program`, `reject-limit-actions-across-stages`, `reject-limit-repeat-bound`, `reject-limit-parameter-hi`, `reject-limit-each-collection` | **none, yet.** Rules 10 and 11's limits, carried at the toy subject only, for the same reason (§10.1) |
+
+**These two tables are complete, and the manifest check holds them to it.** Every vector carrying no
+`subject` whose document is not vocabulary-free either has a toy counterpart of the same name or is
+named in the tables; every toy vector either has a referenced counterpart of the same name or is
+named in them; and every vector a table names is one the manifest enumerates. Within one cell a name
+with no family is in the family of the full name before it. A vector added at either subject without
+its row is a red gate, not a table that has quietly fallen behind.
+
+#### Routing a new vector when more than one host certifies its subject
+
+More than one host certifies the toy subject: the manifest's `adoption` record (§10.1) names each,
+with the subject it certifies at. So a new vector at a subject is not routed by asking one host. It
+lands on this specification's default branch only when **every** host the adoption record names at
+that subject stays green against it — the fifth artefact of §11.1, read per host. A host that has not
+caught up is the change-set not yet being ready, and the vector waits on a branch beside the hosts'
+work rather than landing ahead of any of them. A vocabulary-free vector is certified at both subjects,
+so it waits on every host the record names.
 
 One refusal the toy effect could plausibly be asked for is deliberately **not** a vector: a `Sound`
 carrying a member beyond its three. §5.2 names the class for an extra member arm by arm, and §10.6
@@ -2326,7 +2399,7 @@ Every class a `reject` vector may name. A conformant reader refuses **for the na
 | `limit-exceeded` | the document passes a syntactic limit (§2.10) or a handler passes a program-shape limit (§2.11); the vector names which in its `limit` member |
 | `null-member` | any member's value is the JSON token `null` (§2.5) |
 | `undeclared-member` | a document carries a member this specification does not declare (§2.9) — including a self-declared `capability` (§5.1), an inline body in a reference (§9.2), and an `origin` on a denial that never consulted a destination (§5.3) |
-| `missing-member` | a required member is absent — or, for a finding's `code` or `severity` (§5.1), present and empty |
+| `missing-member` | a required member is absent — or a member §2's non-empty rule marks is present and empty, except the two that rule gives a class of their own (`empty-name`, `empty-idempotency-key`) |
 | `unknown-stage-kind` | a stage's `$type` is neither `Compute` nor `Effect` (§4.2) |
 | `unknown-effect-arm` | an effect names an arm outside the closed vocabulary (§5.1, §5.2) |
 | `empty-name` / `name-too-long` | a handler's registration key is empty or over 256 characters (§4.1) |

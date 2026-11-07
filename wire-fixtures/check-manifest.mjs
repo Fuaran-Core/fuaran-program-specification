@@ -952,6 +952,116 @@ for (const v of [...(manifest.vectors ?? []), ...(manifest.profileVectors ?? [])
 for (const s of [...(manifest.scenarios ?? []), ...(manifest.durableScenarios ?? [])])
   checkWitnesses(s.id ?? "(anonymous scenario)", s.witnesses, typeof s.family === "string" && s.family.endsWith("-toy") ? ["toy"] : ["ui"]);
 
+// --- §10.7's correspondence tables ------------------------------------------
+// "Where the two subjects do not correspond" accounts for every vector of each
+// subject that has no counterpart of the same name at the other. Nothing else
+// reads those tables, so a vector added without its row left the text behind
+// the corpus silently (fuaran#2437 found it three phases behind). Read from the
+// text itself, because a copy of the list here would be a second list to drift.
+//
+// A cell's backticked names are vectors; within one cell a name carrying no
+// family is in the family of the full name before it. The first column names
+// the vectors a row accounts for; the second may name the counterpart, so a
+// full name there accounts for that vector too. A name ending in `/*` stands
+// for a family of vocabulary-free documents and is not resolved.
+const readCorrespondence = (text) => {
+  const start = text.indexOf("#### Where the two subjects do not correspond");
+  if (start < 0) return null;
+  const end = text.indexOf("\n#### ", start + 1);
+  const section = text.slice(start, end < 0 ? undefined : end);
+  const tables = [];
+  let current = null;
+  for (const line of section.split("\n")) {
+    if (!line.startsWith("|")) {
+      current = null;
+      continue;
+    }
+    const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+    if (current === null) {
+      current = { header: cells[0], rows: [] };
+      tables.push(current);
+      continue;
+    }
+    if (/^-+$/.test(cells[0])) continue;
+    current.rows.push(cells);
+  }
+  const named = (cell, bare) => {
+    const out = [];
+    let family = null;
+    for (const [, token] of cell.matchAll(/`([^`]+)`/g)) {
+      if (token.endsWith("/*")) {
+        family = null;
+        continue;
+      }
+      const slash = token.indexOf("/");
+      if (slash > 0) {
+        family = token.slice(0, slash);
+        out.push(token);
+      } else if (bare && family !== null && /^[a-z0-9-]+$/.test(token)) out.push(`${family}/${token}`);
+    }
+    return out;
+  };
+  return tables.map((t) => ({
+    header: t.header,
+    accounted: t.rows.flatMap((r) => named(r[0], true)),
+    counterparts: t.rows.flatMap((r) => named(r[1] ?? "", false)),
+  }));
+};
+
+// The findings for one reading of the tables against the manifest. A function
+// of its inputs so the probe below can hand it a table with a row removed.
+const correspondenceFindings = (tables) => {
+  const found = [];
+  if (tables === null || tables.length !== 2) {
+    found.push(`§10.7 "Where the two subjects do not correspond" does not carry its two tables`);
+    return found;
+  }
+  const known = new Set([
+    ...(manifest.vectors ?? []).map((v) => v.id),
+    ...(manifest.scenarios ?? []).map((s) => s.id),
+  ]);
+  const toyIds = new Set((manifest.vectors ?? []).filter((v) => v.subject === "toy").map((v) => v.id));
+  const referenced = (manifest.vectors ?? []).filter((v) => v.subject === undefined && !vocabularyFreeSet.has(v.document));
+  const referencedIds = new Set(referenced.map((v) => v.id));
+  const accounted = new Set(tables.flatMap((t) => [...t.accounted, ...t.counterparts]));
+  for (const t of tables)
+    for (const id of [...t.accounted, ...t.counterparts])
+      if (!known.has(id)) found.push(`§10.7 names ${id}, which the manifest does not enumerate`);
+  for (const v of referenced)
+    if (!toyIds.has(`toy-${v.id}`) && !accounted.has(v.id))
+      found.push(`${v.id}: no toy counterpart of the same name, and §10.7 does not account for it`);
+  for (const id of toyIds)
+    if (!referencedIds.has(id.replace(/^toy-/, "")) && !accounted.has(id))
+      found.push(`${id}: no referenced counterpart of the same name, and §10.7 does not account for it`);
+  return found;
+};
+
+// The text sits beside the corpus, one directory up. A corpus checked without
+// it is reported rather than passed: the tables are the half of this check the
+// manifest cannot supply, and skipping them quietly would be the very drift the
+// check exists to catch.
+let specText = null;
+try {
+  specText = readFileSync(join(here, "..", "PROGRAM_WIRE.md"), "utf8");
+} catch {
+  fail("PROGRAM_WIRE.md is not beside this corpus, so §10.7's correspondence tables could not be checked");
+}
+const correspondence = specText === null ? null : readCorrespondence(specText);
+if (specText !== null) for (const f of correspondenceFindings(correspondence)) fail(f);
+// Go-red probe: the same tables with one accounted-for vector dropped MUST be
+// reported. A reader of the tables that matched nothing would otherwise pass
+// every corpus by finding nothing to complain about.
+if (correspondence !== null && correspondence.length === 2) {
+  const victim = correspondence[1].accounted.find((id) => !(manifest.vectors ?? []).some((v) => v.id === id.replace(/^toy-/, "")));
+  const perturbed = correspondence.map((t) => ({
+    ...t,
+    accounted: t.accounted.filter((id) => id !== victim),
+    counterparts: t.counterparts.filter((id) => id !== victim),
+  }));
+  if (victim === undefined || !correspondenceFindings(perturbed).some((f) => f.startsWith(`${victim}:`)))
+    fail("the §10.7 correspondence check did not go red when a toy-only vector lost its row");
+}
+
 if (failures.length) {
   console.error(`manifest invariants violated (${failures.length}):`);
   for (const f of failures) console.error(`  ${f}`);

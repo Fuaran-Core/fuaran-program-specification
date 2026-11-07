@@ -41,7 +41,7 @@
         "args": { "$ref": "common.schema.json#/$defs/opaquePayload" },
         "fn": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
         "into": {
-          "description": "The state slot the result lands in. Optional; omitted, the result is discarded. A slot under the host-reserved `host.` namespace is refused (§4.3) — under the toy store's `sys.` at the toy subject (§10.7) — a rule about the VALUE, which is why the corpus carries it and this schema cannot.",
+          "description": "The state slot the result lands in. Optional; omitted, the result is discarded. Present, it is non-empty (§5.1, §2): omission is the one spelling of a discarded result, and the empty string, which names no slot, is refused as `missing-member`. A slot under the host-reserved `host.` namespace is refused (§4.3) — under the toy store's `sys.` at the toy subject (§10.7) — a rule about the VALUE, which is why the corpus carries it and this schema cannot.",
           "$ref": "common.schema.json#/$defs/nonEmptyString"
         }
       }
