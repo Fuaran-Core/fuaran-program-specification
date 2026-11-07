@@ -732,6 +732,110 @@
       "description": "A confirmation with a question and no token. Both members are required, and this is the half whose absence is silent rather than loud: a prompt alone still renders a dialogue, and the answer then addresses nothing."
     },
     {
+      "id": "client-effect/reject-navigate-empty-route",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-navigate-empty-route.json",
+      "sha256": "d179d377c4b9aa5dc024a0c2d51c07704471cdfbe4191a0d99ba89759640e79f",
+      "reject": "missing-member",
+      "description": "A navigation whose route is present and empty (§2, §5.2: `Navigate`'s `route` MUST be non-empty). An empty route names no destination a surface could navigate to."
+    },
+    {
+      "id": "client-effect/reject-push-state-empty-route",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-push-state-empty-route.json",
+      "sha256": "219f5dd1e27fda9d821d08074d93d04734ec69f10e9d164a0bc4939644ae218c",
+      "reject": "missing-member",
+      "description": "A history entry whose route is present and empty (§2, §5.2: `PushState`'s `route` MUST be non-empty)."
+    },
+    {
+      "id": "client-effect/reject-focus-empty-node-id",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-focus-empty-node-id.json",
+      "sha256": "0853a84a7c93bc6f6bba520ac3e748768126eb54a8a207904457cb73b357efe5",
+      "reject": "missing-member",
+      "description": "A focus whose node id is present and empty (§2, §5.2: `Focus`'s `nodeId` MUST be non-empty). An empty id names no node a surface could focus."
+    },
+    {
+      "id": "client-effect/reject-read-file-body-empty-node-id",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-read-file-body-empty-node-id.json",
+      "sha256": "65c7eec6f3bc3f041be365fba48e3908f0c08b9b59bb5522e93e5236ad9cbf75",
+      "reject": "missing-member",
+      "description": "A file read whose node id is present and empty (§2, §5.2: `ReadFileBody`'s `nodeId` MUST be non-empty). An empty id names no input a surface could read from."
+    },
+    {
+      "id": "client-effect/reject-download-empty-url",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-download-empty-url.json",
+      "sha256": "5f782f4ba2b703603af531cbbbaad860c40ec8d2f2d9a6bc9533fa34109a908e",
+      "reject": "missing-member",
+      "description": "A download whose url is present and empty (§2, §5.2: `Download`'s `url` MUST be non-empty)."
+    },
+    {
+      "id": "client-effect/reject-download-empty-name",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-download-empty-name.json",
+      "sha256": "f06f7f25e63ac65f388763ed63f239ff369c50b734a5299453afb5e477c6dfea",
+      "reject": "missing-member",
+      "description": "A download whose file name is present and empty (§2, §5.2: `Download`'s `name` MUST be non-empty)."
+    },
+    {
+      "id": "client-effect/reject-confirm-empty-prompt",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-confirm-empty-prompt.json",
+      "sha256": "8e79c0de49c72455c4a5f97a1eea31d6dd2d760426052b19e568bb37a082cd60",
+      "reject": "missing-member",
+      "description": "A confirmation whose prompt is present and empty (§2, §5.2: `Confirm`'s `prompt` MUST be non-empty). A confirmation that puts no question collects an answer to nothing."
+    },
+    {
+      "id": "client-effect/reject-confirm-empty-token",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-confirm-empty-token.json",
+      "sha256": "43334844a55d270ab6bf95cbc5b43140a5875f4d859d0904f2bddb6877356eb1",
+      "reject": "missing-member",
+      "description": "A confirmation whose token is present and empty (§2, §5.2: `Confirm`'s `token` MUST be non-empty). The empty-token twin of `reject-confirm-missing-token`: the answer would address no confirmation."
+    },
+    {
       "id": "invocation/keyed",
       "family": "invocation",
       "witnesses": [
@@ -1827,6 +1931,20 @@
       "description": "A notification naming its channel twice. Which channel it reaches would be the reader's choice; §2 makes it no reader's (Core row 1)."
     },
     {
+      "id": "toy-server-effect/reject-empty-into",
+      "family": "toy-server-effect",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "toy-server-effect/reject-empty-into.json",
+      "sha256": "d488276e2b5207ea612bd77eca07a5841f4cb0a4de7f50591b7a29ace3f101e4",
+      "reject": "missing-member",
+      "description": "A host call whose landing slot is present and empty (§2, §5.1: `into` MUST be non-empty when present). Omission is the one spelling of a call that lands nowhere; the empty string is not a second one, and it names no slot a result could land in."
+    },
+    {
       "id": "toy-client-effect/sound",
       "family": "toy-client-effect",
       "witnesses": [
@@ -2002,6 +2120,76 @@
       "sha256": "afc304a027c7dd618c212dceec54a28e7f5cfb979861be9df5baeb788633c9f6",
       "reject": "malformed-json",
       "description": "An outcome that says it committed and that it did not. A caller reading the first would believe the work stands (Core row 1)."
+    },
+    {
+      "id": "toy-outcome/reject-empty-channel",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-empty-channel.json",
+      "sha256": "51df41e1f14ae486be08304689944fb87ec94ff2dac6272962fe754bdcee603a",
+      "reject": "missing-member",
+      "description": "An outcome whose one notification has a channel present and empty (§2, §6.3: each notification's `channel` MUST be non-empty). An empty channel names nothing a host could have delivered to."
+    },
+    {
+      "id": "toy-outcome/reject-empty-performed",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-empty-performed.json",
+      "sha256": "55d12f86ebe619fbcbae9150d9e0ebf54443bd103a6b32301ce1df6f02ac4270",
+      "reject": "missing-member",
+      "description": "A committed outcome whose second `performed` entry is the empty string (§2: every capability string MUST be non-empty, and an empty one names no capability a host could have performed or refused)."
+    },
+    {
+      "id": "toy-outcome/reject-empty-denial-capability",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-empty-denial-capability.json",
+      "sha256": "5a3fe1fdca89d03c280cd9f2b3afc0a5b38a762f1e4507d02e60dce7d218a0c8",
+      "reject": "missing-member",
+      "description": "An uncommitted outcome whose denial names an empty capability (§2: every capability string MUST be non-empty, and an empty one names no capability a host could have performed or refused)."
+    },
+    {
+      "id": "toy-outcome/reject-empty-failed-capability",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-empty-failed-capability.json",
+      "sha256": "b5e9ba58e4724df274e370bfc494e5663b9d116bd03ca5376884872cf0d8a970",
+      "reject": "missing-member",
+      "description": "An uncommitted outcome whose `Failed` diagnostic names an empty capability (§2: every capability string MUST be non-empty, and an empty one names no capability a host could have performed or refused). Its `reason` is content and may be empty; the capability may not."
+    },
+    {
+      "id": "toy-outcome/reject-empty-perform-failed-capability",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-empty-perform-failed-capability.json",
+      "sha256": "5e20732f1b0bc7f003daf3b4973c31de5193aeb65b776cc637dc46a8dca8bfd1",
+      "reject": "missing-member",
+      "description": "An uncommitted outcome whose `PerformFailed` diagnostic names an empty capability, beside the work it performed (§2: every capability string MUST be non-empty, and an empty one names no capability a host could have performed or refused). The pairing is otherwise possible, so the empty capability is the document's only defect."
     }
   ],
   "profileVectors": [
