@@ -195,6 +195,21 @@ compliant.
     refuses **for the class** (§10.1); a `limit-exceeded` vector also names the limit it passes, and
     a host whose refusal names its limit SHOULD check that it is that one.
 
+**A document names its own type at the root, and the root is read first.** Four documents this
+specification declares carry a discriminator that admits exactly one value: the handler (§4.1,
+`Handler`), the outcome (§6.3, `HandlerReport`), the invocation (§8.3, `Invocation`) and the
+cross-layer reference (§9.2, `LogicTreeRef`). A reader is always asked for one of them — a host
+knows which document it is reading before it reads it — and it reads the root's `$type` **before any
+other member**. A root whose `$type` names another document, names nothing this specification
+declares, is absent, or is not a string MUST be refused as **`missing-member`**: the required
+discriminator, with the one value its table admits, is not there. The refusal does not echo the tag
+the document chose (§4.4). Reading the root first is what makes the class determinate: read after
+rule 9, a whole document of another kind would be refused as `undeclared-member` by one reader and as
+`missing-member` by another, and a reader that dispatched on its members rather than its root would
+accept, under one document's name, bytes written as another — the parser differential this rule
+exists to remove. A **server effect** (§5.1) is not one of the four: its root names an arm of a
+closed vocabulary, and a root naming none of its arms is refused by rule 6, as `unknown-effect-arm`.
+
 **A member marked non-empty refuses the empty string, as `missing-member`.** The rule is stated here
 once, for every document this specification declares, and the sections below cite it rather than
 restate it. A member is marked non-empty when its value **names** something a host acts on — a slot,
@@ -1946,7 +1961,7 @@ same name.
 | `client-effect/reject-navigate-empty-route`, `reject-push-state-empty-route`, `reject-focus-empty-node-id`, `reject-read-file-body-empty-node-id`, `reject-download-empty-url`, `reject-download-empty-name`, `reject-confirm-empty-prompt`, `reject-confirm-empty-token` | **none.** §2's non-empty rule over the members of arms the toy does not have; the toy effect's one string member is a node id, non-empty by its grammar (§10.6) |
 | `outcome/denied` | `toy-outcome/denied`, **without** the `Bounded` diagnostic — the toy has no diagnostic vocabulary for that position |
 | `cross-layer/reject-result-target` | `toy-handler/reject-result-target` — the toy's call declares its target in its required `targeted`, and the codec refuses `targeted: true` for the same class (refusal 4 above). Its call sits inside a sequence, so the vector also pins that the codec reads through the composition shapes. In a **program** the refusal stays in the fold at both subjects (§9.5), which `driver-semantics-toy/closure-free-call` pins |
-| `invocation/*`, and the `cross-layer` reference vectors `cross-layer/logic-tree-ref`, `logic-tree-ref-pinned`, `reject-malformed-content-address`, `reject-inline-body`, `reject-unknown-slot` | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
+| `invocation/*`, and the `cross-layer` reference vectors `cross-layer/logic-tree-ref`, `logic-tree-ref-pinned`, `reject-malformed-content-address`, `reject-inline-body`, `reject-unknown-slot`, `reject-root-type` | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
 
 | Toy vector | Referenced counterpart, or why there is none |
 |---|---|
@@ -1955,6 +1970,7 @@ same name.
 | `toy-handler/reject-ring-into` | **none.** An undeclared member inside the action, which at the referenced subject is the tree wire specification's rule to state. Its class is `undeclared-member` and not `tree-declared-result-target`: `into` is not the toy's spelling of a target, and §2.9 refuses the member before any reading of the action is made (§9.5) |
 | `toy-handler/reject-repeated-member`, `reject-repeated-member-nested`, `reject-trailing-content`, `reject-number-grammar`, `reject-bare-nonfinite`, `reject-raw-control`, `reject-unpaired-surrogate`, `reject-overflowing-exponent`, `toy-server-effect/reject-repeated-member`, `toy-client-effect/reject-repeated-member`, `toy-outcome/reject-repeated-member` | **none, yet.** §2's cited syntax layer, which the corpus carries at the toy subject only: the referenced subject's hosts must move with any such vector in one change-set (§10.1, §11.1) |
 | `toy-server-effect/reject-empty-into`, `toy-outcome/reject-empty-channel`, `reject-empty-performed`, `reject-empty-denial-capability`, `reject-empty-failed-capability`, `reject-empty-perform-failed-capability` | **none, yet.** §2's non-empty rule over `into`, a notification's channel and every capability string, carried at the toy subject first: the referenced subject's host reads these documents through a release of the generic core that predates the rule, and its counterparts land with its move to one that carries it (§10.1, §11.1) |
+| `toy-outcome/reject-root-type` | **none, yet.** §2's root rule over the outcome, carried at the toy subject first: the referenced subject's host reads the outcome through a release of the generic core that predates the rule, and its counterpart lands with its move to one that carries it (§10.1, §11.1). The handler's root was held to the rule before it was written down, so `handler/reject-root-type` and `toy-handler/reject-root-type` land together |
 | `toy-handler/reject-limit-json-depth`, `reject-limit-action-depth`, `reject-limit-actions-per-program`, `reject-limit-actions-across-stages`, `reject-limit-repeat-bound`, `reject-limit-parameter-hi`, `reject-limit-each-collection` | **none, yet.** Rules 10 and 11's limits, carried at the toy subject only, for the same reason (§10.1) |
 
 **These two tables are complete, and the manifest check holds them to it.** Every vector carrying no
@@ -2401,7 +2417,7 @@ Every class a `reject` vector may name. A conformant reader refuses **for the na
 | `limit-exceeded` | the document passes a syntactic limit (§2.10) or a handler passes a program-shape limit (§2.11); the vector names which in its `limit` member |
 | `null-member` | any member's value is the JSON token `null` (§2.5) |
 | `undeclared-member` | a document carries a member this specification does not declare (§2.9) — including a self-declared `capability` (§5.1), an inline body in a reference (§9.2), and an `origin` on a denial that never consulted a destination (§5.3) |
-| `missing-member` | a required member is absent — or a member §2's non-empty rule marks is present and empty, except the two that rule gives a class of their own (`empty-name`, `empty-idempotency-key`) |
+| `missing-member` | a required member is absent — or a member §2's non-empty rule marks is present and empty, except the two that rule gives a class of their own (`empty-name`, `empty-idempotency-key`) — or a document's root `$type` does not name the document the reader was asked for (§2) |
 | `unknown-stage-kind` | a stage's `$type` is neither `Compute` nor `Effect` (§4.2) |
 | `unknown-effect-arm` | an effect names an arm outside the closed vocabulary (§5.1, §5.2) |
 | `empty-name` / `name-too-long` | a handler's registration key is empty or over 256 characters (§4.1) |

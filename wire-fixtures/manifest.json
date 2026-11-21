@@ -399,6 +399,19 @@
       "description": "A state-only handler document - effect stages alone, so a composition with no dispatch axis decodes it - carrying a finding (format version 3). The report contributes no reason: a second run records the same finding, so an absolutely-addressed op and a report are safe."
     },
     {
+      "id": "handler/reject-root-type",
+      "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-root-type.json",
+      "sha256": "e415517dfb64a4c3b33dccb2f0eb148b4f28aafc39e957d202eab3e6c188774b",
+      "reject": "missing-member",
+      "description": "A handler whose root names another document: `handler/minimal`'s members under the outcome's discriminator (§2: a document's root `$type` names the document the reader was asked for)."
+    },
+    {
       "id": "server-effect/run-query",
       "family": "server-effect",
       "witnesses": [
@@ -918,6 +931,20 @@
       "description": "An invocation whose nodeId is present and empty (§8.3: `nodeId` is a non-empty string). An empty nodeId names no originating node to thread to the evaluator."
     },
     {
+      "id": "invocation/reject-root-type",
+      "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-root-type.json",
+      "sha256": "1e1be9eb36e5ac7b88a8f9f7a95106532fcff064e883b6b003840edbcde6ecab",
+      "reject": "missing-member",
+      "description": "An invocation whose root names another document: `invocation/unkeyed`'s members under the outcome's discriminator (§2, §8.3). The root is read before any member, so the class is the root's whatever members follow it."
+    },
+    {
       "id": "outcome/committed",
       "family": "outcome",
       "witnesses": [
@@ -1084,6 +1111,20 @@
       "sha256": "506eb16d2b3a5beb9ce07799f6de81808d240c576b76ce1f70eb288950455b79",
       "reject": "tree-declared-result-target",
       "description": "A call action declaring where the answer should land. The handler declares that; refusing rather than ignoring is what keeps the retired mechanism from looking alive."
+    },
+    {
+      "id": "cross-layer/reject-root-type",
+      "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-root-type.json",
+      "sha256": "6e37f748bc4052479e08ce4dbdbd22c8a4ee317531f1711aa70c46911380a71c",
+      "reject": "missing-member",
+      "description": "A reference whose root names another document: `cross-layer/logic-tree-ref`'s members under the invocation's discriminator (§2, §9.2). A reader that accepted it would resolve a reference its author did not write as one."
     },
     {
       "id": "toy-handler/minimal",
@@ -1729,6 +1770,20 @@
       "description": "A literal collection of 1025 elements, one past §2.11's each-collection ceiling of 1024."
     },
     {
+      "id": "toy-handler/reject-root-type",
+      "family": "toy-handler",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "handler",
+      "file": "toy-handler/reject-root-type.json",
+      "sha256": "8e4580b6ca8a378238fb350d789323823d2b4ebb4e3b3c024b8ca5d25917b903",
+      "reject": "missing-member",
+      "description": "A toy handler whose root names another document: `toy-handler/minimal`'s members under the outcome's discriminator (§2)."
+    },
+    {
       "id": "toy-server-effect/run-query",
       "family": "toy-server-effect",
       "witnesses": [
@@ -2190,6 +2245,20 @@
       "sha256": "5e20732f1b0bc7f003daf3b4973c31de5193aeb65b776cc637dc46a8dca8bfd1",
       "reject": "missing-member",
       "description": "An uncommitted outcome whose `PerformFailed` diagnostic names an empty capability, beside the work it performed (§2: every capability string MUST be non-empty, and an empty one names no capability a host could have performed or refused). The pairing is otherwise possible, so the empty capability is the document's only defect."
+    },
+    {
+      "id": "toy-outcome/reject-root-type",
+      "family": "toy-outcome",
+      "witnesses": [
+        "toy"
+      ],
+      "subject": "toy",
+      "kind": "reject",
+      "document": "outcome",
+      "file": "toy-outcome/reject-root-type.json",
+      "sha256": "53a2b39d51abe0b0fb2c3d6615f13316c34daec39e9122e0373cfe9c6f55e22c",
+      "reject": "missing-member",
+      "description": "An outcome whose root names another document: `toy-outcome/committed`'s members under the handler's discriminator (§2: a document's root `$type` names the document the reader was asked for). A reader that dispatched on its members rather than its root would act on a document its author did not write as an outcome."
     }
   ],
   "profileVectors": [
