@@ -412,6 +412,61 @@
       "description": "A handler whose root names another document: `handler/minimal`'s members under the outcome's discriminator (§2: a document's root `$type` names the document the reader was asked for)."
     },
     {
+      "id": "handler/reject-repeated-member",
+      "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-repeated-member.json",
+      "sha256": "8f6d049131ae051175dc7fea93cdddb89b5f54d8428b162213d824194dd851fa",
+      "reject": "malformed-json",
+      "description": "A repeated member name in the envelope. Two readers that each took a different occurrence would register two different handlers from one document; §2 refuses the text instead (Core row 1)."
+    },
+    {
+      "id": "handler/reject-limit-json-depth",
+      "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-limit-json-depth.json",
+      "sha256": "6b8e029943a15eb594a98af90059cda4d16c52fc668ba0fcaf6cac38f4b1f9a5",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A state write whose value is nested so that the document's 257th container opens: one past §2.10's JSON depth of 256, refused at that bracket before it is read."
+    },
+    {
+      "id": "handler/reject-limit-action-depth",
+      "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-limit-action-depth.json",
+      "sha256": "007aab43c0d7f24fe461e50781db76c52aa571bce678d8a3d9669316f6469d51",
+      "reject": "limit-exceeded",
+      "limit": "actionDepth",
+      "description": "Thirty-three nested chains: one past §2.11's action depth of 32, refused at the 33rd before anything beneath it is walked."
+    },
+    {
+      "id": "handler/reject-limit-actions-per-program",
+      "family": "handler",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "handler",
+      "file": "handler/reject-limit-actions-per-program.json",
+      "sha256": "c467addb10dfa75bacc1bed55eb5231659b6463e3f3b78b34cec5cdc26d5d716",
+      "reject": "limit-exceeded",
+      "limit": "actionsPerProgram",
+      "description": "One chain of 1024 actions — 1025 with the chain itself, one past §2.11's 1024 actions per program."
+    },
+    {
       "id": "server-effect/run-query",
       "family": "server-effect",
       "witnesses": [
@@ -571,6 +626,33 @@
       "sha256": "25ff63c5a87874ac5c5c8ef7a48730d69afd9520d14c508aeebd262a1e4ef713",
       "reject": "undeclared-member",
       "description": "A document stating its own gate capability. The capability is derived from the closed vocabulary; a wire-carried one would put the untrusted side in charge of a fact the host computes."
+    },
+    {
+      "id": "server-effect/reject-repeated-member",
+      "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-repeated-member.json",
+      "sha256": "d8722723e3c22abc43a9ae994174909a46db2502a54dd0dcc64635316280a567",
+      "reject": "malformed-json",
+      "description": "A notification naming its channel twice. Which channel it reaches would be the reader's choice; §2 makes it no reader's (Core row 1)."
+    },
+    {
+      "id": "server-effect/reject-limit-json-depth",
+      "family": "server-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "server-effect",
+      "file": "server-effect/reject-limit-json-depth.json",
+      "sha256": "d2dc12aed9250d7a32757a078bd1d125c5d110f7b9eb67f343ba989c1bcc8d51",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A notification payload nested so that the document's 257th container opens: one past §2.10's JSON depth of 256, refused at that bracket before it is read."
     },
     {
       "id": "client-effect/navigate",
@@ -849,6 +931,33 @@
       "description": "A confirmation whose token is present and empty (§2, §5.2: `Confirm`'s `token` MUST be non-empty). The empty-token twin of `reject-confirm-missing-token`: the answer would address no confirmation."
     },
     {
+      "id": "client-effect/reject-repeated-member",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-repeated-member.json",
+      "sha256": "888b731d0c2bb7303ccfb39e70b53416019ac359ff30d92b0132ddf850db2249",
+      "reject": "malformed-json",
+      "description": "A navigation naming its route twice — the parser differential §2 closes, at the envelope §5.2 does not otherwise respecify (Core row 1)."
+    },
+    {
+      "id": "client-effect/reject-limit-json-depth",
+      "family": "client-effect",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "client-effect",
+      "file": "client-effect/reject-limit-json-depth.json",
+      "sha256": "96a5f8b067cb561d71501389abf9d6ce4eac99e05329785925edd2b84284c859",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A route nested so that the document's 257th container opens. The bound is enforced while the document is read (§2.10), so the class is the limit's, never the member's type, which no reader has reached."
+    },
+    {
       "id": "invocation/keyed",
       "family": "invocation",
       "witnesses": [
@@ -945,6 +1054,35 @@
       "description": "An invocation whose root names another document: `invocation/unkeyed`'s members under the outcome's discriminator (§2, §8.3). The root is read before any member, so the class is the root's whatever members follow it."
     },
     {
+      "id": "invocation/reject-repeated-member",
+      "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-repeated-member.json",
+      "sha256": "20c60f73bcba8a79e6fab54550088e232009a68e4cb29a7f61da24eda9550c5b",
+      "reject": "malformed-json",
+      "description": "An invocation naming its endpoint twice. A reader taking the first would refresh and one taking the last would settle; §2 refuses the text instead (Core row 1)."
+    },
+    {
+      "id": "invocation/reject-limit-json-depth",
+      "family": "invocation",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "invocation",
+      "file": "invocation/reject-limit-json-depth.json",
+      "sha256": "3f4767a8910dbcb5e1e16f3f3533d755d033608955a771b942a54696b9764cd8",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "An endpoint nested so that the document's 257th container opens. The bound is enforced while the document is read (§2.10), so the class is the limit's, never the member's type, which no reader has reached."
+    },
+    {
       "id": "outcome/committed",
       "family": "outcome",
       "witnesses": [
@@ -1030,6 +1168,46 @@
       "sha256": "36be7a48bca1ff212922811fb9783b5d6a6d2c4e4c9451ae45cc148afd4ea982",
       "reject": "undeclared-member",
       "description": "A denial carrying an origin in the one position where no destination was ever consulted. Two rules refuse it and they coincide rather than compete: no server-effect arm names a destination, so the member is unreachable here at all, and origin belongs to GateRefused alone."
+    },
+    {
+      "id": "outcome/reject-repeated-member",
+      "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-repeated-member.json",
+      "sha256": "afc304a027c7dd618c212dceec54a28e7f5cfb979861be9df5baeb788633c9f6",
+      "reject": "malformed-json",
+      "description": "An outcome that says it committed and that it did not. A caller reading the first would believe the work stands (Core row 1)."
+    },
+    {
+      "id": "outcome/reject-limit-json-depth",
+      "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-limit-json-depth.json",
+      "sha256": "14db24210b3addb43e670b7f35972df366fff1c4a66de29fc043c40da5dac279",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A delivered notification's payload nested so that the document's 257th container opens: one past §2.10's JSON depth of 256, refused at that bracket before it is read."
+    },
+    {
+      "id": "outcome/reject-root-type",
+      "family": "outcome",
+      "witnesses": [
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "outcome",
+      "file": "outcome/reject-root-type.json",
+      "sha256": "9f7d82bd79676934bc355b3e519ce678f7017a719fa4664884c891a92ba9b36a",
+      "reject": "missing-member",
+      "description": "An outcome whose root names another document: `outcome/unregistered`'s members under the invocation's discriminator (§2, §6.3). The root is read before any member, so the class is the root's whatever members follow it."
     },
     {
       "id": "cross-layer/logic-tree-ref",
@@ -1125,6 +1303,35 @@
       "sha256": "6e37f748bc4052479e08ce4dbdbd22c8a4ee317531f1711aa70c46911380a71c",
       "reject": "missing-member",
       "description": "A reference whose root names another document: `cross-layer/logic-tree-ref`'s members under the invocation's discriminator (§2, §9.2). A reader that accepted it would resolve a reference its author did not write as one."
+    },
+    {
+      "id": "cross-layer/reject-repeated-member",
+      "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-repeated-member.json",
+      "sha256": "6078f6b4f27efa46980495011d564aa96fb35a0c98285f84d3332d47a7878f37",
+      "reject": "malformed-json",
+      "description": "A reference naming its program twice. Which program a composition surface runs would be the reader's choice; §2 makes it no reader's (Core row 1)."
+    },
+    {
+      "id": "cross-layer/reject-limit-json-depth",
+      "family": "cross-layer",
+      "witnesses": [
+        "toy",
+        "ui"
+      ],
+      "kind": "reject",
+      "document": "logic-tree-ref",
+      "file": "cross-layer/reject-limit-json-depth.json",
+      "sha256": "3a2a8881efa606416489898ba5f7fd07aa90e5f60c9119476f294e6f9659f713",
+      "reject": "limit-exceeded",
+      "limit": "depth",
+      "description": "A reference whose program name is nested so that the document's 257th container opens. The bound is enforced while the document is read (§2.10), so the class is the limit's, never the member's type."
     },
     {
       "id": "toy-handler/minimal",

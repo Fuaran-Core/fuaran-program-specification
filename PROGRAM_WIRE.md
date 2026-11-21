@@ -1337,17 +1337,22 @@ An implementation conforms by:
    number of vectors it ran equals the number the manifest enumerates for its role and subject (§10.7),
    and that a mutated fixture makes it go red.
 
-**What the corpus reaches of §2's syntax layer and limits, and what a host certifies itself.** The
-corpus carries a `malformed-json` vector per Core row at the handler document, a repeated member at
-every document kind the toy subject certifies, and a `limit-exceeded` vector — naming its `limit` —
-for `depth` and for each of rule 11's bounds, all at the **toy** subject (§10.7). Three things it does
-not carry, each deliberately. A vector one past `stringLength`, `arrayLength`, `objectMembers` or
-`documentBytes` is megabytes, so those four bounds, and every bound's acceptance AT its value, are
+**What the corpus reaches of §2's syntax layer and limits, and what a host certifies itself.** At
+the **toy** subject (§10.7) the corpus carries a `malformed-json` vector per Core row at the handler
+document, a repeated member at every document kind, and a `limit-exceeded` vector — naming its
+`limit` — for `depth` and for each of rule 11's bounds. At the **referenced** subject, and at the two
+vocabulary-free documents, it carries a repeated member and a `depth` vector at every document kind,
+and at the handler `actionDepth` and `actionsPerProgram`; a `depth` vector at a document whose members
+are all strings nests one of them, because the bound is read before any member's type is. Four things
+it does not carry, each deliberately. A vector one past `stringLength`, `arrayLength`, `objectMembers`
+or `documentBytes` is megabytes, so those four bounds, and every bound's acceptance AT its value, are
 certified by a host's own suite, as `content-address-mismatch` is. A rule-11 bound over a collection
-the store holds needs a spelling the toy vocabulary does not have. And the **referenced** subject's
-families and the two vocabulary-free documents (§10.7) carry none yet: the hosts certifying those
-vectors must move with them in one change-set (§11.1), and a vector they have not caught up with
-would be a specification of nothing. Until they do, a host still MUST refuse those documents by
+the store holds needs a spelling the toy vocabulary does not have. Core rows 2 to 7 are pinned at the
+toy handler only: the syntax layer is one reader for every document and subject, and its row 1 at
+each document is what shows a host runs every document through it. And the referenced vocabulary
+views no action as a repeat or an iteration (§10.6), so `repeatBound` and `eachCollection` have no
+referenced spelling, and the summation of `actionsPerProgram` across stages is pinned at the toy
+subject alone, where the bound it sums is the same one. A host still MUST refuse every document by
 rules 10 and 11 and by the cited grammar — the corpus not pinning a case does not make it optional.
 
 [`wire-fixtures/manifest.json`](wire-fixtures/manifest.json) is the **authoritative enumeration** of
@@ -1960,18 +1965,18 @@ same name.
 | `client-effect/reject-confirm-missing-token` | `toy-client-effect/reject-missing-member` |
 | `client-effect/reject-navigate-empty-route`, `reject-push-state-empty-route`, `reject-focus-empty-node-id`, `reject-read-file-body-empty-node-id`, `reject-download-empty-url`, `reject-download-empty-name`, `reject-confirm-empty-prompt`, `reject-confirm-empty-token` | **none.** §2's non-empty rule over the members of arms the toy does not have; the toy effect's one string member is a node id, non-empty by its grammar (§10.6) |
 | `outcome/denied` | `toy-outcome/denied`, **without** the `Bounded` diagnostic — the toy has no diagnostic vocabulary for that position |
+| `server-effect/reject-limit-json-depth`, `client-effect/reject-limit-json-depth`, `outcome/reject-limit-json-depth` | **none.** §2.10's `depth` at the effect and outcome documents. The toy subject pins it at its handler alone, `toy-handler/reject-limit-json-depth`; the syntax layer is one reader for every document, and a repeated member at each toy document is what shows a toy host reads every document through it (§10.1) |
 | `cross-layer/reject-result-target` | `toy-handler/reject-result-target` — the toy's call declares its target in its required `targeted`, and the codec refuses `targeted: true` for the same class (refusal 4 above). Its call sits inside a sequence, so the vector also pins that the codec reads through the composition shapes. In a **program** the refusal stays in the fold at both subjects (§9.5), which `driver-semantics-toy/closure-free-call` pins |
-| `invocation/*`, and the `cross-layer` reference vectors `cross-layer/logic-tree-ref`, `logic-tree-ref-pinned`, `reject-malformed-content-address`, `reject-inline-body`, `reject-unknown-slot`, `reject-root-type` | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
+| `invocation/*`, and the `cross-layer` reference vectors `cross-layer/logic-tree-ref`, `logic-tree-ref-pinned`, `reject-malformed-content-address`, `reject-inline-body`, `reject-unknown-slot`, `reject-root-type`, `reject-repeated-member`, `reject-limit-json-depth` | **not duplicated** — vocabulary-free, certified at both subjects as they stand |
 
 | Toy vector | Referenced counterpart, or why there is none |
 |---|---|
 | `toy-handler/guard`, `choose`, `repeat-literal`, `repeat-parameter`, `each-literal` | **none.** The referenced vocabulary views no action as a guard, a branch, a repeat or an iteration (§10.6) |
 | `toy-handler/reject-foreign-action`, `toy-server-effect/reject-foreign-op`, `toy-outcome/reject-foreign-patch` | **none.** Each puts the other subject's value in a toy position; the corpus carries no referenced vector refused as `malformed-referenced-value`, because such a vector would have to spell a value the tree wire specification decides is malformed |
 | `toy-handler/reject-ring-into` | **none.** An undeclared member inside the action, which at the referenced subject is the tree wire specification's rule to state. Its class is `undeclared-member` and not `tree-declared-result-target`: `into` is not the toy's spelling of a target, and §2.9 refuses the member before any reading of the action is made (§9.5) |
-| `toy-handler/reject-repeated-member`, `reject-repeated-member-nested`, `reject-trailing-content`, `reject-number-grammar`, `reject-bare-nonfinite`, `reject-raw-control`, `reject-unpaired-surrogate`, `reject-overflowing-exponent`, `toy-server-effect/reject-repeated-member`, `toy-client-effect/reject-repeated-member`, `toy-outcome/reject-repeated-member` | **none, yet.** §2's cited syntax layer, which the corpus carries at the toy subject only: the referenced subject's hosts must move with any such vector in one change-set (§10.1, §11.1) |
+| `toy-handler/reject-repeated-member-nested`, `reject-trailing-content`, `reject-number-grammar`, `reject-bare-nonfinite`, `reject-raw-control`, `reject-unpaired-surrogate`, `reject-overflowing-exponent` | **none.** §2's cited syntax layer past its row 1, pinned at the toy handler only: it is one reader for every document and subject, and its row 1 at every document of both subjects is what shows a host runs each document through it (§10.1) |
 | `toy-server-effect/reject-empty-into`, `toy-outcome/reject-empty-channel`, `reject-empty-performed`, `reject-empty-denial-capability`, `reject-empty-failed-capability`, `reject-empty-perform-failed-capability` | **none, yet.** §2's non-empty rule over `into`, a notification's channel and every capability string, carried at the toy subject first: the referenced subject's host reads these documents through a release of the generic core that predates the rule, and its counterparts land with its move to one that carries it (§10.1, §11.1) |
-| `toy-outcome/reject-root-type` | **none, yet.** §2's root rule over the outcome, carried at the toy subject first: the referenced subject's host reads the outcome through a release of the generic core that predates the rule, and its counterpart lands with its move to one that carries it (§10.1, §11.1). The handler's root was held to the rule before it was written down, so `handler/reject-root-type` and `toy-handler/reject-root-type` land together |
-| `toy-handler/reject-limit-json-depth`, `reject-limit-action-depth`, `reject-limit-actions-per-program`, `reject-limit-actions-across-stages`, `reject-limit-repeat-bound`, `reject-limit-parameter-hi`, `reject-limit-each-collection` | **none, yet.** Rules 10 and 11's limits, carried at the toy subject only, for the same reason (§10.1) |
+| `toy-handler/reject-limit-actions-across-stages`, `reject-limit-repeat-bound`, `reject-limit-parameter-hi`, `reject-limit-each-collection` | **none.** The referenced vocabulary views no action as a repeat or an iteration (§10.6), so `repeatBound` and `eachCollection` have no referenced spelling. The summation of `actionsPerProgram` across stages is the toy's to pin: the bound it sums is the one `handler/reject-limit-actions-per-program` pins at the referenced subject (§10.1) |
 
 **These two tables are complete, and the manifest check holds them to it.** Every vector carrying no
 `subject` whose document is not vocabulary-free either has a toy counterpart of the same name or is
